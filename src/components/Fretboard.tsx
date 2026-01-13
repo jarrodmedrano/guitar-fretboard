@@ -123,7 +123,7 @@ export default function Fretboard({
   rootNote,
   scale,
   tuning = STANDARD_TUNING,
-  frets = 15,
+  frets = 24,
   displayMode = 'notes',
   onNoteClick,
 }: FretboardProps) {
@@ -200,7 +200,7 @@ export default function Fretboard({
                   key={fret}
                   className="relative flex flex-col justify-around py-2 border-r-2 border-zinc-400/60"
                   style={{
-                    minWidth: `${Math.max(40, 60 - fretIndex)}px`,
+                    minWidth: `${Math.max(36, 55 - fretIndex * 0.8)}px`,
                   }}
                 >
                   {/* Fret number */}

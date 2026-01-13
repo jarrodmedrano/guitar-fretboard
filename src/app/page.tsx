@@ -92,7 +92,7 @@ export default function Home() {
               rootNote={rootNote}
               scale={scale}
               displayMode={displayMode}
-              frets={15}
+              frets={24}
             />
           </div>
         </div>
