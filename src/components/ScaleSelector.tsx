@@ -8,18 +8,22 @@ interface ScaleSelectorProps {
   rootNote: Note
   scale: string
   displayMode: DisplayMode
+  showOnlyChordTones: boolean
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
   onDisplayModeChange: (mode: DisplayMode) => void
+  onChordTonesToggle: (show: boolean) => void
 }
 
 export default function ScaleSelector({
   rootNote,
   scale,
   displayMode,
+  showOnlyChordTones,
   onRootChange,
   onScaleChange,
   onDisplayModeChange,
+  onChordTonesToggle,
 }: ScaleSelectorProps) {
   return (
     <div className="flex flex-wrap gap-4 items-center justify-center">
@@ -82,6 +86,24 @@ export default function ScaleSelector({
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Chord Tones Only Toggle */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs text-zinc-500 uppercase tracking-wide">Filter</label>
+        <button
+          onClick={() => onChordTonesToggle(!showOnlyChordTones)}
+          className={`
+            px-3 py-2 rounded-md text-sm font-medium transition-all
+            ${showOnlyChordTones
+              ? 'bg-amber-500 text-white shadow-lg'
+              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }
+          `}
+          title="Show only Root, 3rd, and 5th"
+        >
+          R-3-5 Only
+        </button>
       </div>
     </div>
   )

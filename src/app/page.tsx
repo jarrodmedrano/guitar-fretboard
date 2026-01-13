@@ -11,6 +11,7 @@ export default function Home() {
   const [rootNote, setRootNote] = useState<Note>('A')
   const [scale, setScale] = useState('minorPentatonic')
   const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
+  const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
 
   const scaleFormula = SCALES[scale]
   const scaleNotes = scaleFormula.map((interval) => {
@@ -73,9 +74,11 @@ export default function Home() {
             rootNote={rootNote}
             scale={scale}
             displayMode={displayMode}
+            showOnlyChordTones={showOnlyChordTones}
             onRootChange={setRootNote}
             onScaleChange={setScale}
             onDisplayModeChange={setDisplayMode}
+            onChordTonesToggle={setShowOnlyChordTones}
           />
         </div>
 
@@ -92,6 +95,7 @@ export default function Home() {
               rootNote={rootNote}
               scale={scale}
               displayMode={displayMode}
+              showOnlyChordTones={showOnlyChordTones}
               frets={24}
             />
           </div>

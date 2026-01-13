@@ -23,6 +23,7 @@ interface FretboardProps {
   tuning?: Note[]
   frets?: number
   displayMode?: DisplayMode
+  showOnlyChordTones?: boolean
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
 
@@ -119,12 +120,16 @@ function FretMarker({ fret }: { fret: number }) {
   )
 }
 
+// Chord tones: root (0), minor 3rd (3), major 3rd (4), perfect 5th (7)
+const CHORD_TONE_INTERVALS = [0, 3, 4, 7]
+
 export default function Fretboard({
   rootNote,
   scale,
   tuning = STANDARD_TUNING,
   frets = 24,
   displayMode = 'notes',
+  showOnlyChordTones = false,
   onNoteClick,
 }: FretboardProps) {
   const [selectedNotes, setSelectedNotes] = useState<Set<string>>(new Set())
@@ -175,13 +180,15 @@ export default function Fretboard({
                 const degree = getScaleDegree(note, rootNote, scaleFormula)
                 const isRoot = note === rootNote
                 const key = `${actualStringIndex}-0`
+                const isChordTone = CHORD_TONE_INTERVALS.includes(interval)
+                const shouldShow = !showOnlyChordTones || isChordTone
 
                 return (
                   <NoteMarker
                     key={stringIndex}
                     note={note}
                     isRoot={isRoot}
-                    inScale={inScale}
+                    inScale={shouldShow && inScale}
                     interval={interval}
                     degree={degree}
                     displayMode={displayMode}
@@ -220,6 +227,8 @@ export default function Fretboard({
                     const degree = getScaleDegree(note, rootNote, scaleFormula)
                     const isRoot = note === rootNote
                     const key = `${actualStringIndex}-${fret}`
+                    const isChordTone = CHORD_TONE_INTERVALS.includes(interval)
+                    const shouldShow = !showOnlyChordTones || isChordTone
 
                     return (
                       <div key={stringIndex} className="relative flex items-center justify-center">
@@ -234,7 +243,7 @@ export default function Fretboard({
                         <NoteMarker
                           note={note}
                           isRoot={isRoot}
-                          inScale={inScale}
+                          inScale={shouldShow && inScale}
                           interval={interval}
                           degree={degree}
                           displayMode={displayMode}
