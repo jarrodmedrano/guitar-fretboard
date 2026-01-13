@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
+import PositionSelector from '@/components/PositionSelector'
 import { Note, SCALE_NAMES, SCALES } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -12,6 +13,13 @@ export default function Home() {
   const [scale, setScale] = useState('minorPentatonic')
   const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
   const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
+  const [position, setPosition] = useState<number | null>(null)
+
+  // Reset position when scale changes (different scales have different position counts)
+  const handleScaleChange = (newScale: string) => {
+    setScale(newScale)
+    setPosition(null)
+  }
 
   const scaleFormula = SCALES[scale]
   const scaleNotes = scaleFormula.map((interval) => {
@@ -76,7 +84,7 @@ export default function Home() {
             displayMode={displayMode}
             showOnlyChordTones={showOnlyChordTones}
             onRootChange={setRootNote}
-            onScaleChange={setScale}
+            onScaleChange={handleScaleChange}
             onDisplayModeChange={setDisplayMode}
             onChordTonesToggle={setShowOnlyChordTones}
           />
@@ -85,10 +93,23 @@ export default function Home() {
         {/* Fretboard */}
         <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
           <div className="px-6 py-4 border-b border-zinc-800">
-            <h3 className="text-lg font-medium text-white">Interactive Fretboard</h3>
-            <p className="text-zinc-500 text-sm mt-1">
-              Click on notes to select them. Scroll horizontally to see more frets.
-            </p>
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-medium text-white">Interactive Fretboard</h3>
+                <p className="text-zinc-500 text-sm mt-1">
+                  Click on notes to select them. Scroll horizontally to see more frets.
+                </p>
+              </div>
+              {/* Position Selector - placed prominently next to fretboard header */}
+              <div className="lg:min-w-[200px]">
+                <PositionSelector
+                  scale={scale}
+                  rootNote={rootNote}
+                  position={position}
+                  onPositionChange={setPosition}
+                />
+              </div>
+            </div>
           </div>
           <div className="pb-8">
             <Fretboard
@@ -96,6 +117,7 @@ export default function Home() {
               scale={scale}
               displayMode={displayMode}
               showOnlyChordTones={showOnlyChordTones}
+              position={position}
               frets={24}
             />
           </div>

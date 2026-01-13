@@ -6,6 +6,7 @@ import {
   NOTES,
   STANDARD_TUNING,
   SCALES,
+  SCALE_POSITIONS,
   FRET_MARKERS,
   DOUBLE_MARKERS,
   getNoteAtFret,
@@ -13,6 +14,7 @@ import {
   getInterval,
   getScaleDegree,
   getIntervalName,
+  getRootFret,
 } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -24,6 +26,7 @@ interface FretboardProps {
   frets?: number
   displayMode?: DisplayMode
   showOnlyChordTones?: boolean
+  position?: number | null // null means show all positions
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
 
@@ -130,10 +133,31 @@ export default function Fretboard({
   frets = 24,
   displayMode = 'notes',
   showOnlyChordTones = false,
+  position = null,
   onNoteClick,
 }: FretboardProps) {
   const [selectedNotes, setSelectedNotes] = useState<Set<string>>(new Set())
   const scaleFormula = SCALES[scale] || SCALES.major
+  const positions = SCALE_POSITIONS[scale] || SCALE_POSITIONS.minorPentatonic
+  const rootFret = getRootFret(rootNote)
+
+  // Check if a fret is within the current position
+  const isInPosition = useCallback((fret: number): boolean => {
+    if (position === null) return true // Show all
+    const pos = positions[position]
+    if (!pos) return true
+
+    // Calculate the actual fret range based on root note position
+    const startFret = rootFret + pos.start
+    const endFret = rootFret + pos.end
+
+    // Handle wrapping at fret 12 (octave)
+    if (fret >= startFret && fret <= endFret) return true
+    // Also check if the position wraps around (for positions near fret 12)
+    if (startFret + 12 <= frets && fret >= startFret + 12 && fret <= endFret + 12) return true
+
+    return false
+  }, [position, positions, rootFret, frets])
 
   const handleNoteClick = useCallback((note: Note, stringIndex: number, fret: number) => {
     const key = `${stringIndex}-${fret}`
@@ -181,7 +205,8 @@ export default function Fretboard({
                 const isRoot = note === rootNote
                 const key = `${actualStringIndex}-0`
                 const isChordTone = CHORD_TONE_INTERVALS.includes(interval)
-                const shouldShow = !showOnlyChordTones || isChordTone
+                const inPosition = isInPosition(0)
+                const shouldShow = (!showOnlyChordTones || isChordTone) && inPosition
 
                 return (
                   <NoteMarker
@@ -228,7 +253,8 @@ export default function Fretboard({
                     const isRoot = note === rootNote
                     const key = `${actualStringIndex}-${fret}`
                     const isChordTone = CHORD_TONE_INTERVALS.includes(interval)
-                    const shouldShow = !showOnlyChordTones || isChordTone
+                    const inPosition = isInPosition(fret)
+                    const shouldShow = (!showOnlyChordTones || isChordTone) && inPosition
 
                     return (
                       <div key={stringIndex} className="relative flex items-center justify-center">

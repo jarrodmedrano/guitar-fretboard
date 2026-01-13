@@ -51,6 +51,127 @@ export const INTERVAL_NAMES: Record<number, string> = {
 export const FRET_MARKERS = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24]
 export const DOUBLE_MARKERS = [12, 24]
 
+// Scale positions (fret offsets from root note)
+// Each position covers a 4-5 fret span
+export const SCALE_POSITIONS: Record<string, { start: number; end: number }[]> = {
+  // Pentatonic 5 box patterns (minor pentatonic positions)
+  minorPentatonic: [
+    { start: 0, end: 3 },   // Position 1 (root position)
+    { start: 3, end: 6 },   // Position 2
+    { start: 5, end: 8 },   // Position 3
+    { start: 7, end: 10 },  // Position 4
+    { start: 10, end: 13 }, // Position 5 (leads back to position 1)
+  ],
+  majorPentatonic: [
+    { start: 0, end: 4 },   // Position 1
+    { start: 2, end: 5 },   // Position 2
+    { start: 4, end: 7 },   // Position 3
+    { start: 7, end: 10 },  // Position 4
+    { start: 9, end: 12 },  // Position 5
+  ],
+  blues: [
+    { start: 0, end: 3 },
+    { start: 3, end: 6 },
+    { start: 5, end: 8 },
+    { start: 7, end: 10 },
+    { start: 10, end: 13 },
+  ],
+  // 7-note scales use 7 positions (3-notes-per-string approach)
+  major: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 4, end: 8 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 9, end: 13 },
+    { start: 11, end: 15 },
+  ],
+  minor: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 3, end: 7 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 8, end: 12 },
+    { start: 10, end: 14 },
+  ],
+  dorian: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 3, end: 7 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 9, end: 13 },
+    { start: 10, end: 14 },
+  ],
+  phrygian: [
+    { start: 0, end: 4 },
+    { start: 1, end: 5 },
+    { start: 3, end: 7 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 8, end: 12 },
+    { start: 10, end: 14 },
+  ],
+  lydian: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 4, end: 8 },
+    { start: 6, end: 10 },
+    { start: 7, end: 11 },
+    { start: 9, end: 13 },
+    { start: 11, end: 15 },
+  ],
+  mixolydian: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 4, end: 8 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 9, end: 13 },
+    { start: 10, end: 14 },
+  ],
+  locrian: [
+    { start: 0, end: 4 },
+    { start: 1, end: 5 },
+    { start: 3, end: 7 },
+    { start: 5, end: 9 },
+    { start: 6, end: 10 },
+    { start: 8, end: 12 },
+    { start: 10, end: 14 },
+  ],
+  harmonicMinor: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 3, end: 7 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 8, end: 12 },
+    { start: 11, end: 15 },
+  ],
+  melodicMinor: [
+    { start: 0, end: 4 },
+    { start: 2, end: 6 },
+    { start: 3, end: 7 },
+    { start: 5, end: 9 },
+    { start: 7, end: 11 },
+    { start: 9, end: 13 },
+    { start: 11, end: 15 },
+  ],
+}
+
+// Get the fret where the root note first appears on the low E string
+export function getRootFret(rootNote: Note): number {
+  const openE = NOTES.indexOf('E')
+  const rootIndex = NOTES.indexOf(rootNote)
+  return (rootIndex - openE + 12) % 12
+}
+
+// Get position count for a scale
+export function getPositionCount(scale: string): number {
+  return SCALE_POSITIONS[scale]?.length || 5
+}
+
 export function getNoteAtFret(openNote: Note, fret: number): Note {
   const startIndex = NOTES.indexOf(openNote)
   return NOTES[(startIndex + fret) % 12]
