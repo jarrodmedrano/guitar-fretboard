@@ -113,11 +113,11 @@ function FretMarker({ fret }: { fret: number }) {
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
       {isDouble ? (
         <div className="flex gap-4">
-          <div className="h-3 w-3 rounded-full bg-zinc-600/40" />
-          <div className="h-3 w-3 rounded-full bg-zinc-600/40" />
+          <div className="h-3 w-3 rounded-full bg-amber-200/20" />
+          <div className="h-3 w-3 rounded-full bg-amber-200/20" />
         </div>
       ) : (
-        <div className="h-3 w-3 rounded-full bg-zinc-600/40" />
+        <div className="h-3 w-3 rounded-full bg-amber-200/20" />
       )}
     </div>
   )
