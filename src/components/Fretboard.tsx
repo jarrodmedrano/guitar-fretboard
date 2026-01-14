@@ -37,6 +37,7 @@ interface NoteMarkerProps {
   interval: number
   degree: number
   displayMode: DisplayMode
+  isNut?: boolean
   onClick?: () => void
   isSelected?: boolean
 }
@@ -48,17 +49,20 @@ function NoteMarker({
   interval,
   degree,
   displayMode,
+  isNut = false,
   onClick,
   isSelected,
 }: NoteMarkerProps) {
   if (!inScale) {
     return (
-      <div className="h-8 w-8 flex items-center justify-center">
-        <div
-          className="h-2 w-2 rounded-full bg-zinc-700/30 hover:bg-zinc-600/50 cursor-pointer transition-colors"
-          onClick={onClick}
-          title={note}
-        />
+      <div className="h-8 w-8 flex items-center justify-center relative z-10">
+        {isNut ? (
+          <div
+            className="h-2 w-2 rounded-full bg-zinc-700/30 hover:bg-zinc-600/50 cursor-pointer transition-colors"
+            onClick={onClick}
+            title={note}
+          />
+        ) : null}
       </div>
     )
   }
@@ -84,7 +88,7 @@ function NoteMarker({
   }
 
   return (
-    <div className="h-8 w-8 flex items-center justify-center">
+    <div className="h-8 w-8 flex items-center justify-center relative z-10">
       <button
         onClick={onClick}
         className={`
@@ -217,6 +221,7 @@ export default function Fretboard({
                     interval={interval}
                     degree={degree}
                     displayMode={displayMode}
+                    isNut={true}
                     onClick={() => handleNoteClick(note, actualStringIndex, 0)}
                     isSelected={selectedNotes.has(key)}
                   />
