@@ -207,9 +207,18 @@ export default function Home() {
               className="text-left p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
             >
               <span className="text-white font-medium group-hover:text-emerald-400 transition-colors">
-                Pentatonic Forms
+                Minor Pent. Forms
               </span>
-              <p className="text-zinc-500 text-sm mt-1">Fret Science rectangle &amp; stack</p>
+              <p className="text-zinc-500 text-sm mt-1">Fret Science (minor)</p>
+            </button>
+            <button
+              onClick={() => { handleScaleChange('pentatonicFormsMajor'); setRootNote('C') }}
+              className="text-left p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
+            >
+              <span className="text-white font-medium group-hover:text-emerald-400 transition-colors">
+                Major Pent. Forms
+              </span>
+              <p className="text-zinc-500 text-sm mt-1">Fret Science (major)</p>
             </button>
           </div>
         </div>

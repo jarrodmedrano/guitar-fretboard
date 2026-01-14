@@ -155,10 +155,20 @@ export default function Fretboard({
     const startFret = rootFret + pos.start
     const endFret = rootFret + pos.end
 
-    // Handle wrapping at fret 12 (octave)
-    if (fret >= startFret && fret <= endFret) return true
-    // Also check if the position wraps around (for positions near fret 12)
+    // Handle the primary position range (clamp startFret to 0 minimum)
+    const effectiveStart = Math.max(0, startFret)
+    if (fret >= effectiveStart && fret <= endFret) return true
+
+    // Handle wrapping at fret 12 (octave) for positions that extend beyond
     if (startFret + 12 <= frets && fret >= startFret + 12 && fret <= endFret + 12) return true
+
+    // Handle negative start positions that wrap from fret 12
+    // e.g., if startFret is -3, also check frets 9-12 (12 + (-3) = 9)
+    if (startFret < 0) {
+      const wrappedStart = 12 + startFret
+      const wrappedEnd = 12 + pos.end
+      if (fret >= wrappedStart && fret <= wrappedEnd) return true
+    }
 
     return false
   }, [position, positions, rootFret, frets])

@@ -11,6 +11,9 @@ export const SCALES: Record<string, number[]> = {
   // Fret Science Pentatonic Forms - same notes as minor pentatonic
   // but with Rectangle & Stack geometric approach
   pentatonicForms: [0, 3, 5, 7, 10],
+  // Fret Science Major Pentatonic Forms - Rectangle & Stack for major context
+  // Intervals: 1, 2, 3, 5, 6
+  pentatonicFormsMajor: [0, 2, 4, 7, 9],
   blues: [0, 3, 5, 6, 7, 10],
   dorian: [0, 2, 3, 5, 7, 9, 10],
   phrygian: [0, 1, 3, 5, 7, 8, 10],
@@ -26,7 +29,8 @@ export const SCALE_NAMES: Record<string, string> = {
   minor: 'Natural Minor',
   majorPentatonic: 'Major Pentatonic',
   minorPentatonic: 'Minor Pentatonic',
-  pentatonicForms: 'Pentatonic Forms (Fret Science)',
+  pentatonicForms: 'Minor Pentatonic Forms (Fret Science)',
+  pentatonicFormsMajor: 'Major Pentatonic Forms (Fret Science)',
   blues: 'Blues',
   dorian: 'Dorian',
   phrygian: 'Phrygian',
@@ -73,15 +77,28 @@ export const SCALE_POSITIONS: Record<string, { start: number; end: number; name?
     { start: 7, end: 10 },  // Position 4
     { start: 9, end: 12 },  // Position 5
   ],
-  // Fret Science Pentatonic Forms - based on Keith Martin's system
+  // Fret Science Minor Pentatonic Forms - based on Keith Martin's system
   // Uses Rectangle & Stack geometric shapes
   // Form order: 1 → 4 → 2 → 5 → 3 → 1 (for horizontal navigation)
+  // Minor context: Rectangle = 1,b3,5,b7 | Stack = b3,4,b7,1,4,5
   pentatonicForms: [
     { start: 0, end: 3, name: 'Form 1 (Box)' },     // Root on 6th string - most common blues/rock
     { start: 2, end: 5, name: 'Form 2' },           // Connects via shared notes on strings 1-2
     { start: 4, end: 8, name: 'Form 3' },           // Middle position
     { start: 7, end: 10, name: 'Form 4' },          // Root on strings 5 and 2
     { start: 9, end: 12, name: 'Form 5' },          // Leads back to Form 1 one octave higher
+  ],
+  // Fret Science Major Pentatonic Forms - same physical shapes as minor
+  // Major context: Rectangle = 6,1,3,5 | Stack = 1,2,5,6,2,3
+  // The major root is 3 semitones ABOVE the relative minor root in the same shape
+  // So all positions are shifted -3 from minor pentatonic forms
+  // Example: C major Form 1 spans frets 5-8 (same as A minor), but C root is at fret 8
+  pentatonicFormsMajor: [
+    { start: -3, end: 0, name: 'Form 1' },          // Root at high end of box (frets 5-8 for C)
+    { start: -1, end: 2, name: 'Form 2' },          // Frets 7-10 for C
+    { start: 1, end: 5, name: 'Form 3' },           // Frets 9-13 for C
+    { start: 4, end: 7, name: 'Form 4' },           // Frets 12-15 for C
+    { start: 6, end: 9, name: 'Form 5' },           // Frets 14-17 for C
   ],
   blues: [
     { start: 0, end: 3 },
