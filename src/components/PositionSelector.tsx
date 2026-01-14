@@ -30,21 +30,30 @@ export default function PositionSelector({
   }
 
   const range = getCurrentRange()
+  const currentPos = position !== null ? positions[position] : null
+  const hasFormNames = positions.some(p => p.name)
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Position label and fret range indicator */}
-      <div className="flex items-center justify-between">
-        <label className="text-xs text-zinc-500 uppercase tracking-wide">Position</label>
-        {range && (
-          <span className="text-xs text-zinc-400">
-            Frets {range.start === 0 ? 'Open' : range.start}-{range.end}
-          </span>
-        )}
+      {/* Position label and info */}
+      <div className="flex items-center justify-between gap-4">
+        <label className="text-xs text-zinc-500 uppercase tracking-wide">
+          {hasFormNames ? 'Form' : 'Position'}
+        </label>
+        <div className="flex items-center gap-2 text-xs">
+          {currentPos?.name && (
+            <span className="text-emerald-400 font-medium">{currentPos.name}</span>
+          )}
+          {range && (
+            <span className="text-zinc-500">
+              Frets {range.start === 0 ? 'Open' : range.start}-{range.end}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Position buttons */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 flex-wrap">
         {/* All positions button */}
         <button
           onClick={() => onPositionChange(null)}
@@ -60,10 +69,11 @@ export default function PositionSelector({
         </button>
 
         {/* Individual position buttons */}
-        {positions.map((_, index) => (
+        {positions.map((pos, index) => (
           <button
             key={index}
             onClick={() => onPositionChange(index)}
+            title={pos.name || `Position ${index + 1}`}
             className={`
               px-3 py-2 text-sm font-medium transition-all
               ${index === positions.length - 1 ? 'rounded-r-lg' : ''}

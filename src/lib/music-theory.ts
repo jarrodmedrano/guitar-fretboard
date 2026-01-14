@@ -8,6 +8,9 @@ export const SCALES: Record<string, number[]> = {
   minor: [0, 2, 3, 5, 7, 8, 10],
   majorPentatonic: [0, 2, 4, 7, 9],
   minorPentatonic: [0, 3, 5, 7, 10],
+  // Fret Science Pentatonic Forms - same notes as minor pentatonic
+  // but with Rectangle & Stack geometric approach
+  pentatonicForms: [0, 3, 5, 7, 10],
   blues: [0, 3, 5, 6, 7, 10],
   dorian: [0, 2, 3, 5, 7, 9, 10],
   phrygian: [0, 1, 3, 5, 7, 8, 10],
@@ -23,6 +26,7 @@ export const SCALE_NAMES: Record<string, string> = {
   minor: 'Natural Minor',
   majorPentatonic: 'Major Pentatonic',
   minorPentatonic: 'Minor Pentatonic',
+  pentatonicForms: 'Pentatonic Forms (Fret Science)',
   blues: 'Blues',
   dorian: 'Dorian',
   phrygian: 'Phrygian',
@@ -53,7 +57,7 @@ export const DOUBLE_MARKERS = [12, 24]
 
 // Scale positions (fret offsets from root note)
 // Each position covers a 4-5 fret span
-export const SCALE_POSITIONS: Record<string, { start: number; end: number }[]> = {
+export const SCALE_POSITIONS: Record<string, { start: number; end: number; name?: string }[]> = {
   // Pentatonic 5 box patterns (minor pentatonic positions)
   minorPentatonic: [
     { start: 0, end: 3 },   // Position 1 (root position)
@@ -68,6 +72,16 @@ export const SCALE_POSITIONS: Record<string, { start: number; end: number }[]> =
     { start: 4, end: 7 },   // Position 3
     { start: 7, end: 10 },  // Position 4
     { start: 9, end: 12 },  // Position 5
+  ],
+  // Fret Science Pentatonic Forms - based on Keith Martin's system
+  // Uses Rectangle & Stack geometric shapes
+  // Form order: 1 → 4 → 2 → 5 → 3 → 1 (for horizontal navigation)
+  pentatonicForms: [
+    { start: 0, end: 3, name: 'Form 1 (Box)' },     // Root on 6th string - most common blues/rock
+    { start: 2, end: 5, name: 'Form 2' },           // Connects via shared notes on strings 1-2
+    { start: 4, end: 8, name: 'Form 3' },           // Middle position
+    { start: 7, end: 10, name: 'Form 4' },          // Root on strings 5 and 2
+    { start: 9, end: 12, name: 'Form 5' },          // Leads back to Form 1 one octave higher
   ],
   blues: [
     { start: 0, end: 3 },

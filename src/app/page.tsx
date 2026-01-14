@@ -202,6 +202,15 @@ export default function Home() {
               </span>
               <p className="text-zinc-500 text-sm mt-1">Jazz and funk favorite</p>
             </button>
+            <button
+              onClick={() => { handleScaleChange('pentatonicForms'); setRootNote('A') }}
+              className="text-left p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
+            >
+              <span className="text-white font-medium group-hover:text-emerald-400 transition-colors">
+                Pentatonic Forms
+              </span>
+              <p className="text-zinc-500 text-sm mt-1">Fret Science rectangle &amp; stack</p>
+            </button>
           </div>
         </div>
       </main>
