@@ -3,6 +3,21 @@ export type Note = typeof NOTES[number]
 
 export const STANDARD_TUNING: Note[] = ['E', 'A', 'D', 'G', 'B', 'E'] // low to high (6th to 1st string)
 
+// Guitar tunings (low to high, 6th to 1st string)
+export const TUNINGS: Record<string, Note[]> = {
+  standard: ['E', 'A', 'D', 'G', 'B', 'E'],
+  dropD: ['D', 'A', 'D', 'G', 'B', 'E'],
+  dStandard: ['D', 'G', 'C', 'F', 'A', 'D'],
+  dropC: ['C', 'G', 'C', 'F', 'A', 'D'],
+}
+
+export const TUNING_NAMES: Record<string, string> = {
+  standard: 'Standard (E-A-D-G-B-E)',
+  dropD: 'Drop D (D-A-D-G-B-E)',
+  dStandard: 'D Standard (D-G-C-F-A-D)',
+  dropC: 'Drop C (C-G-C-F-A-D)',
+}
+
 export const SCALES: Record<string, number[]> = {
   major: [0, 2, 4, 5, 7, 9, 11],
   minor: [0, 2, 3, 5, 7, 8, 10],
@@ -191,11 +206,12 @@ export const SCALE_POSITIONS: Record<string, { start: number; end: number; name?
   ],
 }
 
-// Get the fret where the root note first appears on the low E string
-export function getRootFret(rootNote: Note): number {
-  const openE = NOTES.indexOf('E')
+// Get the fret where the root note first appears on the lowest string
+export function getRootFret(rootNote: Note, tuning: Note[] = STANDARD_TUNING): number {
+  const lowestString = tuning[0]
+  const openNoteIndex = NOTES.indexOf(lowestString)
   const rootIndex = NOTES.indexOf(rootNote)
-  return (rootIndex - openE + 12) % 12
+  return (rootIndex - openNoteIndex + 12) % 12
 }
 
 // Get position count for a scale

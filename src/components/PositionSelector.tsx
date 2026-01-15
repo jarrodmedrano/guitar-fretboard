@@ -1,10 +1,11 @@
 'use client'
 
-import { SCALE_POSITIONS, getRootFret, Note } from '@/lib/music-theory'
+import { SCALE_POSITIONS, getRootFret, Note, TUNINGS } from '@/lib/music-theory'
 
 interface PositionSelectorProps {
   scale: string
   rootNote: Note
+  tuning: string
   position: number | null // null means "All"
   onPositionChange: (position: number | null) => void
 }
@@ -12,11 +13,13 @@ interface PositionSelectorProps {
 export default function PositionSelector({
   scale,
   rootNote,
+  tuning,
   position,
   onPositionChange,
 }: PositionSelectorProps) {
   const positions = SCALE_POSITIONS[scale] || SCALE_POSITIONS.minorPentatonic
-  const rootFret = getRootFret(rootNote)
+  const tuningNotes = TUNINGS[tuning] || TUNINGS.standard
+  const rootFret = getRootFret(rootNote, tuningNotes)
 
   // Calculate actual fret range for current position
   const getCurrentRange = () => {

@@ -143,7 +143,7 @@ export default function Fretboard({
   const [selectedNotes, setSelectedNotes] = useState<Set<string>>(new Set())
   const scaleFormula = SCALES[scale] || SCALES.major
   const positions = SCALE_POSITIONS[scale] || SCALE_POSITIONS.minorPentatonic
-  const rootFret = getRootFret(rootNote)
+  const rootFret = getRootFret(rootNote, tuning)
 
   // Check if a fret is within the current position
   const isInPosition = useCallback((fret: number): boolean => {

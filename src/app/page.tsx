@@ -4,13 +4,14 @@ import { useState } from 'react'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
-import { Note, SCALE_NAMES, SCALES } from '@/lib/music-theory'
+import { Note, SCALE_NAMES, SCALES, TUNINGS } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 
 export default function Home() {
   const [rootNote, setRootNote] = useState<Note>('A')
   const [scale, setScale] = useState('minorPentatonic')
+  const [tuning, setTuning] = useState('standard')
   const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
   const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
   const [position, setPosition] = useState<number | null>(null)
@@ -81,10 +82,12 @@ export default function Home() {
           <ScaleSelector
             rootNote={rootNote}
             scale={scale}
+            tuning={tuning}
             displayMode={displayMode}
             showOnlyChordTones={showOnlyChordTones}
             onRootChange={setRootNote}
             onScaleChange={handleScaleChange}
+            onTuningChange={setTuning}
             onDisplayModeChange={setDisplayMode}
             onChordTonesToggle={setShowOnlyChordTones}
           />
@@ -105,6 +108,7 @@ export default function Home() {
                 <PositionSelector
                   scale={scale}
                   rootNote={rootNote}
+                  tuning={tuning}
                   position={position}
                   onPositionChange={setPosition}
                 />
@@ -115,6 +119,7 @@ export default function Home() {
             <Fretboard
               rootNote={rootNote}
               scale={scale}
+              tuning={TUNINGS[tuning]}
               displayMode={displayMode}
               showOnlyChordTones={showOnlyChordTones}
               position={position}
