@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback } from 'react'
 import { SCALE_POSITIONS, getRootFret, Note, TUNINGS } from '@/lib/music-theory'
 
 interface PositionSelectorProps {
@@ -35,6 +36,26 @@ export default function PositionSelector({
   const range = getCurrentRange()
   const currentPos = position !== null ? positions[position] : null
   const hasFormNames = positions.some(p => p.name)
+
+  const handlePrevPosition = useCallback(() => {
+    if (position === null) {
+      onPositionChange(0)
+    } else if (position > 0) {
+      onPositionChange(position - 1)
+    } else {
+      onPositionChange(positions.length - 1) // Wrap to last
+    }
+  }, [position, positions.length, onPositionChange])
+
+  const handleNextPosition = useCallback(() => {
+    if (position === null) {
+      onPositionChange(0)
+    } else if (position < positions.length - 1) {
+      onPositionChange(position + 1)
+    } else {
+      onPositionChange(0) // Wrap to first
+    }
+  }, [position, positions.length, onPositionChange])
 
   return (
     <div className="flex flex-col gap-3">
@@ -94,15 +115,7 @@ export default function PositionSelector({
       {/* Previous/Next navigation for easier stepping */}
       <div className="flex items-center gap-2">
         <button
-          onClick={() => {
-            if (position === null) {
-              onPositionChange(0)
-            } else if (position > 0) {
-              onPositionChange(position - 1)
-            } else {
-              onPositionChange(positions.length - 1) // Wrap to last
-            }
-          }}
+          onClick={handlePrevPosition}
           className="flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all
                      bg-zinc-800 text-zinc-300 hover:bg-zinc-700 flex items-center justify-center gap-1"
         >
@@ -112,15 +125,7 @@ export default function PositionSelector({
           Prev
         </button>
         <button
-          onClick={() => {
-            if (position === null) {
-              onPositionChange(0)
-            } else if (position < positions.length - 1) {
-              onPositionChange(position + 1)
-            } else {
-              onPositionChange(0) // Wrap to first
-            }
-          }}
+          onClick={handleNextPosition}
           className="flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all
                      bg-zinc-800 text-zinc-300 hover:bg-zinc-700 flex items-center justify-center gap-1"
         >

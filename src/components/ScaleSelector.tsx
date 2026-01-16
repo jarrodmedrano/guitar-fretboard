@@ -1,36 +1,68 @@
 'use client'
 
-import { Note, NOTES, SCALES, SCALE_NAMES, TUNINGS, TUNING_NAMES } from '@/lib/music-theory'
+import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, TUNING_CONFIGS } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 
 interface ScaleSelectorProps {
   rootNote: Note
   scale: string
+  stringCount: number
   tuning: string
   displayMode: DisplayMode
   showOnlyChordTones: boolean
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
+  onStringCountChange: (count: number) => void
   onTuningChange: (tuning: string) => void
   onDisplayModeChange: (mode: DisplayMode) => void
   onChordTonesToggle: (show: boolean) => void
 }
 
+const STRING_COUNTS = [4, 6, 7, 8] as const
+
 export default function ScaleSelector({
   rootNote,
   scale,
+  stringCount,
   tuning,
   displayMode,
   showOnlyChordTones,
   onRootChange,
   onScaleChange,
+  onStringCountChange,
   onTuningChange,
   onDisplayModeChange,
   onChordTonesToggle,
 }: ScaleSelectorProps) {
+  // Get tunings filtered by current string count
+  const availableTunings = getTuningsByStringCount(stringCount)
+
   return (
     <div className="flex flex-wrap gap-4 items-center justify-center">
+      {/* String Count / Instrument Selector */}
+      <div className="flex flex-col gap-1">
+        <label className="text-xs text-zinc-500 uppercase tracking-wide">Instrument</label>
+        <div className="flex gap-1">
+          {STRING_COUNTS.map((count) => (
+            <button
+              key={count}
+              onClick={() => onStringCountChange(count)}
+              className={`
+                px-3 py-2 rounded-md text-sm font-medium transition-all
+                ${stringCount === count
+                  ? 'bg-purple-500 text-white shadow-lg'
+                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                }
+              `}
+              title={INSTRUMENT_NAMES[`${count}-string` as keyof typeof INSTRUMENT_NAMES]}
+            >
+              {count}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Root Note Selector */}
       <div className="flex flex-col gap-1">
         <label className="text-xs text-zinc-500 uppercase tracking-wide">Root Note</label>
@@ -70,7 +102,7 @@ export default function ScaleSelector({
         </select>
       </div>
 
-      {/* Tuning Selector */}
+      {/* Tuning Selector - filtered by string count */}
       <div className="flex flex-col gap-1">
         <label className="text-xs text-zinc-500 uppercase tracking-wide">Tuning</label>
         <select
@@ -79,9 +111,9 @@ export default function ScaleSelector({
           className="px-4 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700
                      focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
         >
-          {Object.keys(TUNINGS).map((tuningKey) => (
+          {Object.entries(availableTunings).map(([tuningKey, config]) => (
             <option key={tuningKey} value={tuningKey}>
-              {TUNING_NAMES[tuningKey]}
+              {config.name}
             </option>
           ))}
         </select>

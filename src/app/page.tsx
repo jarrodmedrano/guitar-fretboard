@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
-import { Note, SCALE_NAMES, SCALES, TUNINGS } from '@/lib/music-theory'
+import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 
 export default function Home() {
   const [rootNote, setRootNote] = useState<Note>('A')
   const [scale, setScale] = useState('minorPentatonic')
+  const [stringCount, setStringCount] = useState(6)
   const [tuning, setTuning] = useState('standard')
   const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
   const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
@@ -21,6 +22,12 @@ export default function Home() {
     setScale(newScale)
     setPosition(null)
   }
+
+  // When string count changes, switch to default tuning for that string count
+  const handleStringCountChange = useCallback((count: number) => {
+    setStringCount(count)
+    setTuning(getDefaultTuning(count))
+  }, [])
 
   const scaleFormula = SCALES[scale]
   const scaleNotes = scaleFormula.map((interval) => {
@@ -39,15 +46,7 @@ export default function Home() {
                 <span className="text-3xl">🎸</span>
                 Fretboard Master
               </h1>
-              <p className="text-zinc-500 mt-1">Learn scales, modes, and patterns on the guitar fretboard</p>
-            </div>
-            <div className="hidden md:flex items-center gap-4">
-              <a href="/api/scales" className="text-zinc-400 hover:text-white transition-colors text-sm">
-                Scales API
-              </a>
-              <a href="/api/chords" className="text-zinc-400 hover:text-white transition-colors text-sm">
-                Chords API
-              </a>
+              <p className="text-zinc-500 mt-1">Learn scales, modes, and patterns on guitar and bass fretboards</p>
             </div>
           </div>
         </div>
@@ -58,9 +57,14 @@ export default function Home() {
         <div className="bg-zinc-900 rounded-xl p-6 mb-8 border border-zinc-800">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
-              <h2 className="text-xl font-semibold text-white">
-                {rootNote} {SCALE_NAMES[scale]}
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-semibold text-white">
+                  {rootNote} {SCALE_NAMES[scale]}
+                </h2>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
+                  {INSTRUMENT_NAMES[`${stringCount}-string` as keyof typeof INSTRUMENT_NAMES]}
+                </span>
+              </div>
               <p className="text-zinc-400 mt-1">
                 Notes: <span className="text-zinc-200 font-mono">{scaleNotes.join(' - ')}</span>
               </p>
@@ -82,11 +86,13 @@ export default function Home() {
           <ScaleSelector
             rootNote={rootNote}
             scale={scale}
+            stringCount={stringCount}
             tuning={tuning}
             displayMode={displayMode}
             showOnlyChordTones={showOnlyChordTones}
             onRootChange={setRootNote}
             onScaleChange={handleScaleChange}
+            onStringCountChange={handleStringCountChange}
             onTuningChange={setTuning}
             onDisplayModeChange={setDisplayMode}
             onChordTonesToggle={setShowOnlyChordTones}
