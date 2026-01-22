@@ -16,6 +16,9 @@ import {
   getIntervalName,
   getRootFret,
   getChordIntervals,
+  getChordVoicing,
+  getAllChordVoicings,
+  ChordVoicing,
 } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -42,6 +45,8 @@ interface NoteMarkerProps {
   isNut?: boolean
   onClick?: () => void
   isSelected?: boolean
+  fingerNumber?: number | null  // For chord mode: which finger to use
+  isMuted?: boolean             // For chord mode: whether string is muted
 }
 
 function NoteMarker({
@@ -54,7 +59,25 @@ function NoteMarker({
   isNut = false,
   onClick,
   isSelected,
+  fingerNumber,
+  isMuted = false,
 }: NoteMarkerProps) {
+  // Handle muted strings - only show X at the nut
+  if (isMuted && isNut) {
+    return (
+      <div className="h-8 w-8 flex items-center justify-center relative z-10">
+        <div className="h-6 w-6 flex items-center justify-center rounded-full bg-zinc-700/30 text-xs font-bold text-zinc-400">
+          X
+        </div>
+      </div>
+    )
+  }
+
+  // For muted strings beyond the nut, show nothing
+  if (isMuted) {
+    return <div className="h-8 w-8 flex items-center justify-center relative z-10" />
+  }
+
   if (!inScale) {
     return (
       <div className="h-8 w-8 flex items-center justify-center relative z-10">
@@ -70,6 +93,13 @@ function NoteMarker({
   }
 
   const getBackgroundColor = () => {
+    // If showing finger numbers (chord mode), use a neutral color
+    if (fingerNumber !== undefined) {
+      if (isRoot) return 'bg-orange-500 hover:bg-orange-400'
+      return 'bg-slate-600 hover:bg-slate-500'
+    }
+
+    // Normal color coding for scale notes
     if (isRoot) return 'bg-red-500 hover:bg-red-400'
     if (interval === 4 || interval === 3) return 'bg-green-500 hover:bg-green-400' // 3rd
     if (interval === 7) return 'bg-blue-500 hover:bg-blue-400' // 5th
@@ -79,6 +109,17 @@ function NoteMarker({
   }
 
   const getDisplayText = () => {
+    // If we have a finger number, show that instead (chord mode)
+    if (fingerNumber !== undefined && fingerNumber !== null) {
+      return fingerNumber.toString()
+    }
+
+    // If open string in chord mode (fingerNumber is null but not undefined, and at nut position)
+    if (fingerNumber === null && isNut) {
+      return 'O'
+    }
+
+    // Normal display modes
     switch (displayMode) {
       case 'intervals':
         return getIntervalName(NOTES[0] as Note, NOTES[interval] as Note) || 'R'
@@ -149,6 +190,41 @@ export default function Fretboard({
   const chordIntervals = getChordIntervals(scale)
   // For R-3-5 filter mode, include both major and minor 3rds
   const r35Intervals = [0, 3, 4, 7]
+
+  // Get chord voicing(s) for chord mode
+  const chordVoicings = showChordsMode
+    ? position !== null
+      ? [getChordVoicing(rootNote, scale, position, tuning)].filter(Boolean) as ChordVoicing[]
+      : getAllChordVoicings(rootNote, scale, tuning)
+    : []
+
+  // Helper to check if a note is part of any chord voicing and get its finger number
+  const getChordInfo = useCallback((stringIndex: number, fret: number): {
+    shouldShow: boolean
+    fingerNumber?: number | null
+    isMuted?: boolean
+  } => {
+    if (!showChordsMode || chordVoicings.length === 0) {
+      return { shouldShow: false }
+    }
+
+    for (const voicing of chordVoicings) {
+      const fretValue = voicing.frets[stringIndex]
+
+      // Check for muted string
+      if (fretValue === 'x') {
+        return { shouldShow: true, isMuted: true }
+      }
+
+      // Check if this fret matches the voicing
+      if (fretValue === fret) {
+        const fingerNumber = voicing.fingers[stringIndex]
+        return { shouldShow: true, fingerNumber, isMuted: false }
+      }
+    }
+
+    return { shouldShow: false }
+  }, [showChordsMode, chordVoicings])
 
   // Check if a fret is within the current position
   const isInPosition = useCallback((fret: number): boolean => {
@@ -225,11 +301,14 @@ export default function Fretboard({
                 const key = `${actualStringIndex}-0`
                 const inPosition = isInPosition(0)
 
+                // Check chord voicing info for chord mode
+                const chordInfo = getChordInfo(actualStringIndex, 0)
+
                 // Determine if note should be shown based on mode
                 const isChordTone = chordIntervals.includes(interval)
                 const isR35Tone = r35Intervals.includes(interval)
                 const shouldShow = showChordsMode
-                  ? isChordTone && inPosition  // Chords mode: only chord tones (R, 3, 5)
+                  ? chordInfo.shouldShow  // Chords mode: only notes in voicing
                   : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode: respect R-3-5 filter
 
                 return (
@@ -244,6 +323,8 @@ export default function Fretboard({
                     isNut={true}
                     onClick={() => handleNoteClick(note, actualStringIndex, 0)}
                     isSelected={selectedNotes.has(key)}
+                    fingerNumber={chordInfo.fingerNumber}
+                    isMuted={chordInfo.isMuted}
                   />
                 )
               })}
@@ -279,11 +360,14 @@ export default function Fretboard({
                     const key = `${actualStringIndex}-${fret}`
                     const inPosition = isInPosition(fret)
 
+                    // Check chord voicing info for chord mode
+                    const chordInfo = getChordInfo(actualStringIndex, fret)
+
                     // Determine if note should be shown based on mode
                     const isChordTone = chordIntervals.includes(interval)
                     const isR35Tone = r35Intervals.includes(interval)
                     const shouldShow = showChordsMode
-                      ? isChordTone && inPosition  // Chords mode: only chord tones (R, 3, 5)
+                      ? chordInfo.shouldShow  // Chords mode: only notes in voicing
                       : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode: respect R-3-5 filter
 
                     return (
@@ -305,6 +389,8 @@ export default function Fretboard({
                           displayMode={displayMode}
                           onClick={() => handleNoteClick(note, actualStringIndex, fret)}
                           isSelected={selectedNotes.has(key)}
+                          fingerNumber={chordInfo.fingerNumber}
+                          isMuted={chordInfo.isMuted}
                         />
                       </div>
                     )
