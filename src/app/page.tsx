@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
-import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES, getChordNameForPosition } from '@/lib/music-theory'
+import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES, getChordNameForPosition, getProgressionChordName } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 
@@ -16,6 +16,8 @@ export default function Home() {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
   const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
   const [showChordsMode, setShowChordsMode] = useState(false)
+  const [showProgressionMode, setShowProgressionMode] = useState(false)
+  const [selectedProgression, setSelectedProgression] = useState<string | null>(null)
   const [position, setPosition] = useState<number | null>(null)
 
   // Reset position when scale changes (different scales have different position counts)
@@ -28,6 +30,22 @@ export default function Home() {
   const handleStringCountChange = useCallback((count: number) => {
     setStringCount(count)
     setTuning(getDefaultTuning(count))
+  }, [])
+
+  // When chords mode is toggled, disable progression mode
+  const handleChordsModeToggle = useCallback((enabled: boolean) => {
+    setShowChordsMode(enabled)
+    if (enabled) {
+      setShowProgressionMode(false)
+    }
+  }, [])
+
+  // When progression mode is toggled, disable chords mode
+  const handleProgressionModeToggle = useCallback((enabled: boolean) => {
+    setShowProgressionMode(enabled)
+    if (enabled) {
+      setShowChordsMode(false)
+    }
   }, [])
 
   const scaleFormula = SCALES[scale]
@@ -65,7 +83,7 @@ export default function Home() {
                 <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
                   {INSTRUMENT_NAMES[`${stringCount}-string` as keyof typeof INSTRUMENT_NAMES]}
                 </span>
-                {showChordsMode && (
+                {showChordsMode && !showProgressionMode && (
                   position !== null ? (
                     <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
                       {getChordNameForPosition(rootNote, scale, position)}
@@ -73,6 +91,17 @@ export default function Home() {
                   ) : (
                     <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
                       All CAGED Shapes
+                    </span>
+                  )
+                )}
+                {showProgressionMode && selectedProgression && (
+                  position !== null ? (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                      {getProgressionChordName(rootNote, scale, position, selectedProgression)}
+                    </span>
+                  ) : (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                      Progression: {selectedProgression}
                     </span>
                   )
                 )}
@@ -103,13 +132,17 @@ export default function Home() {
             displayMode={displayMode}
             showOnlyChordTones={showOnlyChordTones}
             showChordsMode={showChordsMode}
+            showProgressionMode={showProgressionMode}
+            selectedProgression={selectedProgression}
             onRootChange={setRootNote}
             onScaleChange={handleScaleChange}
             onStringCountChange={handleStringCountChange}
             onTuningChange={setTuning}
             onDisplayModeChange={setDisplayMode}
             onChordTonesToggle={setShowOnlyChordTones}
-            onChordsModeToggle={setShowChordsMode}
+            onChordsModeToggle={handleChordsModeToggle}
+            onProgressionModeToggle={handleProgressionModeToggle}
+            onProgressionSelect={setSelectedProgression}
           />
         </div>
 
@@ -143,6 +176,8 @@ export default function Home() {
               displayMode={displayMode}
               showOnlyChordTones={showOnlyChordTones}
               showChordsMode={showChordsMode}
+              showProgressionMode={showProgressionMode}
+              selectedProgression={selectedProgression}
               position={position}
               frets={24}
             />

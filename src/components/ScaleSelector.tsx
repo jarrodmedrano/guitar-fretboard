@@ -1,6 +1,6 @@
 'use client'
 
-import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, TUNING_CONFIGS } from '@/lib/music-theory'
+import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, TUNING_CONFIGS, CHORD_PROGRESSIONS } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 
@@ -12,6 +12,8 @@ interface ScaleSelectorProps {
   displayMode: DisplayMode
   showOnlyChordTones: boolean
   showChordsMode: boolean
+  showProgressionMode: boolean
+  selectedProgression: string | null
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
   onStringCountChange: (count: number) => void
@@ -19,6 +21,8 @@ interface ScaleSelectorProps {
   onDisplayModeChange: (mode: DisplayMode) => void
   onChordTonesToggle: (show: boolean) => void
   onChordsModeToggle: (show: boolean) => void
+  onProgressionModeToggle: (show: boolean) => void
+  onProgressionSelect: (progression: string | null) => void
 }
 
 const STRING_COUNTS = [4, 6, 7, 8] as const
@@ -31,6 +35,8 @@ export default function ScaleSelector({
   displayMode,
   showOnlyChordTones,
   showChordsMode,
+  showProgressionMode,
+  selectedProgression,
   onRootChange,
   onScaleChange,
   onStringCountChange,
@@ -38,6 +44,8 @@ export default function ScaleSelector({
   onDisplayModeChange,
   onChordTonesToggle,
   onChordsModeToggle,
+  onProgressionModeToggle,
+  onProgressionSelect,
 }: ScaleSelectorProps) {
   // Get tunings filtered by current string count
   const availableTunings = getTuningsByStringCount(stringCount)
@@ -155,8 +163,45 @@ export default function ScaleSelector({
           >
             Chords
           </button>
+          <button
+            onClick={() => {
+              onProgressionModeToggle(!showProgressionMode)
+              if (!showProgressionMode && !selectedProgression) {
+                onProgressionSelect('1-4-5') // Default to I-IV-V
+              }
+            }}
+            className={`
+              px-3 py-2 rounded-md text-sm font-medium transition-all capitalize
+              ${showProgressionMode
+                ? 'bg-emerald-500 text-white shadow-lg'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+              }
+            `}
+            title="Show chord progressions"
+          >
+            Progression
+          </button>
         </div>
       </div>
+
+      {/* Chord Progression Selector */}
+      {showProgressionMode && (
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-zinc-500 uppercase tracking-wide">Progression</label>
+          <select
+            value={selectedProgression || '1-4-5'}
+            onChange={(e) => onProgressionSelect(e.target.value)}
+            className="px-4 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700
+                       focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+          >
+            {Object.entries(CHORD_PROGRESSIONS).map(([key, prog]) => (
+              <option key={key} value={key}>
+                {prog.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Chord Tones Only Toggle */}
       <div className="flex flex-col gap-1">

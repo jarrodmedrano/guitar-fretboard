@@ -19,6 +19,10 @@ import {
   getChordVoicing,
   getAllChordVoicings,
   ChordVoicing,
+  getProgressionChordVoicing,
+  getAllProgressionChordVoicings,
+  getChordNameForPosition,
+  getProgressionChordName,
 } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -31,6 +35,8 @@ interface FretboardProps {
   displayMode?: DisplayMode
   showOnlyChordTones?: boolean
   showChordsMode?: boolean
+  showProgressionMode?: boolean
+  selectedProgression?: string | null
   position?: number | null // null means show all positions
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
@@ -178,6 +184,8 @@ export default function Fretboard({
   displayMode = 'notes',
   showOnlyChordTones = false,
   showChordsMode = false,
+  showProgressionMode = false,
+  selectedProgression = null,
   position = null,
   onNoteClick,
 }: FretboardProps) {
@@ -191,11 +199,15 @@ export default function Fretboard({
   // For R-3-5 filter mode, include both major and minor 3rds
   const r35Intervals = [0, 3, 4, 7]
 
-  // Get chord voicing(s) for chord mode
-  const chordVoicings = showChordsMode
-    ? position !== null
-      ? [getChordVoicing(rootNote, scale, position, tuning)].filter(Boolean) as ChordVoicing[]
-      : getAllChordVoicings(rootNote, scale, tuning)
+  // Get chord voicing(s) for chord mode or progression mode
+  const chordVoicings = showChordsMode || showProgressionMode
+    ? showProgressionMode && selectedProgression
+      ? position !== null
+        ? [getProgressionChordVoicing(rootNote, scale, position, selectedProgression, tuning)].filter(Boolean) as ChordVoicing[]
+        : getAllProgressionChordVoicings(rootNote, scale, selectedProgression, tuning)
+      : position !== null
+        ? [getChordVoicing(rootNote, scale, position, tuning)].filter(Boolean) as ChordVoicing[]
+        : getAllChordVoicings(rootNote, scale, tuning)
     : []
 
   // Helper to check if a note is part of any chord voicing and get its finger number
@@ -204,7 +216,7 @@ export default function Fretboard({
     fingerNumber?: number | null
     isMuted?: boolean
   } => {
-    if (!showChordsMode || chordVoicings.length === 0) {
+    if ((!showChordsMode && !showProgressionMode) || chordVoicings.length === 0) {
       return { shouldShow: false }
     }
 
@@ -307,8 +319,8 @@ export default function Fretboard({
                 // Determine if note should be shown based on mode
                 const isChordTone = chordIntervals.includes(interval)
                 const isR35Tone = r35Intervals.includes(interval)
-                const shouldShow = showChordsMode
-                  ? chordInfo.shouldShow  // Chords mode: only notes in voicing
+                const shouldShow = showChordsMode || showProgressionMode
+                  ? chordInfo.shouldShow  // Chords/Progression mode: only notes in voicing
                   : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode: respect R-3-5 filter
 
                 return (
@@ -366,8 +378,8 @@ export default function Fretboard({
                     // Determine if note should be shown based on mode
                     const isChordTone = chordIntervals.includes(interval)
                     const isR35Tone = r35Intervals.includes(interval)
-                    const shouldShow = showChordsMode
-                      ? chordInfo.shouldShow  // Chords mode: only notes in voicing
+                    const shouldShow = showChordsMode || showProgressionMode
+                      ? chordInfo.shouldShow  // Chords/Progression mode: only notes in voicing
                       : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode: respect R-3-5 filter
 
                     return (
@@ -428,6 +440,20 @@ export default function Fretboard({
             <span className="text-zinc-400">Scale Note</span>
           </div>
         </div>
+
+        {/* Chord Name Display */}
+        {(showChordsMode || showProgressionMode) && position !== null && (
+          <div className="mt-6 text-center">
+            <div className="inline-block px-6 py-3 rounded-lg bg-zinc-800/50 border border-zinc-700">
+              <div className="text-sm text-zinc-500 uppercase tracking-wide mb-1">Current Chord</div>
+              <div className="text-3xl font-bold text-white">
+                {showProgressionMode && selectedProgression
+                  ? getProgressionChordName(rootNote, scale, position, selectedProgression)
+                  : getChordNameForPosition(rootNote, scale, position)}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
