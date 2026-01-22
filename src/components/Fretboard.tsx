@@ -245,7 +245,7 @@ export default function Fretboard({
     }
 
     return { shouldShow: false }
-  }, [showChordsMode, chordVoicings])
+  }, [showChordsMode, showProgressionMode, chordVoicings])
 
   // Check if a fret is within the current position
   const isInPosition = useCallback((fret: number): boolean => {
