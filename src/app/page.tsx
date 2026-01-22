@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
-import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES } from '@/lib/music-theory'
+import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES, getChordNameForPosition } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 
@@ -15,6 +15,7 @@ export default function Home() {
   const [tuning, setTuning] = useState('standard')
   const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
   const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
+  const [showChordsMode, setShowChordsMode] = useState(false)
   const [position, setPosition] = useState<number | null>(null)
 
   // Reset position when scale changes (different scales have different position counts)
@@ -57,13 +58,24 @@ export default function Home() {
         <div className="bg-zinc-900 rounded-xl p-6 mb-8 border border-zinc-800">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-xl font-semibold text-white">
                   {rootNote} {SCALE_NAMES[scale]}
                 </h2>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
                   {INSTRUMENT_NAMES[`${stringCount}-string` as keyof typeof INSTRUMENT_NAMES]}
                 </span>
+                {showChordsMode && (
+                  position !== null ? (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+                      {getChordNameForPosition(rootNote, scale, position)}
+                    </span>
+                  ) : (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+                      All CAGED Shapes
+                    </span>
+                  )
+                )}
               </div>
               <p className="text-zinc-400 mt-1">
                 Notes: <span className="text-zinc-200 font-mono">{scaleNotes.join(' - ')}</span>
@@ -90,12 +102,14 @@ export default function Home() {
             tuning={tuning}
             displayMode={displayMode}
             showOnlyChordTones={showOnlyChordTones}
+            showChordsMode={showChordsMode}
             onRootChange={setRootNote}
             onScaleChange={handleScaleChange}
             onStringCountChange={handleStringCountChange}
             onTuningChange={setTuning}
             onDisplayModeChange={setDisplayMode}
             onChordTonesToggle={setShowOnlyChordTones}
+            onChordsModeToggle={setShowChordsMode}
           />
         </div>
 
@@ -128,6 +142,7 @@ export default function Home() {
               tuning={TUNINGS[tuning]}
               displayMode={displayMode}
               showOnlyChordTones={showOnlyChordTones}
+              showChordsMode={showChordsMode}
               position={position}
               frets={24}
             />

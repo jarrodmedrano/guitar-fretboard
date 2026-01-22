@@ -11,12 +11,14 @@ interface ScaleSelectorProps {
   tuning: string
   displayMode: DisplayMode
   showOnlyChordTones: boolean
+  showChordsMode: boolean
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
   onStringCountChange: (count: number) => void
   onTuningChange: (tuning: string) => void
   onDisplayModeChange: (mode: DisplayMode) => void
   onChordTonesToggle: (show: boolean) => void
+  onChordsModeToggle: (show: boolean) => void
 }
 
 const STRING_COUNTS = [4, 6, 7, 8] as const
@@ -28,12 +30,14 @@ export default function ScaleSelector({
   tuning,
   displayMode,
   showOnlyChordTones,
+  showChordsMode,
   onRootChange,
   onScaleChange,
   onStringCountChange,
   onTuningChange,
   onDisplayModeChange,
   onChordTonesToggle,
+  onChordsModeToggle,
 }: ScaleSelectorProps) {
   // Get tunings filtered by current string count
   const availableTunings = getTuningsByStringCount(stringCount)
@@ -138,6 +142,19 @@ export default function ScaleSelector({
               {mode}
             </button>
           ))}
+          <button
+            onClick={() => onChordsModeToggle(!showChordsMode)}
+            className={`
+              px-3 py-2 rounded-md text-sm font-medium transition-all capitalize
+              ${showChordsMode
+                ? 'bg-amber-500 text-white shadow-lg'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+              }
+            `}
+            title="Show CAGED chord shapes"
+          >
+            Chords
+          </button>
         </div>
       </div>
 

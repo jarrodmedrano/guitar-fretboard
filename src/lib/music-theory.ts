@@ -300,3 +300,67 @@ export function getIntervalName(rootNote: Note, note: Note): string {
   const interval = getInterval(rootNote, note)
   return INTERVAL_NAMES[interval] || ''
 }
+
+// CAGED System Support
+export const CAGED_SHAPES = ['C', 'A', 'G', 'E', 'D'] as const
+export type CAGEDShape = typeof CAGED_SHAPES[number]
+
+// Map each scale position to its corresponding CAGED shape
+// For minor scales/pentatonics: E-D-C-A-G order
+// For major scales/pentatonics: C-A-G-E-D order
+export const CAGED_POSITION_MAP: Record<string, CAGEDShape[]> = {
+  minorPentatonic: ['E', 'D', 'C', 'A', 'G'],
+  majorPentatonic: ['C', 'A', 'G', 'E', 'D'],
+  pentatonicForms: ['E', 'D', 'C', 'A', 'G'],
+  pentatonicFormsMajor: ['C', 'A', 'G', 'E', 'D'],
+  blues: ['E', 'D', 'C', 'A', 'G'],
+  major: ['C', 'A', 'G', 'E', 'D', 'C', 'A'],
+  minor: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  dorian: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  phrygian: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  lydian: ['C', 'A', 'G', 'E', 'D', 'C', 'A'],
+  mixolydian: ['C', 'A', 'G', 'E', 'D', 'C', 'A'],
+  locrian: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  harmonicMinor: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  melodicMinor: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+}
+
+// Chord tone intervals for major and minor chords
+export const MAJOR_CHORD_INTERVALS = [0, 4, 7]  // R, 3, 5
+export const MINOR_CHORD_INTERVALS = [0, 3, 7]  // R, b3, 5
+
+// Determine if a scale is major or minor quality based on its third
+export function getChordQuality(scale: string): 'major' | 'minor' {
+  const formula = SCALES[scale]
+  // Check if the scale has a minor 3rd (interval 3) or major 3rd (interval 4)
+  if (formula.includes(3)) return 'minor'
+  if (formula.includes(4)) return 'major'
+  // Default to major for ambiguous scales
+  return 'major'
+}
+
+// Get chord intervals based on scale quality
+export function getChordIntervals(scale: string): number[] {
+  return getChordQuality(scale) === 'minor'
+    ? MINOR_CHORD_INTERVALS
+    : MAJOR_CHORD_INTERVALS
+}
+
+// Get the CAGED shape name for a given position
+export function getCAGEDShape(scale: string, position: number): CAGEDShape {
+  const shapes = CAGED_POSITION_MAP[scale] || CAGED_POSITION_MAP.minorPentatonic
+  return shapes[position] || 'E'
+}
+
+// Get the chord name for the current position
+export function getChordNameForPosition(
+  rootNote: Note,
+  scale: string,
+  position: number
+): string {
+  const quality = getChordQuality(scale)
+  const cagedShape = getCAGEDShape(scale, position)
+  const suffix = quality === 'minor' ? 'm' : ''
+
+  return `${rootNote}${suffix} (${cagedShape} shape)`
+}

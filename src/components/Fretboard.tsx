@@ -15,6 +15,7 @@ import {
   getScaleDegree,
   getIntervalName,
   getRootFret,
+  getChordIntervals,
 } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -26,6 +27,7 @@ interface FretboardProps {
   frets?: number
   displayMode?: DisplayMode
   showOnlyChordTones?: boolean
+  showChordsMode?: boolean
   position?: number | null // null means show all positions
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
@@ -127,9 +129,6 @@ function FretMarker({ fret }: { fret: number }) {
   )
 }
 
-// Chord tones: root (0), minor 3rd (3), major 3rd (4), perfect 5th (7)
-const CHORD_TONE_INTERVALS = [0, 3, 4, 7]
-
 export default function Fretboard({
   rootNote,
   scale,
@@ -137,6 +136,7 @@ export default function Fretboard({
   frets = 24,
   displayMode = 'notes',
   showOnlyChordTones = false,
+  showChordsMode = false,
   position = null,
   onNoteClick,
 }: FretboardProps) {
@@ -144,6 +144,11 @@ export default function Fretboard({
   const scaleFormula = SCALES[scale] || SCALES.major
   const positions = SCALE_POSITIONS[scale] || SCALE_POSITIONS.minorPentatonic
   const rootFret = getRootFret(rootNote, tuning)
+
+  // Get chord intervals based on scale quality (major or minor)
+  const chordIntervals = getChordIntervals(scale)
+  // For R-3-5 filter mode, include both major and minor 3rds
+  const r35Intervals = [0, 3, 4, 7]
 
   // Check if a fret is within the current position
   const isInPosition = useCallback((fret: number): boolean => {
@@ -218,9 +223,14 @@ export default function Fretboard({
                 const degree = getScaleDegree(note, rootNote, scaleFormula)
                 const isRoot = note === rootNote
                 const key = `${actualStringIndex}-0`
-                const isChordTone = CHORD_TONE_INTERVALS.includes(interval)
                 const inPosition = isInPosition(0)
-                const shouldShow = (!showOnlyChordTones || isChordTone) && inPosition
+
+                // Determine if note should be shown based on mode
+                const isChordTone = chordIntervals.includes(interval)
+                const isR35Tone = r35Intervals.includes(interval)
+                const shouldShow = showChordsMode
+                  ? isChordTone && inPosition  // Chords mode: only chord tones (R, 3, 5)
+                  : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode: respect R-3-5 filter
 
                 return (
                   <NoteMarker
@@ -267,9 +277,14 @@ export default function Fretboard({
                     const degree = getScaleDegree(note, rootNote, scaleFormula)
                     const isRoot = note === rootNote
                     const key = `${actualStringIndex}-${fret}`
-                    const isChordTone = CHORD_TONE_INTERVALS.includes(interval)
                     const inPosition = isInPosition(fret)
-                    const shouldShow = (!showOnlyChordTones || isChordTone) && inPosition
+
+                    // Determine if note should be shown based on mode
+                    const isChordTone = chordIntervals.includes(interval)
+                    const isR35Tone = r35Intervals.includes(interval)
+                    const shouldShow = showChordsMode
+                      ? isChordTone && inPosition  // Chords mode: only chord tones (R, 3, 5)
+                      : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode: respect R-3-5 filter
 
                     return (
                       <div key={stringIndex} className="relative flex items-center justify-center">
