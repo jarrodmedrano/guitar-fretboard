@@ -37,6 +37,7 @@ interface FretboardProps {
   showChordsMode?: boolean
   showProgressionMode?: boolean
   selectedProgression?: string | null
+  showFingerings?: boolean
   position?: number | null // null means show all positions
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
@@ -53,6 +54,7 @@ interface NoteMarkerProps {
   isSelected?: boolean
   fingerNumber?: number | null  // For chord mode: which finger to use
   isMuted?: boolean             // For chord mode: whether string is muted
+  showFingerings?: boolean      // Show finger numbers or note labels
 }
 
 function NoteMarker({
@@ -67,6 +69,7 @@ function NoteMarker({
   isSelected,
   fingerNumber,
   isMuted = false,
+  showFingerings = true,
 }: NoteMarkerProps) {
   // Handle muted strings - only show X at the nut
   if (isMuted && isNut) {
@@ -99,13 +102,13 @@ function NoteMarker({
   }
 
   const getBackgroundColor = () => {
-    // If showing finger numbers (chord mode), use a neutral color
-    if (fingerNumber !== undefined) {
+    // If showing finger numbers in chord mode, use neutral colors
+    if (fingerNumber !== undefined && showFingerings) {
       if (isRoot) return 'bg-orange-500 hover:bg-orange-400'
       return 'bg-slate-600 hover:bg-slate-500'
     }
 
-    // Normal color coding for scale notes
+    // Normal color coding for scale notes (used when not showing fingerings)
     if (isRoot) return 'bg-red-500 hover:bg-red-400'
     if (interval === 4 || interval === 3) return 'bg-green-500 hover:bg-green-400' // 3rd
     if (interval === 7) return 'bg-blue-500 hover:bg-blue-400' // 5th
@@ -115,17 +118,22 @@ function NoteMarker({
   }
 
   const getDisplayText = () => {
-    // If we have a finger number, show that instead (chord mode)
-    if (fingerNumber !== undefined && fingerNumber !== null) {
-      return fingerNumber.toString()
+    // If we're in chord mode with fingerNumber defined
+    if (fingerNumber !== undefined) {
+      // Show finger numbers if showFingerings is true
+      if (showFingerings) {
+        if (fingerNumber !== null) {
+          return fingerNumber.toString()
+        }
+        // Open string in chord mode
+        if (fingerNumber === null && isNut) {
+          return 'O'
+        }
+      }
+      // Otherwise use the displayMode (notes/intervals/degrees)
     }
 
-    // If open string in chord mode (fingerNumber is null but not undefined, and at nut position)
-    if (fingerNumber === null && isNut) {
-      return 'O'
-    }
-
-    // Normal display modes
+    // Use displayMode for non-chord mode OR chord mode with fingerings off
     switch (displayMode) {
       case 'intervals':
         return getIntervalName(NOTES[0] as Note, NOTES[interval] as Note) || 'R'
@@ -186,6 +194,7 @@ export default function Fretboard({
   showChordsMode = false,
   showProgressionMode = false,
   selectedProgression = null,
+  showFingerings = true,
   position = null,
   onNoteClick,
 }: FretboardProps) {
@@ -337,6 +346,7 @@ export default function Fretboard({
                     isSelected={selectedNotes.has(key)}
                     fingerNumber={chordInfo.fingerNumber}
                     isMuted={chordInfo.isMuted}
+                    showFingerings={showFingerings}
                   />
                 )
               })}
@@ -403,6 +413,7 @@ export default function Fretboard({
                           isSelected={selectedNotes.has(key)}
                           fingerNumber={chordInfo.fingerNumber}
                           isMuted={chordInfo.isMuted}
+                          showFingerings={showFingerings}
                         />
                       </div>
                     )

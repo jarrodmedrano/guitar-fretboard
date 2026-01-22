@@ -18,6 +18,7 @@ export default function Home() {
   const [showChordsMode, setShowChordsMode] = useState(false)
   const [showProgressionMode, setShowProgressionMode] = useState(false)
   const [selectedProgression, setSelectedProgression] = useState<string | null>(null)
+  const [showFingerings, setShowFingerings] = useState(true)
   const [position, setPosition] = useState<number | null>(null)
 
   // Reset position when scale changes (different scales have different position counts)
@@ -134,6 +135,7 @@ export default function Home() {
             showChordsMode={showChordsMode}
             showProgressionMode={showProgressionMode}
             selectedProgression={selectedProgression}
+            showFingerings={showFingerings}
             onRootChange={setRootNote}
             onScaleChange={handleScaleChange}
             onStringCountChange={handleStringCountChange}
@@ -143,6 +145,7 @@ export default function Home() {
             onChordsModeToggle={handleChordsModeToggle}
             onProgressionModeToggle={handleProgressionModeToggle}
             onProgressionSelect={setSelectedProgression}
+            onFingeringsToggle={setShowFingerings}
           />
         </div>
 
@@ -178,6 +181,7 @@ export default function Home() {
               showChordsMode={showChordsMode}
               showProgressionMode={showProgressionMode}
               selectedProgression={selectedProgression}
+              showFingerings={showFingerings}
               position={position}
               frets={24}
             />
