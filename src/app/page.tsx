@@ -7,6 +7,7 @@ import PositionSelector from '@/components/PositionSelector'
 import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES, getChordNameForPosition, getProgressionChordName } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
+type ProgressionViewMode = 'chord' | 'scale'
 
 export default function Home() {
   const [rootNote, setRootNote] = useState<Note>('A')
@@ -19,6 +20,7 @@ export default function Home() {
   const [showProgressionMode, setShowProgressionMode] = useState(false)
   const [selectedProgression, setSelectedProgression] = useState<string | null>(null)
   const [showFingerings, setShowFingerings] = useState(true)
+  const [progressionViewMode, setProgressionViewMode] = useState<ProgressionViewMode>('chord')
   const [position, setPosition] = useState<number | null>(null)
 
   // Reset position when scale changes (different scales have different position counts)
@@ -136,6 +138,7 @@ export default function Home() {
             showProgressionMode={showProgressionMode}
             selectedProgression={selectedProgression}
             showFingerings={showFingerings}
+            progressionViewMode={progressionViewMode}
             onRootChange={setRootNote}
             onScaleChange={handleScaleChange}
             onStringCountChange={handleStringCountChange}
@@ -146,6 +149,7 @@ export default function Home() {
             onProgressionModeToggle={handleProgressionModeToggle}
             onProgressionSelect={setSelectedProgression}
             onFingeringsToggle={setShowFingerings}
+            onProgressionViewModeChange={setProgressionViewMode}
           />
         </div>
 
@@ -182,6 +186,7 @@ export default function Home() {
               showProgressionMode={showProgressionMode}
               selectedProgression={selectedProgression}
               showFingerings={showFingerings}
+              progressionViewMode={progressionViewMode}
               position={position}
               frets={24}
             />

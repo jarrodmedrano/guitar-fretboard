@@ -3,6 +3,7 @@
 import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, TUNING_CONFIGS, CHORD_PROGRESSIONS } from '@/lib/music-theory'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
+type ProgressionViewMode = 'chord' | 'scale'
 
 interface ScaleSelectorProps {
   rootNote: Note
@@ -15,6 +16,7 @@ interface ScaleSelectorProps {
   showProgressionMode: boolean
   selectedProgression: string | null
   showFingerings: boolean
+  progressionViewMode: ProgressionViewMode
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
   onStringCountChange: (count: number) => void
@@ -25,6 +27,7 @@ interface ScaleSelectorProps {
   onProgressionModeToggle: (show: boolean) => void
   onProgressionSelect: (progression: string | null) => void
   onFingeringsToggle: (show: boolean) => void
+  onProgressionViewModeChange: (mode: ProgressionViewMode) => void
 }
 
 const STRING_COUNTS = [4, 6, 7, 8] as const
@@ -40,6 +43,7 @@ export default function ScaleSelector({
   showProgressionMode,
   selectedProgression,
   showFingerings,
+  progressionViewMode,
   onRootChange,
   onScaleChange,
   onStringCountChange,
@@ -50,6 +54,7 @@ export default function ScaleSelector({
   onProgressionModeToggle,
   onProgressionSelect,
   onFingeringsToggle,
+  onProgressionViewModeChange,
 }: ScaleSelectorProps) {
   // Get tunings filtered by current string count
   const availableTunings = getTuningsByStringCount(stringCount)
@@ -207,8 +212,32 @@ export default function ScaleSelector({
         </div>
       )}
 
-      {/* Fingerings Toggle - only visible when Chords or Progression mode is active */}
-      {(showChordsMode || showProgressionMode) && (
+      {/* Progression View Mode Toggle - only visible in Progression mode */}
+      {showProgressionMode && (
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-zinc-500 uppercase tracking-wide">Show</label>
+          <div className="flex gap-1">
+            {(['chord', 'scale'] as ProgressionViewMode[]).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => onProgressionViewModeChange(mode)}
+                className={`
+                  px-3 py-2 rounded-md text-sm font-medium transition-all capitalize
+                  ${progressionViewMode === mode
+                    ? 'bg-emerald-500 text-white shadow-lg'
+                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  }
+                `}
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Fingerings Toggle - only visible when showing chord voicings */}
+      {(showChordsMode || (showProgressionMode && progressionViewMode === 'chord')) && (
         <div className="flex flex-col gap-1">
           <label className="text-xs text-zinc-500 uppercase tracking-wide">Chord View</label>
           <button
