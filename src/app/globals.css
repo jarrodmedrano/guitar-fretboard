@@ -3,12 +3,6 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
-
-  /* Safe area insets for mobile devices */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 @theme inline {
@@ -53,19 +47,6 @@ button:focus-visible,
 select:focus-visible {
   outline: 3px solid #ef4444;
   outline-offset: 3px;
-}
-
-/* Screen reader only content */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
 }
 
 /* Animation keyframes for UI transitions */
@@ -113,17 +94,31 @@ select:focus-visible {
 
 /* Animation helper classes */
 .animate-slide-up {
-  animation: slide-up 0.3s ease-out;
+  animation: slide-up 0.3s ease-out forwards;
 }
 
 .animate-slide-down {
-  animation: slide-down 0.3s ease-out;
+  animation: slide-down 0.3s ease-out forwards;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.2s ease-in;
+  animation: fade-in 0.2s ease-in forwards;
 }
 
 .animate-scale-in {
-  animation: scale-in 0.2s ease-out;
+  animation: scale-in 0.2s ease-out forwards;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-fade-in,
+  .animate-scale-in {
+    animation: none;
+  }
+
+  button {
+    transition: none;
+  }
 }
