@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import {
   Note,
   NOTES,
@@ -208,6 +208,8 @@ export default function Fretboard({
   onNoteClick,
 }: FretboardProps) {
   const [selectedNotes, setSelectedNotes] = useState<Set<string>>(new Set())
+  const leftIndicatorRef = useRef<HTMLDivElement>(null)
+  const rightIndicatorRef = useRef<HTMLDivElement>(null)
   const scaleFormula = SCALES[scale] || SCALES.major
   const positions = SCALE_POSITIONS[scale] || SCALE_POSITIONS.minorPentatonic
 
@@ -393,24 +395,25 @@ export default function Fretboard({
     <div className="w-full relative">
       {/* Scroll indicator gradients */}
       <div
+        ref={leftIndicatorRef}
         className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-900 to-transparent pointer-events-none z-20 opacity-0 transition-opacity"
-        id="scroll-indicator-left"
       />
       <div
+        ref={rightIndicatorRef}
         className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-900 to-transparent pointer-events-none z-20"
-        id="scroll-indicator-right"
       />
 
       <div
         className="w-full overflow-x-auto"
         onScroll={(e) => {
           const target = e.target as HTMLDivElement
-          const left = document.getElementById('scroll-indicator-left')
-          const right = document.getElementById('scroll-indicator-right')
-
-          if (left) left.style.opacity = target.scrollLeft > 20 ? '1' : '0'
-          if (right) right.style.opacity =
-            target.scrollLeft < target.scrollWidth - target.clientWidth - 20 ? '1' : '0'
+          if (leftIndicatorRef.current) {
+            leftIndicatorRef.current.style.opacity = target.scrollLeft > 20 ? '1' : '0'
+          }
+          if (rightIndicatorRef.current) {
+            rightIndicatorRef.current.style.opacity =
+              target.scrollLeft < target.scrollWidth - target.clientWidth - 20 ? '1' : '0'
+          }
         }}
       >
         <div className="inline-block min-w-full p-3 md:p-4">

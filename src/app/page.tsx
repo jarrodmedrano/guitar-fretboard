@@ -194,7 +194,7 @@ export default function Home() {
         </div>
 
         {/* Controls */}
-        <nav role="region" aria-label="Fretboard controls" className="bg-zinc-900 rounded-xl p-4 md:p-6 mb-6 md:mb-8 border border-zinc-800 animate-scale-in" style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}>
+        <section aria-label="Fretboard controls" className="bg-zinc-900 rounded-xl p-4 md:p-6 mb-6 md:mb-8 border border-zinc-800 animate-scale-in" style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}>
           <ScaleSelector
             rootNote={rootNote}
             scale={scale}
@@ -228,10 +228,10 @@ export default function Home() {
               <span><kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-mono">C</kbd> Chords</span>
             </div>
           </div>
-        </nav>
+        </section>
 
         {/* Fretboard */}
-        <main role="main" aria-label="Interactive fretboard">
+        <section aria-label="Interactive fretboard">
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden animate-scale-in" style={{ animationDelay: '0.2s', animationFillMode: 'backwards' }}>
             <div className="px-4 md:px-6 py-3 md:py-4 border-b border-zinc-800">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 md:gap-4">
@@ -270,7 +270,7 @@ export default function Home() {
               />
             </div>
           </div>
-        </main>
+        </section>
 
         {/* Tips Section */}
         <section aria-label="Quick note reference" className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-6 md:mt-8">
