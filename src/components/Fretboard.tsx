@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import {
   Note,
   NOTES,
@@ -149,19 +149,22 @@ function NoteMarker({
     }
   }
 
+  const intervalName = getIntervalName(NOTES[0] as Note, NOTES[interval] as Note)
+
   return (
-    <div className="h-8 w-8 flex items-center justify-center relative z-10">
+    <div className="h-11 w-11 sm:h-9 sm:w-9 md:h-8 md:w-8 flex items-center justify-center relative z-10">
       <button
         onClick={onClick}
         className={`
-          h-7 w-7 rounded-full flex items-center justify-center
+          h-10 w-10 sm:h-8 sm:w-8 md:h-7 md:w-7 rounded-full flex items-center justify-center
           text-xs font-bold text-white shadow-md
           transition-all duration-150 cursor-pointer
           ${getBackgroundColor()}
           ${isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''}
           ${isRoot ? 'scale-110' : ''}
         `}
-        title={`${note} - ${getIntervalName(NOTES[0] as Note, NOTES[interval] as Note)}`}
+        aria-label={`${note} - ${intervalName}`}
+        aria-pressed={isSelected}
       >
         {getDisplayText()}
       </button>
@@ -176,7 +179,7 @@ function FretMarker({ fret }: { fret: number }) {
   if (!hasMarker) return null
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
       {isDouble ? (
         <div className="flex gap-4">
           <div className="h-3 w-3 rounded-full bg-amber-200/20" />
@@ -205,6 +208,8 @@ export default function Fretboard({
   onNoteClick,
 }: FretboardProps) {
   const [selectedNotes, setSelectedNotes] = useState<Set<string>>(new Set())
+  const leftIndicatorRef = useRef<HTMLDivElement>(null)
+  const rightIndicatorRef = useRef<HTMLDivElement>(null)
   const scaleFormula = SCALES[scale] || SCALES.major
   const positions = SCALE_POSITIONS[scale] || SCALE_POSITIONS.minorPentatonic
 
@@ -295,6 +300,46 @@ export default function Fretboard({
     return false
   }, [position, positions, rootFret, frets])
 
+  // Detect if any notes are visible with current R-3-5 filter
+  const hasVisibleNotes = useMemo(() => {
+    // Only check when R-3-5 filter is active
+    if (!showOnlyChordTones) return true
+
+    // Skip check in chord/progression chord mode - they have their own logic
+    if (showChordsMode || (showProgressionMode && progressionViewMode === 'chord')) {
+      return true
+    }
+
+    // Check all strings and frets for notes that match the filter criteria
+    for (let stringIndex = 0; stringIndex < tuning.length; stringIndex++) {
+      // Check open string (fret 0)
+      const openNote = tuning[tuning.length - 1 - stringIndex]
+      const openInScale = isNoteInScale(openNote, effectiveRootNote, scaleFormula)
+      const openInterval = getInterval(effectiveRootNote, openNote)
+      const openIsR35Tone = r35Intervals.includes(openInterval)
+      const openInPosition = isInPosition(0)
+
+      if (openInScale && openIsR35Tone && openInPosition) {
+        return true
+      }
+
+      // Check fretted notes
+      for (let fret = 1; fret <= frets; fret++) {
+        const note = getNoteAtFret(tuning[tuning.length - 1 - stringIndex], fret)
+        const inScale = isNoteInScale(note, effectiveRootNote, scaleFormula)
+        const interval = getInterval(effectiveRootNote, note)
+        const isR35Tone = r35Intervals.includes(interval)
+        const inPosition = isInPosition(fret)
+
+        if (inScale && isR35Tone && inPosition) {
+          return true
+        }
+      }
+    }
+
+    return false
+  }, [showOnlyChordTones, showChordsMode, showProgressionMode, progressionViewMode, tuning, effectiveRootNote, scaleFormula, r35Intervals, isInPosition, frets])
+
   const handleNoteClick = useCallback((note: Note, stringIndex: number, fret: number) => {
     const key = `${stringIndex}-${fret}`
     setSelectedNotes(prev => {
@@ -309,12 +354,69 @@ export default function Fretboard({
     onNoteClick?.(note, stringIndex, fret)
   }, [onNoteClick])
 
+  // Show empty state if R-3-5 filter is active but no notes match
+  if (showOnlyChordTones && !hasVisibleNotes) {
+    return (
+      <div className="w-full flex items-center justify-center h-64 animate-fade-in">
+        <div className="text-center space-y-4 max-w-md px-4">
+          <div className="flex justify-center">
+            <div className="h-16 w-16 rounded-full bg-zinc-800 flex items-center justify-center">
+              <svg
+                className="h-8 w-8 text-zinc-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 15 Q12 11 16 15" />
+                <circle cx="9" cy="9" r="1" fill="currentColor" />
+                <circle cx="15" cy="9" r="1" fill="currentColor" />
+              </svg>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-2">
+              No notes match current filter
+            </h3>
+            <p className="text-sm text-zinc-400">
+              The R-3-5 filter shows only root, third, and fifth notes. Try selecting a different position or disabling the filter.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Reverse tuning for display (high E at top)
   const displayTuning = [...tuning].reverse()
 
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="min-w-[800px] p-4">
+    <div className="w-full relative">
+      {/* Scroll indicator gradients */}
+      <div
+        ref={leftIndicatorRef}
+        className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-900 to-transparent pointer-events-none z-20 opacity-0 transition-opacity"
+      />
+      <div
+        ref={rightIndicatorRef}
+        className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-900 to-transparent pointer-events-none z-20"
+      />
+
+      <div
+        className="w-full overflow-x-auto"
+        onScroll={(e) => {
+          const target = e.target as HTMLDivElement
+          if (leftIndicatorRef.current) {
+            leftIndicatorRef.current.style.opacity = target.scrollLeft > 20 ? '1' : '0'
+          }
+          if (rightIndicatorRef.current) {
+            rightIndicatorRef.current.style.opacity =
+              target.scrollLeft < target.scrollWidth - target.clientWidth - 20 ? '1' : '0'
+          }
+        }}
+      >
+        <div className="inline-block min-w-full p-3 md:p-4">
         {/* Fretboard container */}
         <div className="relative rounded-lg overflow-hidden" style={{
           background: 'linear-gradient(to bottom, #78350f, #451a03)',
@@ -322,8 +424,10 @@ export default function Fretboard({
           {/* String labels */}
           <div className="absolute left-0 top-0 bottom-0 w-10 flex flex-col justify-around py-2 bg-zinc-900/50 z-10">
             {displayTuning.map((note, i) => (
-              <div key={i} className="h-8 flex items-center justify-center text-xs font-mono text-zinc-400">
-                {6 - i}
+              <div key={i} className="h-8 flex items-center justify-center text-xs font-mono text-zinc-300">
+                <span role="text" aria-label={`String ${tuning.length - i}`}>
+                  {tuning.length - i}
+                </span>
               </div>
             ))}
           </div>
@@ -445,28 +549,28 @@ export default function Fretboard({
         </div>
 
         {/* Legend */}
-        <div className="mt-8 flex flex-wrap gap-4 justify-center text-sm">
-          <div className="flex items-center gap-2">
+        <div className="mt-6 md:mt-8 flex flex-wrap gap-3 md:gap-4 justify-center text-xs md:text-sm">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-red-500" />
             <span className="text-zinc-400">Root</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-green-500" />
             <span className="text-zinc-400">3rd</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-blue-500" />
             <span className="text-zinc-400">5th</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-purple-500" />
             <span className="text-zinc-400">7th</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-cyan-500" />
             <span className="text-zinc-400">Blue Note</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-zinc-500" />
             <span className="text-zinc-400">Scale Note</span>
           </div>
@@ -475,9 +579,9 @@ export default function Fretboard({
         {/* Chord Name Display */}
         {(showChordsMode || showProgressionMode) && position !== null && (
           <div className="mt-6 text-center">
-            <div className="inline-block px-6 py-3 rounded-lg bg-zinc-800/50 border border-zinc-700">
-              <div className="text-sm text-zinc-500 uppercase tracking-wide mb-1">Current Chord</div>
-              <div className="text-3xl font-bold text-white">
+            <div className="inline-block px-4 md:px-6 py-2 md:py-3 rounded-lg bg-zinc-800/50 border border-zinc-700">
+              <div className="text-xs md:text-sm text-zinc-500 uppercase tracking-wide mb-1">Current Chord</div>
+              <div className="text-2xl md:text-3xl font-bold text-white">
                 {showProgressionMode && selectedProgression
                   ? getProgressionChordName(rootNote, scale, position, selectedProgression)
                   : getChordNameForPosition(rootNote, scale, position)}
@@ -485,6 +589,12 @@ export default function Fretboard({
             </div>
           </div>
         )}
+      </div>
+
+      {/* Mobile scroll hint */}
+      <div className="text-xs text-zinc-500 text-center mt-3 md:hidden">
+        ← Swipe to see more frets →
+      </div>
       </div>
     </div>
   )

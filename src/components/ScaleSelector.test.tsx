@@ -186,12 +186,12 @@ describe('ScaleSelector Component', () => {
   describe('Chord Tones Toggle', () => {
     it('should render R-3-5 Only button', () => {
       render(<ScaleSelector {...defaultProps} />)
-      expect(screen.getByRole('button', { name: /r-3-5 only/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /show only root, third, and fifth notes/i })).toBeInTheDocument()
     })
 
     it('should highlight when showOnlyChordTones is true', () => {
       render(<ScaleSelector {...defaultProps} showOnlyChordTones={true} />)
-      const button = screen.getByRole('button', { name: /r-3-5 only/i })
+      const button = screen.getByRole('button', { name: /show only root, third, and fifth notes/i })
       expect(button).toHaveClass('bg-amber-500')
     })
 
@@ -199,7 +199,7 @@ describe('ScaleSelector Component', () => {
       const onChordTonesToggle = vi.fn()
       render(<ScaleSelector {...defaultProps} onChordTonesToggle={onChordTonesToggle} />)
 
-      fireEvent.click(screen.getByRole('button', { name: /r-3-5 only/i }))
+      fireEvent.click(screen.getByRole('button', { name: /show only root, third, and fifth notes/i }))
       expect(onChordTonesToggle).toHaveBeenCalledWith(true)
     })
 
@@ -207,7 +207,7 @@ describe('ScaleSelector Component', () => {
       const onChordTonesToggle = vi.fn()
       render(<ScaleSelector {...defaultProps} showOnlyChordTones={true} onChordTonesToggle={onChordTonesToggle} />)
 
-      fireEvent.click(screen.getByRole('button', { name: /r-3-5 only/i }))
+      fireEvent.click(screen.getByRole('button', { name: /show only root, third, and fifth notes/i }))
       expect(onChordTonesToggle).toHaveBeenCalledWith(false)
     })
   })
