@@ -10,12 +10,22 @@ describe('ScaleSelector Component', () => {
     tuning: 'standard',
     displayMode: 'notes' as const,
     showOnlyChordTones: false,
+    showChordsMode: false,
+    showProgressionMode: false,
+    selectedProgression: null,
+    showFingerings: false,
+    progressionViewMode: 'chord' as const,
     onRootChange: vi.fn(),
     onScaleChange: vi.fn(),
     onStringCountChange: vi.fn(),
     onTuningChange: vi.fn(),
     onDisplayModeChange: vi.fn(),
     onChordTonesToggle: vi.fn(),
+    onChordsModeToggle: vi.fn(),
+    onProgressionModeToggle: vi.fn(),
+    onProgressionSelect: vi.fn(),
+    onFingeringsToggle: vi.fn(),
+    onProgressionViewModeChange: vi.fn(),
   }
 
   beforeEach(() => {

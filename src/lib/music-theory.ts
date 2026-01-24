@@ -875,23 +875,6 @@ export function getProgressionChordVoicing(
   })
 
   const selectedVoicing = candidates[0].voicing
-
-  // Debug logging
-  if (typeof window !== 'undefined') {
-    console.log('[Progression Debug]', {
-      scale,
-      scaleQualityType,
-      chordDegree,
-      chordRoot,
-      isMinorChord,
-      voicingSource: isMinorChord ? 'MINOR_VOICINGS' : 'MAJOR_VOICINGS',
-      selectedShape: selectedVoicing.shape,
-      selectedFrets: selectedVoicing.frets,
-      targetFret,
-      baseFret: selectedVoicing.baseFret
-    })
-  }
-
   return selectedVoicing
 }
 

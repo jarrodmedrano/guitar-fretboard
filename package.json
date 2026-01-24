@@ -25,10 +25,14 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "prepare": "husky"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": "eslint --fix"
   },
   "dependencies": {
     "@prisma/client": "5",
@@ -47,7 +51,9 @@
     "@vitejs/plugin-react": "4.3.4",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "husky": "^9.1.7",
     "jsdom": "24",
+    "lint-staged": "^16.2.7",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
