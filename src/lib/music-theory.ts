@@ -320,20 +320,20 @@ export interface ChordVoicing {
 // For minor scales/pentatonics: E-D-C-A-G order
 // For major scales/pentatonics: C-A-G-E-D order
 export const CAGED_POSITION_MAP: Record<string, CAGEDShape[]> = {
-  minorPentatonic: ['E', 'D', 'C', 'G', 'D'],  // Ensures unique voicings per position
+  minorPentatonic: ['E', 'D', 'C', 'A', 'G'],  // Standard CAGED sequence for minor
   majorPentatonic: ['C', 'A', 'G', 'E', 'D'],
-  pentatonicForms: ['E', 'D', 'C', 'G', 'D'],  // Match minor pentatonic
+  pentatonicForms: ['E', 'D', 'C', 'A', 'G'],  // Match minor pentatonic
   pentatonicFormsMajor: ['C', 'A', 'G', 'E', 'D'],
-  blues: ['E', 'D', 'C', 'G', 'D'],
+  blues: ['E', 'D', 'C', 'A', 'G'],
   major: ['C', 'A', 'G', 'E', 'D', 'C', 'A'],
-  minor: ['E', 'D', 'C', 'G', 'D', 'E', 'C'],  // Adjusted
-  dorian: ['E', 'D', 'C', 'G', 'D', 'E', 'C'],
-  phrygian: ['E', 'D', 'C', 'G', 'D', 'E', 'C'],
+  minor: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],  // Full CAGED cycle for 7 positions
+  dorian: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  phrygian: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
   lydian: ['C', 'A', 'G', 'E', 'D', 'C', 'A'],
   mixolydian: ['C', 'A', 'G', 'E', 'D', 'C', 'A'],
-  locrian: ['E', 'D', 'C', 'G', 'D', 'E', 'C'],
-  harmonicMinor: ['E', 'D', 'C', 'G', 'D', 'E', 'C'],
-  melodicMinor: ['E', 'D', 'C', 'G', 'D', 'E', 'C'],
+  locrian: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  harmonicMinor: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
+  melodicMinor: ['E', 'D', 'C', 'A', 'G', 'E', 'D'],
 }
 
 // Chord tone intervals for major and minor chords
