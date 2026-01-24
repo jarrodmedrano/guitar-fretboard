@@ -547,27 +547,27 @@ export default function Fretboard({
 
         {/* Legend */}
         <div className="mt-6 md:mt-8 flex flex-wrap gap-3 md:gap-4 justify-center text-xs md:text-sm">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-red-500" />
             <span className="text-zinc-400">Root</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-green-500" />
             <span className="text-zinc-400">3rd</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-blue-500" />
             <span className="text-zinc-400">5th</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-purple-500" />
             <span className="text-zinc-400">7th</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-cyan-500" />
             <span className="text-zinc-400">Blue Note</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 transition-transform hover:scale-110 cursor-default">
             <div className="h-4 w-4 rounded-full bg-zinc-500" />
             <span className="text-zinc-400">Scale Note</span>
           </div>
