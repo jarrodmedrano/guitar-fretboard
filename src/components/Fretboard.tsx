@@ -80,7 +80,7 @@ function NoteMarker({
   if (isMuted && isNut) {
     return (
       <div className="h-8 w-8 flex items-center justify-center relative z-10">
-        <div className="h-6 w-6 flex items-center justify-center rounded-full bg-zinc-700/30 text-xs font-bold text-zinc-400">
+        <div className="h-7 w-7 sm:h-6 sm:w-6 flex items-center justify-center rounded-full bg-zinc-700/30 text-xs font-bold text-zinc-400">
           X
         </div>
       </div>
@@ -152,11 +152,11 @@ function NoteMarker({
   const intervalName = getIntervalName(NOTES[0] as Note, NOTES[interval] as Note)
 
   return (
-    <div className="h-11 w-11 sm:h-9 sm:w-9 md:h-8 md:w-8 flex items-center justify-center relative z-10">
+    <div className="h-8 w-8 flex items-center justify-center relative z-10">
       <button
         onClick={onClick}
         className={`
-          h-10 w-10 sm:h-8 sm:w-8 md:h-7 md:w-7 rounded-full flex items-center justify-center
+          h-7 w-7 sm:h-8 sm:w-8 md:h-7 md:w-7 rounded-full flex items-center justify-center
           text-xs font-bold text-white shadow-md
           transition-all duration-150 cursor-pointer
           ${getBackgroundColor()}
