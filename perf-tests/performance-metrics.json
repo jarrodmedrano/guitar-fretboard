@@ -1,0 +1,309 @@
+{
+  "testMetadata": {
+    "timestamp": "2026-01-25T16:04:19.562Z",
+    "url": "http://localhost:3000",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "browser": "Chromium 145.0.0.0",
+    "environment": "development",
+    "testType": "cold-load"
+  },
+  "coreWebVitals": {
+    "fcp": {
+      "value": 4008,
+      "unit": "ms",
+      "target": 1800,
+      "status": "poor",
+      "percentageOverTarget": 122
+    },
+    "lcp": {
+      "value": 4008,
+      "unit": "ms",
+      "target": 2500,
+      "status": "poor",
+      "percentageOverTarget": 60
+    },
+    "cls": {
+      "value": 0,
+      "unit": "score",
+      "target": 0.1,
+      "status": "excellent",
+      "percentageUnderTarget": 100
+    },
+    "tbt": {
+      "value": 34,
+      "unit": "ms",
+      "target": 200,
+      "status": "excellent",
+      "percentageUnderTarget": 83
+    },
+    "tti": {
+      "value": 158,
+      "unit": "ms",
+      "target": 3800,
+      "status": "excellent",
+      "percentageUnderTarget": 96
+    }
+  },
+  "loadTimings": {
+    "ttfb": {
+      "value": 97.6,
+      "unit": "ms",
+      "description": "Time to First Byte"
+    },
+    "responseEnd": {
+      "value": 157.6,
+      "unit": "ms",
+      "description": "HTML download complete"
+    },
+    "domInteractive": {
+      "value": 158,
+      "unit": "ms",
+      "description": "DOM ready for interaction"
+    },
+    "domContentLoaded": {
+      "value": 158.4,
+      "unit": "ms",
+      "description": "DOMContentLoaded event"
+    },
+    "domComplete": {
+      "value": 326.5,
+      "unit": "ms",
+      "description": "DOM processing complete"
+    },
+    "loadComplete": {
+      "value": 326.5,
+      "unit": "ms",
+      "description": "Page load event complete"
+    },
+    "totalDuration": {
+      "value": 326.5,
+      "unit": "ms",
+      "description": "Total navigation duration"
+    }
+  },
+  "transferSizes": {
+    "totalTransfer": {
+      "bytes": 12227,
+      "kb": 11.94,
+      "description": "Compressed transfer size"
+    },
+    "encodedBody": {
+      "bytes": 11927,
+      "kb": 11.65,
+      "description": "Encoded body size"
+    },
+    "decodedBody": {
+      "bytes": 114263,
+      "kb": 111.59,
+      "description": "Decompressed body size"
+    },
+    "compressionRatio": {
+      "value": 9.58,
+      "description": "Compression efficiency"
+    }
+  },
+  "memory": {
+    "usedJSHeapSize": {
+      "bytes": 14719208,
+      "mb": 14.04,
+      "description": "Active JavaScript heap"
+    },
+    "totalJSHeapSize": {
+      "bytes": 18005892,
+      "mb": 17.17,
+      "description": "Allocated heap space"
+    },
+    "jsHeapSizeLimit": {
+      "bytes": 4294967296,
+      "mb": 4096,
+      "description": "Browser heap limit"
+    },
+    "heapUtilization": {
+      "percentage": 0.34,
+      "description": "Percentage of limit used"
+    }
+  },
+  "network": {
+    "totalRequests": 26,
+    "requestsByType": {
+      "scripts": 21,
+      "fonts": 2,
+      "stylesheets": 1,
+      "documents": 1,
+      "other": 1
+    },
+    "topResources": [
+      {
+        "name": "next-devtools.js",
+        "size_kb": 218.4,
+        "duration_ms": 117.7,
+        "type": "script",
+        "isDevelopmentOnly": true
+      },
+      {
+        "name": "react-dom.js",
+        "size_kb": 178.6,
+        "duration_ms": 113.1,
+        "type": "script",
+        "isDevelopmentOnly": false
+      },
+      {
+        "name": "client.js",
+        "size_kb": 123.0,
+        "duration_ms": 102.4,
+        "type": "script",
+        "isDevelopmentOnly": false
+      },
+      {
+        "name": "fonts",
+        "size_kb": 58.4,
+        "duration_ms": 22,
+        "type": "font",
+        "isDevelopmentOnly": false
+      }
+    ]
+  },
+  "layoutStability": {
+    "cls": 0,
+    "layoutShiftCount": 0,
+    "unexpectedShifts": 0,
+    "status": "perfect"
+  },
+  "issues": {
+    "blockers": [
+      {
+        "severity": "critical",
+        "metric": "FCP",
+        "issue": "First Contentful Paint delay of 4008ms",
+        "impact": "Users see blank screen for 4 seconds",
+        "target": "< 1800ms",
+        "current": "4008ms",
+        "mustFixBeforeProduction": true
+      }
+    ],
+    "highPriority": [
+      {
+        "severity": "high",
+        "issue": "Production build not tested",
+        "impact": "Development mode includes 218 KB of devtools overhead",
+        "action": "Run production build: pnpm build && pnpm start"
+      },
+      {
+        "severity": "high",
+        "metric": "LCP",
+        "issue": "Largest Contentful Paint at 4008ms",
+        "impact": "Main content appears too slowly",
+        "target": "< 2500ms",
+        "current": "4008ms"
+      }
+    ],
+    "mediumPriority": [
+      {
+        "issue": "Bundle size optimization needed",
+        "impact": "21 JavaScript chunks could be consolidated"
+      },
+      {
+        "issue": "Font loading strategy",
+        "impact": "2 font files without font-display: swap"
+      }
+    ]
+  },
+  "recommendations": {
+    "immediate": [
+      "Test production build (pnpm build && pnpm start)",
+      "Implement critical CSS inlining",
+      "Add loading skeleton/placeholder",
+      "Optimize font loading with font-display: swap"
+    ],
+    "shortTerm": [
+      "Bundle size optimization via code splitting",
+      "Implement service worker for caching",
+      "Set up Real User Monitoring (RUM)",
+      "Create performance regression tests"
+    ],
+    "longTerm": [
+      "Advanced lazy loading implementation",
+      "Image optimization pipeline",
+      "Consider edge rendering (Vercel Edge Functions)",
+      "A/B test loading strategies"
+    ]
+  },
+  "performanceBudget": {
+    "fcp": {
+      "budget": 1800,
+      "current": 4008,
+      "status": "overBudget",
+      "variance": 2208
+    },
+    "lcp": {
+      "budget": 2500,
+      "current": 4008,
+      "status": "overBudget",
+      "variance": 1508
+    },
+    "tbt": {
+      "budget": 200,
+      "current": 34,
+      "status": "underBudget",
+      "variance": -166
+    },
+    "cls": {
+      "budget": 0.1,
+      "current": 0,
+      "status": "underBudget",
+      "variance": -0.1
+    },
+    "totalJS": {
+      "budget": 300,
+      "current": 520,
+      "status": "overBudget (dev mode)",
+      "variance": 220,
+      "note": "Includes 218 KB development tools"
+    }
+  },
+  "device": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+    "deviceMemory": 8,
+    "hardwareConcurrency": 8,
+    "connection": {
+      "effectiveType": "4g",
+      "downlink": 1.75,
+      "rtt": 150
+    }
+  },
+  "overallAssessment": {
+    "grade": "B-",
+    "expectedGradeAfterFixes": "A-",
+    "strengths": [
+      "Perfect layout stability (CLS: 0.0)",
+      "Excellent server response time (TTFB: 97.6ms)",
+      "Minimal main thread blocking (TBT: 34ms)",
+      "Fast DOM processing (158ms to interactive)",
+      "Efficient compression (9.58:1 ratio)",
+      "Clean console (0 errors, 0 warnings)",
+      "Low memory footprint (14 MB)"
+    ],
+    "criticalWeaknesses": [
+      "FCP/LCP delay blocks production readiness",
+      "3.68 second render delay after DOM ready",
+      "Production build performance unknown"
+    ],
+    "readyForProduction": false
+  },
+  "generatedFiles": {
+    "comprehensiveReport": "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/PERFORMANCE_ANALYSIS.md",
+    "summaryReport": "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/performance-report.md",
+    "metricsJSON": "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/performance-metrics.json",
+    "screenshots": [
+      "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/initial-page-load.png",
+      "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/performance-screenshot.png"
+    ],
+    "testScripts": [
+      "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/performance-test.mjs",
+      "/Users/jarrodmedrano/work/new-proj/guitar-fretboard-app/performance-test-enhanced.mjs"
+    ]
+  }
+}
