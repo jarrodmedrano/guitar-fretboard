@@ -1,0 +1,17 @@
+{
+  "name": "Fretboard Master",
+  "short_name": "Fretboard",
+  "description": "A project by Jarrod Medrano",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#3E2723",
+  "background_color": "#1a1a1a",
+  "display": "standalone",
+  "start_url": "/"
+}
