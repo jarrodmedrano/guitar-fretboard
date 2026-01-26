@@ -1,11 +1,12 @@
 'use client'
 
-import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, TUNING_CONFIGS, CHORD_PROGRESSIONS } from '@/lib/music-theory'
+import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, CHORD_PROGRESSIONS } from '@/lib/music-theory'
+import { styles } from './ScaleSelector.styles'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
 type ProgressionViewMode = 'chord' | 'scale'
 
-interface ScaleSelectorProps {
+export interface ScaleSelectorProps {
   rootNote: Note
   scale: string
   stringCount: number
@@ -60,22 +61,16 @@ export default function ScaleSelector({
   const availableTunings = getTuningsByStringCount(stringCount)
 
   return (
-    <div className="flex flex-col md:flex-row flex-wrap gap-3 md:gap-4 items-stretch md:items-center md:justify-center">
+    <div className={styles.container}>
       {/* String Count / Instrument Selector */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400 uppercase tracking-wide">Instrument</label>
-        <div className="flex gap-1.5 md:gap-1" role="group" aria-label="Select instrument">
+      <div className={styles.fieldWrapper}>
+        <label className={styles.label}>Instrument</label>
+        <div className={styles.buttonGroup} role="group" aria-label="Select instrument">
           {STRING_COUNTS.map((count) => (
             <button
               key={count}
               onClick={() => onStringCountChange(count)}
-              className={`
-                flex-1 md:flex-none px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all
-                ${stringCount === count
-                  ? 'bg-purple-500 text-white shadow-lg'
-                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                }
-              `}
+              className={styles.flexButton(stringCount === count, 'purple')}
               aria-label={`Select instrument: ${INSTRUMENT_NAMES[`${count}-string` as keyof typeof INSTRUMENT_NAMES]}`}
               aria-pressed={stringCount === count}
             >
@@ -86,16 +81,15 @@ export default function ScaleSelector({
       </div>
 
       {/* Root Note Selector */}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="root-note-mobile" className="text-xs text-zinc-400 uppercase tracking-wide">Root Note</label>
+      <div className={styles.fieldWrapper}>
+        <label htmlFor="root-note-mobile" className={styles.label}>Root Note</label>
 
         {/* Mobile: Dropdown */}
         <select
           id="root-note-mobile"
           value={rootNote}
           onChange={(e) => onRootChange(e.target.value as Note)}
-          className="md:hidden px-4 py-3 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700
-                     focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
+          className={styles.selectMobile}
           aria-label="Select root note"
         >
           {NOTES.map((note) => (
@@ -104,18 +98,12 @@ export default function ScaleSelector({
         </select>
 
         {/* Desktop: Buttons */}
-        <div className="hidden md:flex flex-wrap gap-1" role="group" aria-label="Select root note">
+        <div className={styles.buttonGroupDesktopOnly} role="group" aria-label="Select root note">
           {NOTES.map((note) => (
             <button
               key={note}
               onClick={() => onRootChange(note)}
-              className={`
-                px-3 py-2 rounded-md text-sm font-medium transition-all
-                ${rootNote === note
-                  ? 'bg-red-500 text-white shadow-lg'
-                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                }
-              `}
+              className={styles.desktopButton(rootNote === note, 'red')}
               aria-label={`Select root note: ${note}`}
               aria-pressed={rootNote === note}
             >
@@ -126,14 +114,13 @@ export default function ScaleSelector({
       </div>
 
       {/* Scale Selector */}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="scale-select" className="text-xs text-zinc-400 uppercase tracking-wide">Scale</label>
+      <div className={styles.fieldWrapper}>
+        <label htmlFor="scale-select" className={styles.label}>Scale</label>
         <select
           id="scale-select"
           value={scale}
           onChange={(e) => onScaleChange(e.target.value)}
-          className="px-4 py-3 md:py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700
-                     focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer text-sm"
+          className={styles.select}
           aria-label="Select scale type"
         >
           {Object.keys(SCALES).map((scaleKey) => (
@@ -145,14 +132,13 @@ export default function ScaleSelector({
       </div>
 
       {/* Tuning Selector - filtered by string count */}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="tuning-select" className="text-xs text-zinc-400 uppercase tracking-wide">Tuning</label>
+      <div className={styles.fieldWrapper}>
+        <label htmlFor="tuning-select" className={styles.label}>Tuning</label>
         <select
           id="tuning-select"
           value={tuning}
           onChange={(e) => onTuningChange(e.target.value)}
-          className="px-4 py-3 md:py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700
-                     focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer text-sm"
+          className={styles.select}
           aria-label="Select tuning"
         >
           {Object.entries(availableTunings).map(([tuningKey, config]) => (
@@ -164,20 +150,14 @@ export default function ScaleSelector({
       </div>
 
       {/* Display Mode */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400 uppercase tracking-wide">Display</label>
-        <div className="flex flex-wrap gap-1.5 md:gap-1" role="group" aria-label="Select display mode">
+      <div className={styles.fieldWrapper}>
+        <label className={styles.label}>Display</label>
+        <div className={styles.buttonGroupWrap} role="group" aria-label="Select display mode">
           {(['notes', 'intervals', 'degrees'] as DisplayMode[]).map((mode) => (
             <button
               key={mode}
               onClick={() => onDisplayModeChange(mode)}
-              className={`
-                px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all capitalize
-                ${displayMode === mode
-                  ? 'bg-blue-500 text-white shadow-lg'
-                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                }
-              `}
+              className={styles.buttonCapitalize(displayMode === mode, 'blue')}
               aria-label={`Display ${mode}`}
               aria-pressed={displayMode === mode}
             >
@@ -186,13 +166,7 @@ export default function ScaleSelector({
           ))}
           <button
             onClick={() => onChordsModeToggle(!showChordsMode)}
-            className={`
-              px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all capitalize
-              ${showChordsMode
-                ? 'bg-amber-500 text-white shadow-lg'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-              }
-            `}
+            className={styles.buttonCapitalize(showChordsMode, 'amber')}
             aria-label="Show CAGED chord shapes"
             aria-pressed={showChordsMode}
           >
@@ -205,13 +179,7 @@ export default function ScaleSelector({
                 onProgressionSelect('1-4-5') // Default to I-IV-V
               }
             }}
-            className={`
-              px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all capitalize
-              ${showProgressionMode
-                ? 'bg-emerald-500 text-white shadow-lg'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-              }
-            `}
+            className={styles.buttonCapitalize(showProgressionMode, 'emerald')}
             aria-label="Show chord progressions"
             aria-pressed={showProgressionMode}
           >
@@ -222,14 +190,13 @@ export default function ScaleSelector({
 
       {/* Chord Progression Selector */}
       {showProgressionMode && (
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="progression-select" className="text-xs text-zinc-400 uppercase tracking-wide">Progression</label>
+        <div className={styles.fieldWrapper}>
+          <label htmlFor="progression-select" className={styles.label}>Progression</label>
           <select
             id="progression-select"
             value={selectedProgression || '1-4-5'}
             onChange={(e) => onProgressionSelect(e.target.value)}
-            className="px-4 py-3 md:py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700
-                       focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer text-sm"
+            className={styles.selectEmerald}
             aria-label="Select chord progression"
           >
             {Object.entries(CHORD_PROGRESSIONS).map(([key, prog]) => (
@@ -243,20 +210,14 @@ export default function ScaleSelector({
 
       {/* Progression View Mode Toggle - only visible in Progression mode */}
       {showProgressionMode && (
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-zinc-400 uppercase tracking-wide">Show</label>
-          <div className="flex gap-1.5 md:gap-1" role="group" aria-label="Progression view mode">
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label}>Show</label>
+          <div className={styles.buttonGroup} role="group" aria-label="Progression view mode">
             {(['chord', 'scale'] as ProgressionViewMode[]).map((mode) => (
               <button
                 key={mode}
                 onClick={() => onProgressionViewModeChange(mode)}
-                className={`
-                  flex-1 md:flex-none px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all capitalize
-                  ${progressionViewMode === mode
-                    ? 'bg-emerald-500 text-white shadow-lg'
-                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                  }
-                `}
+                className={styles.flexButtonCapitalize(progressionViewMode === mode, 'emerald')}
                 aria-label={`Show ${mode}`}
                 aria-pressed={progressionViewMode === mode}
               >
@@ -269,17 +230,11 @@ export default function ScaleSelector({
 
       {/* Fingerings Toggle - only visible when showing chord voicings */}
       {(showChordsMode || (showProgressionMode && progressionViewMode === 'chord')) && (
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-zinc-400 uppercase tracking-wide">Chord View</label>
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label}>Chord View</label>
           <button
             onClick={() => onFingeringsToggle(!showFingerings)}
-            className={`
-              px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all
-              ${showFingerings
-                ? 'bg-cyan-500 text-white shadow-lg'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-              }
-            `}
+            className={styles.button(showFingerings, 'cyan')}
             aria-label="Show finger numbers or note labels"
             aria-pressed={showFingerings}
           >
@@ -289,17 +244,11 @@ export default function ScaleSelector({
       )}
 
       {/* Chord Tones Only Toggle */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-400 uppercase tracking-wide">Filter</label>
+      <div className={styles.fieldWrapper}>
+        <label className={styles.label}>Filter</label>
         <button
           onClick={() => onChordTonesToggle(!showOnlyChordTones)}
-          className={`
-            px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all
-            ${showOnlyChordTones
-              ? 'bg-amber-500 text-white shadow-lg'
-              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            }
-          `}
+          className={styles.button(showOnlyChordTones, 'amber')}
           aria-label="Show only root, third, and fifth notes"
           aria-pressed={showOnlyChordTones}
         >
