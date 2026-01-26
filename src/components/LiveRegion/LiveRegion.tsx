@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-interface LiveRegionProps {
+import { styles } from './LiveRegion.styles'
+
+export interface LiveRegionProps {
   message: string
 }
 
@@ -41,7 +43,7 @@ export function LiveRegion({ message }: LiveRegionProps) {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
+        className={styles.srOnly}
       >
         {message}
       </div>
@@ -49,7 +51,7 @@ export function LiveRegion({ message }: LiveRegionProps) {
       {/* Visual toast notification */}
       {showToast && (
         <div
-          className="fixed bottom-4 right-4 bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-lg shadow-lg px-4 py-3 animate-slide-up"
+          className={styles.toast}
           aria-hidden="true"
         >
           {message}
