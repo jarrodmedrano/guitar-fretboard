@@ -67,3 +67,70 @@ describe('useFretboardApp', () => {
     expect(result.current.scaleNotes).toEqual(['A', 'C', 'D', 'E', 'G'])
   })
 })
+
+  it('should handle string count change and update tuning', () => {
+    const { result } = renderHook(() => useFretboardApp())
+
+    act(() => {
+      result.current.handleStringCountChange(4)
+    })
+
+    expect(result.current.stringCount).toBe(4)
+    // Default tuning for 4-string should be set
+  })
+
+  it('should announce when showing all positions', () => {
+    const { result } = renderHook(() => useFretboardApp())
+
+    // Set a position first
+    act(() => {
+      result.current.handlePositionChange(1)
+    })
+
+    // Then clear it
+    act(() => {
+      result.current.handlePositionChange(null)
+    })
+
+    expect(result.current.position).toBe(null)
+    expect(result.current.announcement).toBe('Showing all positions')
+  })
+
+  it('should cycle through display modes', () => {
+    const { result } = renderHook(() => useFretboardApp())
+
+    expect(result.current.displayMode).toBe('notes')
+
+    act(() => {
+      result.current.handleToggleDisplayMode()
+    })
+    expect(result.current.displayMode).toBe('intervals')
+
+    act(() => {
+      result.current.handleToggleDisplayMode()
+    })
+    expect(result.current.displayMode).toBe('degrees')
+
+    act(() => {
+      result.current.handleToggleDisplayMode()
+    })
+    expect(result.current.displayMode).toBe('notes')
+  })
+
+  it('should toggle and announce chords mode', () => {
+    const { result } = renderHook(() => useFretboardApp())
+
+    act(() => {
+      result.current.handleToggleChordsMode()
+    })
+
+    expect(result.current.showChordsMode).toBe(true)
+    expect(result.current.announcement).toBe('Chords mode enabled')
+
+    act(() => {
+      result.current.handleToggleChordsMode()
+    })
+
+    expect(result.current.showChordsMode).toBe(false)
+    expect(result.current.announcement).toBe('Chords mode disabled')
+  })

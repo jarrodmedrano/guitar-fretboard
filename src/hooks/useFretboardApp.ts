@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Note, SCALE_NAMES, SCALES, getDefaultTuning } from '@/lib/music-theory'
+import { Note, NOTES, SCALE_NAMES, SCALES, getDefaultTuning } from '@/lib/music-theory'
 import { useAnnouncements } from './useAnnouncements'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -84,10 +84,10 @@ export function useFretboardApp() {
   const scaleFormula = SCALES[scale] || SCALES.minorPentatonic
 
   const scaleNotes = useMemo(() => {
-    const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-    const rootIndex = noteNames.indexOf(rootNote)
+    const rootIndex = NOTES.indexOf(rootNote)
+    
     return scaleFormula.map((interval) =>
-      noteNames[(rootIndex + interval) % 12]
+      NOTES[(rootIndex + interval) % 12]
     )
   }, [rootNote, scaleFormula])
 
