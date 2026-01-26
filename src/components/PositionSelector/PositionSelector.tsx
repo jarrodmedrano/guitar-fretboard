@@ -2,8 +2,22 @@
 
 import { useCallback } from 'react'
 import { SCALE_POSITIONS, getRootFret, Note, TUNINGS } from '@/lib/music-theory'
+import {
+  containerStyles,
+  headerRowStyles,
+  labelStyles,
+  infoSectionStyles,
+  formNameStyles,
+  fretRangeStyles,
+  buttonGroupStyles,
+  getAllButtonStyles,
+  getPositionButtonStyles,
+  navButtonGroupStyles,
+  navButtonStyles,
+  navIconStyles,
+} from './PositionSelector.styles'
 
-interface PositionSelectorProps {
+export interface PositionSelectorProps {
   scale: string
   rootNote: Note
   tuning: string
@@ -58,18 +72,18 @@ export default function PositionSelector({
   }, [position, positions.length, onPositionChange])
 
   return (
-    <div className="flex flex-col gap-2.5 md:gap-3">
+    <div className={containerStyles}>
       {/* Position label and info */}
-      <div className="flex items-center justify-between gap-4">
-        <label className="text-xs text-zinc-400 uppercase tracking-wide">
+      <div className={headerRowStyles}>
+        <label className={labelStyles}>
           {hasFormNames ? 'Form' : 'Position'}
         </label>
-        <div className="flex items-center gap-2 text-xs">
+        <div className={infoSectionStyles}>
           {currentPos?.name && (
-            <span className="text-emerald-400 font-medium">{currentPos.name}</span>
+            <span className={formNameStyles}>{currentPos.name}</span>
           )}
           {range && (
-            <span className="text-zinc-400">
+            <span className={fretRangeStyles}>
               Frets {range.start === 0 ? 'Open' : range.start}-{range.end}
             </span>
           )}
@@ -77,17 +91,11 @@ export default function PositionSelector({
       </div>
 
       {/* Position buttons */}
-      <div className="flex items-center gap-1.5 md:gap-1 flex-wrap" role="group" aria-label="Position selector">
+      <div className={buttonGroupStyles} role="group" aria-label="Position selector">
         {/* All positions button */}
         <button
           onClick={() => onPositionChange(null)}
-          className={`
-            px-4 py-3 md:px-3 md:py-2 rounded-l-lg text-sm font-medium transition-all
-            ${position === null
-              ? 'bg-emerald-500 text-white shadow-lg'
-              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            }
-          `}
+          className={getAllButtonStyles(position === null)}
           aria-label="Show all positions across fretboard"
           aria-pressed={position === null}
         >
@@ -100,18 +108,12 @@ export default function PositionSelector({
             start: rootFret + pos.start,
             end: rootFret + pos.end,
           }
+          const isLast = index === positions.length - 1
           return (
             <button
               key={index}
               onClick={() => onPositionChange(index)}
-              className={`
-                px-4 py-3 md:px-3 md:py-2 text-sm font-medium transition-all
-                ${index === positions.length - 1 ? 'rounded-r-lg' : ''}
-                ${position === index
-                  ? 'bg-emerald-500 text-white shadow-lg'
-                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-                }
-              `}
+              className={getPositionButtonStyles(position === index, isLast)}
               aria-label={`Position ${index + 1}, Frets ${Math.max(0, positionRange.start)}-${positionRange.end}${pos.name ? ` - ${pos.name}` : ''}`}
               aria-current={position === index ? 'true' : undefined}
             >
@@ -122,26 +124,24 @@ export default function PositionSelector({
       </div>
 
       {/* Previous/Next navigation for easier stepping */}
-      <div className="flex items-center gap-2">
+      <div className={navButtonGroupStyles}>
         <button
           onClick={handlePrevPosition}
-          className="flex-1 px-4 py-3 md:px-3 md:py-1.5 rounded-md text-sm font-medium transition-all
-                     bg-zinc-800 text-zinc-300 hover:bg-zinc-700 flex items-center justify-center gap-1"
+          className={navButtonStyles}
           aria-label="Previous position"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className={navIconStyles} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Prev
         </button>
         <button
           onClick={handleNextPosition}
-          className="flex-1 px-4 py-3 md:px-3 md:py-1.5 rounded-md text-sm font-medium transition-all
-                     bg-zinc-800 text-zinc-300 hover:bg-zinc-700 flex items-center justify-center gap-1"
+          className={navButtonStyles}
           aria-label="Next position"
         >
           Next
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className={navIconStyles} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
