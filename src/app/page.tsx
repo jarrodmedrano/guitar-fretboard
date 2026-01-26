@@ -4,6 +4,7 @@ import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
 import { LiveRegion } from '@/components/LiveRegion'
+import { QuickScaleButtons } from '@/components/QuickScaleButtons'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useFretboardApp } from '@/hooks/useFretboardApp'
 import { SCALE_NAMES, SCALES, TUNINGS, INSTRUMENT_NAMES, getChordNameForPosition, getProgressionChordName } from '@/lib/music-theory'
@@ -261,67 +262,10 @@ export default function Home() {
         </section>
 
         {/* Scale Categories */}
-        <section aria-label="Quick scale reference">
-          <div className="mt-6 md:mt-8 bg-zinc-900 rounded-xl p-4 md:p-6 border border-zinc-800">
-            <h3 className="text-base md:text-lg font-medium text-white mb-3 md:mb-4">Quick Scale Reference</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-            <button
-              onClick={() => { handleScaleChange('minorPentatonic'); handleRootChange('A') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                A Minor Pentatonic
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">The essential blues/rock scale</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('blues'); handleRootChange('E') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                E Blues Scale
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Classic blues with the b5</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('major'); handleRootChange('C') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                C Major Scale
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">The foundation of music theory</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('dorian'); handleRootChange('D') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                D Dorian Mode
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Jazz and funk favorite</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('pentatonicForms'); handleRootChange('A') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-emerald-400 transition-colors">
-                Minor Pent. Forms
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Fret Science (minor)</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('pentatonicFormsMajor'); handleRootChange('C') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-emerald-400 transition-colors">
-                Major Pent. Forms
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Fret Science (major)</p>
-            </button>
-          </div>
-          </div>
-        </section>
+        <QuickScaleButtons
+          onScaleChange={handleScaleChange}
+          onRootChange={handleRootChange}
+        />
       </main>
 
       {/* Footer */}
