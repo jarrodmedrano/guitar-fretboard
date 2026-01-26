@@ -40,8 +40,8 @@ describe('Fretboard Component', () => {
   describe('Note Display', () => {
     it('should show root note A in A minor pentatonic', () => {
       render(<Fretboard {...defaultProps} displayMode="notes" />)
-      // A should appear multiple times on the fretboard (button text is just "A")
-      const aButtons = screen.getAllByRole('button', { name: /^A$/ })
+      // A should appear multiple times on the fretboard (aria-label is "A - R" for root)
+      const aButtons = screen.getAllByRole('button', { name: /^A - R$/ })
       expect(aButtons.length).toBeGreaterThan(0)
     })
 

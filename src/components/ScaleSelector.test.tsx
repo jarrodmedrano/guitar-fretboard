@@ -35,15 +35,15 @@ describe('ScaleSelector Component', () => {
   describe('String Count / Instrument Selector', () => {
     it('should render string count buttons', () => {
       render(<ScaleSelector {...defaultProps} />)
-      expect(screen.getByRole('button', { name: '4' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: '6' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: '7' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: '8' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Select instrument: 4-String/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Select instrument: 6-String/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Select instrument: 7-String/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Select instrument: 8-String/i })).toBeInTheDocument()
     })
 
     it('should highlight the selected string count', () => {
       render(<ScaleSelector {...defaultProps} stringCount={6} />)
-      const button = screen.getByRole('button', { name: '6' })
+      const button = screen.getByRole('button', { name: /Select instrument: 6-String/i })
       expect(button).toHaveClass('bg-purple-500')
     })
 
@@ -51,7 +51,7 @@ describe('ScaleSelector Component', () => {
       const onStringCountChange = vi.fn()
       render(<ScaleSelector {...defaultProps} onStringCountChange={onStringCountChange} />)
 
-      fireEvent.click(screen.getByRole('button', { name: '7' }))
+      fireEvent.click(screen.getByRole('button', { name: /Select instrument: 7-String/i }))
       expect(onStringCountChange).toHaveBeenCalledWith(7)
     })
 
@@ -76,13 +76,15 @@ describe('ScaleSelector Component', () => {
       render(<ScaleSelector {...defaultProps} />)
       const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
       notes.forEach(note => {
-        expect(screen.getByRole('button', { name: note })).toBeInTheDocument()
+        // Use regex to handle special characters like # in note names
+        const escapedNote = note.replace('#', '\\#')
+        expect(screen.getByRole('button', { name: new RegExp(`Select root note: ${escapedNote}$`, 'i') })).toBeInTheDocument()
       })
     })
 
     it('should highlight the selected root note', () => {
       render(<ScaleSelector {...defaultProps} rootNote="A" />)
-      const aButton = screen.getByRole('button', { name: 'A' })
+      const aButton = screen.getByRole('button', { name: /Select root note: A$/i })
       expect(aButton).toHaveClass('bg-red-500')
     })
 
@@ -90,7 +92,7 @@ describe('ScaleSelector Component', () => {
       const onRootChange = vi.fn()
       render(<ScaleSelector {...defaultProps} onRootChange={onRootChange} />)
 
-      fireEvent.click(screen.getByRole('button', { name: 'C' }))
+      fireEvent.click(screen.getByRole('button', { name: /Select root note: C$/i }))
       expect(onRootChange).toHaveBeenCalledWith('C')
     })
   })
@@ -163,14 +165,14 @@ describe('ScaleSelector Component', () => {
   describe('Display Mode', () => {
     it('should render display mode buttons', () => {
       render(<ScaleSelector {...defaultProps} />)
-      expect(screen.getByRole('button', { name: /notes/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /intervals/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /degrees/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Display notes/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Display intervals/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Display degrees/i })).toBeInTheDocument()
     })
 
     it('should highlight the selected display mode', () => {
       render(<ScaleSelector {...defaultProps} displayMode="intervals" />)
-      const intervalsButton = screen.getByRole('button', { name: /intervals/i })
+      const intervalsButton = screen.getByRole('button', { name: /Display intervals/i })
       expect(intervalsButton).toHaveClass('bg-blue-500')
     })
 
@@ -178,7 +180,7 @@ describe('ScaleSelector Component', () => {
       const onDisplayModeChange = vi.fn()
       render(<ScaleSelector {...defaultProps} onDisplayModeChange={onDisplayModeChange} />)
 
-      fireEvent.click(screen.getByRole('button', { name: /intervals/i }))
+      fireEvent.click(screen.getByRole('button', { name: /Display intervals/i }))
       expect(onDisplayModeChange).toHaveBeenCalledWith('intervals')
     })
   })
