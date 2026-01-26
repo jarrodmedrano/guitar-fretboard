@@ -1,78 +1,49 @@
 'use client'
 
-import { useState, useCallback } from 'react'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
 import { LiveRegion } from '@/components/LiveRegion'
+import { QuickScaleButtons } from '@/components/QuickScaleButtons'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
-import { Note, SCALE_NAMES, SCALES, TUNINGS, getDefaultTuning, INSTRUMENT_NAMES, getChordNameForPosition, getProgressionChordName } from '@/lib/music-theory'
-
-type DisplayMode = 'notes' | 'intervals' | 'degrees'
-type ProgressionViewMode = 'chord' | 'scale'
+import { useFretboardApp } from '@/hooks/useFretboardApp'
+import { SCALE_NAMES, SCALES, TUNINGS, INSTRUMENT_NAMES, getChordNameForPosition, getProgressionChordName } from '@/lib/music-theory'
 
 export default function Home() {
-  const [rootNote, setRootNote] = useState<Note>('A')
-  const [scale, setScale] = useState('minorPentatonic')
-  const [stringCount, setStringCount] = useState(6)
-  const [tuning, setTuning] = useState('standard')
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('notes')
-  const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
-  const [showChordsMode, setShowChordsMode] = useState(false)
-  const [showProgressionMode, setShowProgressionMode] = useState(false)
-  const [selectedProgression, setSelectedProgression] = useState<string | null>(null)
-  const [showFingerings, setShowFingerings] = useState(true)
-  const [progressionViewMode, setProgressionViewMode] = useState<ProgressionViewMode>('chord')
-  const [position, setPosition] = useState<number | null>(null)
-  const [announcement, setAnnouncement] = useState('')
+  const {
+    rootNote,
+    scale,
+    stringCount,
+    tuning,
+    displayMode,
+    position,
+    showOnlyChordTones,
+    showChordsMode,
+    showProgressionMode,
+    selectedProgression,
+    showFingerings,
+    progressionViewMode,
+    announcement,
+    handleScaleChange,
+    handleRootChange,
+    handlePositionChange,
+    handleStringCountChange,
+    handleChordsModeToggle,
+    handleProgressionModeToggle,
+    handleToggleDisplayMode,
+    handleToggleChordsMode,
+    setTuning,
+    setDisplayMode,
+    setShowOnlyChordTones,
+    setSelectedProgression,
+    setShowFingerings,
+    setProgressionViewMode,
+    scaleNotes,
+    scaleFormula,
+  } = useFretboardApp()
 
-  // Reset position when scale changes (different scales have different position counts)
-  const handleScaleChange = (newScale: string) => {
-    setScale(newScale)
-    setPosition(null)
-    setAnnouncement(`Scale changed to ${SCALE_NAMES[newScale]}, position reset`)
-  }
-
-  // Handle root note change with announcement
-  const handleRootChange = (newRoot: Note) => {
-    setRootNote(newRoot)
-    setAnnouncement(`Root note changed to ${newRoot}`)
-  }
-
-  // Handle position change with announcement
-  const handlePositionChange = (newPosition: number | null) => {
-    setPosition(newPosition)
-    if (newPosition === null) {
-      setAnnouncement('Showing all positions')
-    } else {
-      setAnnouncement(`Position ${newPosition + 1} selected`)
-    }
-  }
-
-  // When string count changes, switch to default tuning for that string count
-  const handleStringCountChange = useCallback((count: number) => {
-    setStringCount(count)
-    setTuning(getDefaultTuning(count))
-  }, [])
-
-  // When chords mode is toggled, disable progression mode
-  const handleChordsModeToggle = useCallback((enabled: boolean) => {
-    setShowChordsMode(enabled)
-    if (enabled) {
-      setShowProgressionMode(false)
-    }
-  }, [])
-
-  // When progression mode is toggled, disable chords mode
-  const handleProgressionModeToggle = useCallback((enabled: boolean) => {
-    setShowProgressionMode(enabled)
-    if (enabled) {
-      setShowChordsMode(false)
-    }
-  }, [])
-
-  // Keyboard shortcut handlers
-  const handlePrevPosition = useCallback(() => {
+  // Local keyboard shortcut handlers for position navigation
+  const handlePrevPosition = () => {
     const positions = SCALES[scale] ? Object.keys(SCALES[scale]).length : 5
     if (position === null) {
       handlePositionChange(0)
@@ -81,9 +52,9 @@ export default function Home() {
     } else {
       handlePositionChange(positions - 1)
     }
-  }, [position, scale])
+  }
 
-  const handleNextPosition = useCallback(() => {
+  const handleNextPosition = () => {
     const positions = SCALES[scale] ? Object.keys(SCALES[scale]).length : 5
     if (position === null) {
       handlePositionChange(0)
@@ -92,34 +63,13 @@ export default function Home() {
     } else {
       handlePositionChange(0)
     }
-  }, [position, scale])
+  }
 
-  const handleToggleDisplayMode = useCallback(() => {
-    const modes: DisplayMode[] = ['notes', 'intervals', 'degrees']
-    const currentIndex = modes.indexOf(displayMode)
-    const nextMode = modes[(currentIndex + 1) % modes.length]
-    setDisplayMode(nextMode)
-    setAnnouncement(`Display mode changed to ${nextMode}`)
-  }, [displayMode])
-
-  const handleToggleChordsMode = useCallback(() => {
-    const newValue = !showChordsMode
-    handleChordsModeToggle(newValue)
-    setAnnouncement(newValue ? 'Chords mode enabled' : 'Chords mode disabled')
-  }, [showChordsMode, handleChordsModeToggle])
-
-  // Setup keyboard shortcuts
   useKeyboardShortcuts({
     onPreviousPosition: handlePrevPosition,
     onNextPosition: handleNextPosition,
     onToggleDisplayMode: handleToggleDisplayMode,
     onToggleChordsMode: handleToggleChordsMode,
-  })
-
-  const scaleFormula = SCALES[scale]
-  const scaleNotes = scaleFormula.map((interval) => {
-    const rootIndex = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'].indexOf(rootNote)
-    return ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][(rootIndex + interval) % 12]
   })
 
   return (
@@ -312,67 +262,10 @@ export default function Home() {
         </section>
 
         {/* Scale Categories */}
-        <section aria-label="Quick scale reference">
-          <div className="mt-6 md:mt-8 bg-zinc-900 rounded-xl p-4 md:p-6 border border-zinc-800">
-            <h3 className="text-base md:text-lg font-medium text-white mb-3 md:mb-4">Quick Scale Reference</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
-            <button
-              onClick={() => { handleScaleChange('minorPentatonic'); handleRootChange('A') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                A Minor Pentatonic
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">The essential blues/rock scale</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('blues'); handleRootChange('E') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                E Blues Scale
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Classic blues with the b5</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('major'); handleRootChange('C') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                C Major Scale
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">The foundation of music theory</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('dorian'); handleRootChange('D') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-red-400 transition-colors">
-                D Dorian Mode
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Jazz and funk favorite</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('pentatonicForms'); handleRootChange('A') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-emerald-400 transition-colors">
-                Minor Pent. Forms
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Fret Science (minor)</p>
-            </button>
-            <button
-              onClick={() => { handleScaleChange('pentatonicFormsMajor'); handleRootChange('C') }}
-              className="text-left p-3 md:p-4 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors group"
-            >
-              <span className="text-white text-sm md:text-base font-medium group-hover:text-emerald-400 transition-colors">
-                Major Pent. Forms
-              </span>
-              <p className="text-zinc-500 text-xs md:text-sm mt-1">Fret Science (major)</p>
-            </button>
-          </div>
-          </div>
-        </section>
+        <QuickScaleButtons
+          onScaleChange={handleScaleChange}
+          onRootChange={handleRootChange}
+        />
       </main>
 
       {/* Footer */}
