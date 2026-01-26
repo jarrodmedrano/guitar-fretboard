@@ -93,56 +93,6 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 md:py-8">
-        {/* Scale Info Card */}
-        <div className="bg-zinc-900 rounded-xl p-4 md:p-6 mb-6 md:mb-8 border border-zinc-800 animate-scale-in">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 md:gap-6">
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-xl font-semibold text-white">
-                  {rootNote} {SCALE_NAMES[scale]}
-                </h2>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-300">
-                  {INSTRUMENT_NAMES[`${stringCount}-string` as keyof typeof INSTRUMENT_NAMES]}
-                </span>
-                {showChordsMode && !showProgressionMode && (
-                  position !== null ? (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
-                      {getChordNameForPosition(rootNote, scale, position)}
-                    </span>
-                  ) : (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
-                      All CAGED Shapes
-                    </span>
-                  )
-                )}
-                {showProgressionMode && selectedProgression && (
-                  position !== null ? (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300">
-                      {getProgressionChordName(rootNote, scale, position, selectedProgression)}
-                    </span>
-                  ) : (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300">
-                      Progression: {selectedProgression}
-                    </span>
-                  )
-                )}
-              </div>
-              <p className="text-zinc-400 mt-1">
-                Notes: <span className="text-zinc-200 font-mono">{scaleNotes.join(' - ')}</span>
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-zinc-500">Formula:</span>
-              <span className="font-mono text-zinc-300 bg-zinc-800 px-3 py-1 rounded">
-                {scaleFormula.map((i, idx) => {
-                  const intervals = ['R', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7']
-                  return intervals[i]
-                }).join('-')}
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Controls */}
         <section aria-label="Fretboard controls" className="bg-zinc-900 rounded-xl p-4 md:p-6 mb-6 md:mb-8 border border-zinc-800 animate-scale-in" style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}>
           <ScaleSelector
@@ -186,9 +136,45 @@ export default function Home() {
             <div className="px-4 md:px-6 py-3 md:py-4 border-b border-zinc-800">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 md:gap-4">
                 <div>
-                  <h3 className="text-base md:text-lg font-medium text-white">Interactive Fretboard</h3>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-base md:text-lg font-medium text-white">
+                      {rootNote} {SCALE_NAMES[scale]}
+                    </h3>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-300">
+                      {INSTRUMENT_NAMES[`${stringCount}-string` as keyof typeof INSTRUMENT_NAMES]}
+                    </span>
+                    {showChordsMode && !showProgressionMode && (
+                      position !== null ? (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
+                          {getChordNameForPosition(rootNote, scale, position)}
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
+                          All CAGED Shapes
+                        </span>
+                      )
+                    )}
+                    {showProgressionMode && selectedProgression && (
+                      position !== null ? (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300">
+                          {getProgressionChordName(rootNote, scale, position, selectedProgression)}
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300">
+                          Progression: {selectedProgression}
+                        </span>
+                      )
+                    )}
+                  </div>
                   <p className="text-zinc-400 text-xs md:text-sm mt-1">
-                    <span className="hidden sm:inline">Click on notes to select them. </span>Scroll horizontally to see more frets.
+                    Notes: <span className="text-zinc-200 font-mono">{scaleNotes.join(' - ')}</span>
+                    <span className="mx-2">|</span>
+                    Formula: <span className="font-mono text-zinc-300">
+                      {scaleFormula.map((i) => {
+                        const intervals = ['R', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7']
+                        return intervals[i]
+                      }).join('-')}
+                    </span>
                   </p>
                 </div>
                 {/* Position Selector - placed prominently next to fretboard header */}
