@@ -83,7 +83,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                <span className="text-3xl" aria-hidden="true">🎸</span>
+                <img src="/logo.svg" alt="Fretboard Master logo" className="h-12 w-12" />
                 Fretboard Master
               </h1>
               <p className="text-zinc-400 mt-1">Learn scales, modes, and patterns on guitar and bass fretboards</p>
