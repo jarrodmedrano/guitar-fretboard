@@ -56,6 +56,7 @@ export function useFretboardApp() {
     setShowChordsMode(enabled)
     if (enabled) {
       setShowProgressionMode(false)
+      setShowOnlyChordTones(false)
     }
   }, [])
 
@@ -63,6 +64,7 @@ export function useFretboardApp() {
     setShowProgressionMode(enabled)
     if (enabled) {
       setShowChordsMode(false)
+      setShowOnlyChordTones(false)
     }
   }, [])
 

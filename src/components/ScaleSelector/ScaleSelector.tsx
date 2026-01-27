@@ -248,9 +248,10 @@ export default function ScaleSelector({
         <label className={styles.label}>Filter</label>
         <button
           onClick={() => onChordTonesToggle(!showOnlyChordTones)}
-          className={styles.button(showOnlyChordTones, 'amber')}
+          className={`${styles.button(showOnlyChordTones && !(showChordsMode || (showProgressionMode && progressionViewMode === 'chord')), 'amber')} ${(showChordsMode || (showProgressionMode && progressionViewMode === 'chord')) ? 'opacity-50 cursor-not-allowed' : ''}`}
           aria-label="Show only root, third, and fifth notes"
           aria-pressed={showOnlyChordTones}
+          disabled={showChordsMode || (showProgressionMode && progressionViewMode === 'chord')}
         >
           R-3-5 Only
         </button>
