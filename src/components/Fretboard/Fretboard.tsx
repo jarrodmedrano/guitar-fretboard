@@ -17,8 +17,6 @@ import {
   ChordVoicing,
   getProgressionChordVoicing,
   getAllProgressionChordVoicings,
-  getChordNameForPosition,
-  getProgressionChordName,
   getChordRootForDegree,
   getChordQuality,
   CHORD_PROGRESSIONS,
@@ -38,7 +36,6 @@ import {
   noteMarkerStyles,
   legendStyles,
   legendColors,
-  chordNameStyles,
   emptyStateStyles,
   mobileHintStyles,
   inlineStyles,
@@ -438,19 +435,6 @@ export default function Fretboard({
           </div>
         </div>
 
-        {/* Chord Name Display */}
-        {(showChordsMode || showProgressionMode) && position !== null && (
-          <div className={chordNameStyles.container}>
-            <div className={chordNameStyles.box}>
-              <div className={chordNameStyles.label}>Current Chord</div>
-              <div className={chordNameStyles.name}>
-                {showProgressionMode && selectedProgression
-                  ? getProgressionChordName(rootNote, scale, position, selectedProgression)
-                  : getChordNameForPosition(rootNote, scale, position)}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Mobile scroll hint */}

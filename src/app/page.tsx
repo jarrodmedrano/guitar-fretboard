@@ -176,6 +176,16 @@ export default function Home() {
                       }).join('-')}
                     </span>
                   </p>
+                  {(showChordsMode || showProgressionMode) && position !== null && (
+                    <div className="inline-block px-4 md:px-6 py-2 md:py-3 rounded-lg bg-zinc-800/50 border border-zinc-700 mt-2">
+                      <div className="text-xs md:text-sm text-zinc-500 uppercase tracking-wide mb-1">Current Chord</div>
+                      <div className="text-2xl md:text-3xl font-bold text-white">
+                        {showProgressionMode && selectedProgression
+                          ? getProgressionChordName(rootNote, scale, position, selectedProgression)
+                          : getChordNameForPosition(rootNote, scale, position)}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {/* Position Selector - placed prominently next to fretboard header */}
                 <div className="w-full lg:w-auto lg:min-w-[200px]">
