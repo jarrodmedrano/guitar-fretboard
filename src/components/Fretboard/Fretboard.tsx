@@ -57,6 +57,7 @@ export interface FretboardProps {
   showFingerings?: boolean
   progressionViewMode?: ProgressionViewMode
   position?: number | null // null means show all positions
+  activeNotes?: Set<string> // Currently sounding notes, keyed `${stringIndex}-${fret}` (0 = lowest string)
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
 
@@ -73,6 +74,7 @@ export default function Fretboard({
   showFingerings = true,
   progressionViewMode = 'chord',
   position = null,
+  activeNotes,
   onNoteClick,
 }: FretboardProps) {
   const [selectedNotes, setSelectedNotes] = useState<Set<string>>(new Set())
@@ -320,19 +322,21 @@ export default function Fretboard({
                 const shouldShow = showChordsMode || (showProgressionMode && progressionViewMode === 'chord')
                   ? chordInfo.shouldShow  // Chords/Progression chord mode: only notes in voicing
                   : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode or progression scale mode: respect R-3-5 filter
+                const isActive = activeNotes?.has(key) ?? false
 
                 return (
                   <NoteMarker
                     key={stringIndex}
                     note={note}
                     isRoot={isRoot}
-                    inScale={shouldShow && inScale}
+                    inScale={(shouldShow && inScale) || isActive}
                     interval={interval}
                     degree={degree}
                     displayMode={displayMode}
                     isNut={true}
                     onClick={() => handleNoteClick(note, actualStringIndex, 0)}
                     isSelected={selectedNotes.has(key)}
+                    isActive={isActive}
                     fingerNumber={chordInfo.fingerNumber}
                     isMuted={chordInfo.isMuted}
                     showFingerings={showFingerings}
@@ -377,6 +381,7 @@ export default function Fretboard({
                     const shouldShow = showChordsMode || (showProgressionMode && progressionViewMode === 'chord')
                       ? chordInfo.shouldShow  // Chords/Progression chord mode: only notes in voicing
                       : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode or progression scale mode: respect R-3-5 filter
+                    const isActive = activeNotes?.has(key) ?? false
 
                     return (
                       <div key={stringIndex} className={fretStyles.stringLineWrapper}>
@@ -388,12 +393,13 @@ export default function Fretboard({
                         <NoteMarker
                           note={note}
                           isRoot={isRoot}
-                          inScale={shouldShow && inScale}
+                          inScale={(shouldShow && inScale) || isActive}
                           interval={interval}
                           degree={degree}
                           displayMode={displayMode}
                           onClick={() => handleNoteClick(note, actualStringIndex, fret)}
                           isSelected={selectedNotes.has(key)}
+                          isActive={isActive}
                           fingerNumber={chordInfo.fingerNumber}
                           isMuted={chordInfo.isMuted}
                           showFingerings={showFingerings}

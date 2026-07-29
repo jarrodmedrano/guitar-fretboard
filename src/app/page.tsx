@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Fretboard from '@/components/Fretboard'
 import ScaleSelector from '@/components/ScaleSelector'
 import PositionSelector from '@/components/PositionSelector'
@@ -88,6 +89,12 @@ export default function Home() {
               </h1>
               <p className="text-zinc-400 mt-1">Learn scales, modes, and patterns on guitar and bass fretboards</p>
             </div>
+            <Link
+              href="/practice"
+              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+            >
+              Practice →
+            </Link>
           </div>
         </div>
       </header>

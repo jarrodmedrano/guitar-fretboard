@@ -16,6 +16,7 @@ export interface NoteMarkerProps {
   isNut?: boolean
   onClick?: () => void
   isSelected?: boolean
+  isActive?: boolean // Currently sounding during practice playback
   fingerNumber?: number | null // For chord mode: which finger to use
   isMuted?: boolean // For chord mode: whether string is muted
   showFingerings?: boolean // Show finger numbers or note labels
@@ -31,6 +32,7 @@ export function NoteMarker({
   isNut = false,
   onClick,
   isSelected,
+  isActive = false,
   fingerNumber,
   isMuted = false,
   showFingerings = true,
@@ -113,7 +115,7 @@ export function NoteMarker({
       <button
         onClick={onClick}
         className={cn(
-          styles.noteButton({ isRoot, isSelected: isSelected ?? false }),
+          styles.noteButton({ isRoot, isSelected: isSelected ?? false, isActive }),
           getBackgroundColor()
         )}
         aria-label={`${note} - ${intervalName}`}

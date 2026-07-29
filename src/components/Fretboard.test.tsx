@@ -37,6 +37,32 @@ describe('Fretboard Component', () => {
     })
   })
 
+  describe('Active Notes (practice playback)', () => {
+    it('should apply the active highlight to notes in activeNotes', () => {
+      // Low E string (index 0), fret 5 = A, the root of A minor pentatonic
+      const { container } = render(
+        <Fretboard {...defaultProps} activeNotes={new Set(['0-5'])} />
+      )
+      const activeButtons = container.querySelectorAll('.ring-amber-400')
+      expect(activeButtons.length).toBe(1)
+    })
+
+    it('should render an active note even when a filter would hide it', () => {
+      // Position 0 of A minor pentatonic spans frets 5-8; fret 12 on the low E (E note)
+      // is outside the position window but must still render while sounding
+      const { container } = render(
+        <Fretboard {...defaultProps} position={0} activeNotes={new Set(['0-12'])} />
+      )
+      const activeButtons = container.querySelectorAll('.ring-amber-400')
+      expect(activeButtons.length).toBe(1)
+    })
+
+    it('should apply no highlight when activeNotes is omitted', () => {
+      const { container } = render(<Fretboard {...defaultProps} />)
+      expect(container.querySelectorAll('.ring-amber-400').length).toBe(0)
+    })
+  })
+
   describe('Note Display', () => {
     it('should show root note A in A minor pentatonic', () => {
       render(<Fretboard {...defaultProps} displayMode="notes" />)

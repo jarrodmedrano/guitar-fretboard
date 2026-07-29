@@ -9,13 +9,14 @@ export const styles = {
   emptyNutDot:
     'h-2 w-2 rounded-full bg-zinc-700/30 hover:bg-zinc-600/50 cursor-pointer transition-colors',
 
-  noteButton: (options: { isRoot: boolean; isSelected: boolean }) =>
+  noteButton: (options: { isRoot: boolean; isSelected: boolean; isActive: boolean }) =>
     cn(
       'h-7 w-7 sm:h-8 sm:w-8 md:h-7 md:w-7 rounded-full flex items-center justify-center',
       'text-xs font-bold text-white shadow-md',
       'transition-all duration-150 cursor-pointer',
       options.isRoot && 'scale-110',
-      options.isSelected && 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900'
+      options.isSelected && 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900',
+      options.isActive && 'ring-2 ring-amber-400 ring-offset-2 ring-offset-zinc-900 scale-125 z-20'
     ),
 
   // Background colors by interval/mode
