@@ -1,0 +1,1976 @@
+{
+  "source": {
+    "keyPopularity": "https://www.hooktheory.com/cheat-sheet/key-popularity",
+    "progressionsPerKey": "https://www.hooktheory.com/cheat-sheet/key/{root}/{mode} (chord data from api.hooktheory.com/v1/songs/public/{id})",
+    "fetched": "2026-07-29",
+    "notes": [
+      "keyPopularity: percentage of songs in the Hooktheory TheoryTab database per key, grouped by mode; 12 keys per mode, 7 modes.",
+      "progressions: the Popular Chord Progressions shown on every key cheat sheet page. Identical roman-numeral progressions are shown for every key of the same mode (verified: identical song IDs across keys), rendered into the chosen key.",
+      "progression chords: root = scale degree (1-7) within the mode; dur = beats; type 5 = triad, 7 = 7th chord; inv = inversion (0 root position, 1 first inversion); borrowed = quality borrowed from parallel mode (e.g. major V in minor)."
+    ]
+  },
+  "keyPopularity": [
+    {
+      "root": "c",
+      "mode": "major",
+      "popularityPercent": 15
+    },
+    {
+      "root": "d",
+      "mode": "major",
+      "popularityPercent": 12
+    },
+    {
+      "root": "g",
+      "mode": "major",
+      "popularityPercent": 12
+    },
+    {
+      "root": "a",
+      "mode": "major",
+      "popularityPercent": 10
+    },
+    {
+      "root": "e",
+      "mode": "major",
+      "popularityPercent": 9
+    },
+    {
+      "root": "f",
+      "mode": "major",
+      "popularityPercent": 8
+    },
+    {
+      "root": "e-flat",
+      "mode": "major",
+      "popularityPercent": 7
+    },
+    {
+      "root": "b-flat",
+      "mode": "major",
+      "popularityPercent": 6
+    },
+    {
+      "root": "d-flat",
+      "mode": "major",
+      "popularityPercent": 5
+    },
+    {
+      "root": "b",
+      "mode": "major",
+      "popularityPercent": 5
+    },
+    {
+      "root": "f-sharp",
+      "mode": "major",
+      "popularityPercent": 5
+    },
+    {
+      "root": "a-flat",
+      "mode": "major",
+      "popularityPercent": 5
+    },
+    {
+      "root": "a",
+      "mode": "minor",
+      "popularityPercent": 13
+    },
+    {
+      "root": "e",
+      "mode": "minor",
+      "popularityPercent": 12
+    },
+    {
+      "root": "c",
+      "mode": "minor",
+      "popularityPercent": 12
+    },
+    {
+      "root": "d",
+      "mode": "minor",
+      "popularityPercent": 11
+    },
+    {
+      "root": "b",
+      "mode": "minor",
+      "popularityPercent": 9
+    },
+    {
+      "root": "g",
+      "mode": "minor",
+      "popularityPercent": 8
+    },
+    {
+      "root": "f-sharp",
+      "mode": "minor",
+      "popularityPercent": 7
+    },
+    {
+      "root": "c-sharp",
+      "mode": "minor",
+      "popularityPercent": 7
+    },
+    {
+      "root": "f",
+      "mode": "minor",
+      "popularityPercent": 7
+    },
+    {
+      "root": "d-sharp",
+      "mode": "minor",
+      "popularityPercent": 6
+    },
+    {
+      "root": "b-flat",
+      "mode": "minor",
+      "popularityPercent": 6
+    },
+    {
+      "root": "g-sharp",
+      "mode": "minor",
+      "popularityPercent": 5
+    },
+    {
+      "root": "a",
+      "mode": "mixolydian",
+      "popularityPercent": 13
+    },
+    {
+      "root": "g",
+      "mode": "mixolydian",
+      "popularityPercent": 13
+    },
+    {
+      "root": "e",
+      "mode": "mixolydian",
+      "popularityPercent": 13
+    },
+    {
+      "root": "d",
+      "mode": "mixolydian",
+      "popularityPercent": 13
+    },
+    {
+      "root": "c",
+      "mode": "mixolydian",
+      "popularityPercent": 11
+    },
+    {
+      "root": "b",
+      "mode": "mixolydian",
+      "popularityPercent": 7
+    },
+    {
+      "root": "f",
+      "mode": "mixolydian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "b-flat",
+      "mode": "mixolydian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "a-flat",
+      "mode": "mixolydian",
+      "popularityPercent": 5
+    },
+    {
+      "root": "e-flat",
+      "mode": "mixolydian",
+      "popularityPercent": 5
+    },
+    {
+      "root": "c-sharp",
+      "mode": "mixolydian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "f-sharp",
+      "mode": "mixolydian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "d",
+      "mode": "dorian",
+      "popularityPercent": 15
+    },
+    {
+      "root": "a",
+      "mode": "dorian",
+      "popularityPercent": 13
+    },
+    {
+      "root": "e",
+      "mode": "dorian",
+      "popularityPercent": 12
+    },
+    {
+      "root": "c",
+      "mode": "dorian",
+      "popularityPercent": 10
+    },
+    {
+      "root": "g",
+      "mode": "dorian",
+      "popularityPercent": 9
+    },
+    {
+      "root": "f",
+      "mode": "dorian",
+      "popularityPercent": 8
+    },
+    {
+      "root": "b",
+      "mode": "dorian",
+      "popularityPercent": 8
+    },
+    {
+      "root": "f-sharp",
+      "mode": "dorian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "e-flat",
+      "mode": "dorian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "c-sharp",
+      "mode": "dorian",
+      "popularityPercent": 5
+    },
+    {
+      "root": "g-sharp",
+      "mode": "dorian",
+      "popularityPercent": 5
+    },
+    {
+      "root": "b-flat",
+      "mode": "dorian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "c",
+      "mode": "lydian",
+      "popularityPercent": 16
+    },
+    {
+      "root": "f",
+      "mode": "lydian",
+      "popularityPercent": 15
+    },
+    {
+      "root": "a",
+      "mode": "lydian",
+      "popularityPercent": 11
+    },
+    {
+      "root": "d",
+      "mode": "lydian",
+      "popularityPercent": 10
+    },
+    {
+      "root": "g",
+      "mode": "lydian",
+      "popularityPercent": 8
+    },
+    {
+      "root": "a-flat",
+      "mode": "lydian",
+      "popularityPercent": 7
+    },
+    {
+      "root": "e",
+      "mode": "lydian",
+      "popularityPercent": 7
+    },
+    {
+      "root": "d-flat",
+      "mode": "lydian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "e-flat",
+      "mode": "lydian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "b-flat",
+      "mode": "lydian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "b",
+      "mode": "lydian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "g-flat",
+      "mode": "lydian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "e",
+      "mode": "phrygian",
+      "popularityPercent": 17
+    },
+    {
+      "root": "c",
+      "mode": "phrygian",
+      "popularityPercent": 12
+    },
+    {
+      "root": "d",
+      "mode": "phrygian",
+      "popularityPercent": 10
+    },
+    {
+      "root": "d-sharp",
+      "mode": "phrygian",
+      "popularityPercent": 9
+    },
+    {
+      "root": "g",
+      "mode": "phrygian",
+      "popularityPercent": 9
+    },
+    {
+      "root": "f",
+      "mode": "phrygian",
+      "popularityPercent": 9
+    },
+    {
+      "root": "a",
+      "mode": "phrygian",
+      "popularityPercent": 8
+    },
+    {
+      "root": "c-sharp",
+      "mode": "phrygian",
+      "popularityPercent": 7
+    },
+    {
+      "root": "b",
+      "mode": "phrygian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "f-sharp",
+      "mode": "phrygian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "a-sharp",
+      "mode": "phrygian",
+      "popularityPercent": 5
+    },
+    {
+      "root": "g-sharp",
+      "mode": "phrygian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "b",
+      "mode": "locrian",
+      "popularityPercent": 15
+    },
+    {
+      "root": "d",
+      "mode": "locrian",
+      "popularityPercent": 14
+    },
+    {
+      "root": "d-sharp",
+      "mode": "locrian",
+      "popularityPercent": 12
+    },
+    {
+      "root": "c",
+      "mode": "locrian",
+      "popularityPercent": 12
+    },
+    {
+      "root": "e",
+      "mode": "locrian",
+      "popularityPercent": 9
+    },
+    {
+      "root": "a",
+      "mode": "locrian",
+      "popularityPercent": 9
+    },
+    {
+      "root": "f-sharp",
+      "mode": "locrian",
+      "popularityPercent": 8
+    },
+    {
+      "root": "c-sharp",
+      "mode": "locrian",
+      "popularityPercent": 8
+    },
+    {
+      "root": "g",
+      "mode": "locrian",
+      "popularityPercent": 6
+    },
+    {
+      "root": "a-sharp",
+      "mode": "locrian",
+      "popularityPercent": 4
+    },
+    {
+      "root": "g-sharp",
+      "mode": "locrian",
+      "popularityPercent": 1
+    },
+    {
+      "root": "e-sharp",
+      "mode": "locrian",
+      "popularityPercent": 1
+    }
+  ],
+  "progressions": [
+    {
+      "mode": "major",
+      "id": "yvmrAaQVoOW",
+      "song": "KCP Major 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "zngRwrWVxJj",
+      "song": "KCP Major 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "JNgq-zQJgrz",
+      "song": "KCP Major 3",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "KexEj_Xvo_B",
+      "song": "KCP Major 4",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "lamknPYAoDM",
+      "song": "KCP Major 5",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 1,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "bWgMP_WjmlX",
+      "song": "KCP Major 6",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 1,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "Wegl_rKYmrY",
+      "song": "KCP Major 7",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 1,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "major",
+      "id": "nJmBj_YEmAV",
+      "song": "KCP Major 8",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 1,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 7,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "minor",
+      "id": "dPoDj_edgnM",
+      "song": "KCP Minor 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "major",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "minor",
+      "id": "AaoGB_qAxeQ",
+      "song": "KCP Minor 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "major",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "minor",
+      "id": "Abm_nbqwoak",
+      "song": "KCP Minor 3",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "minor",
+      "id": "nZgWJz__mry",
+      "song": "KCP Minor 4",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "minor",
+      "id": "AQodn-vKgDl",
+      "song": "KCP Minor 5",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 1,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "minor",
+      "id": "ANmpnwQdxyM",
+      "song": "KCP Minor 6",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 7,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "major",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "dorian",
+      "id": "eWxLy_qkoaK",
+      "song": "KCP Dorian 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "dorian",
+      "id": "_NgbnNQOgQA",
+      "song": "KCP Dorian 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "dorian",
+      "id": "nvgy-KYOgkA",
+      "song": "KCP Dorian 3",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "dorian",
+      "id": "yvgPqyGExYq",
+      "song": "KCP Dorian 4",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "dorian",
+      "id": "yvmrAazVoOW",
+      "song": "KCP Dorian 5",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "minor",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "dorian",
+      "id": "zngRwrnVxJj",
+      "song": "KCP Dorian 6",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 6,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "minor",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "mixolydian",
+      "id": "nLgadjadmYp",
+      "song": "KCP Mixolydian 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "mixolydian",
+      "id": "lamknPWAoDM",
+      "song": "KCP Mixolydian 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "mixolydian",
+      "id": "JkmZYZPkoqn",
+      "song": "KCP Mixolydian 3",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "mixolydian",
+      "id": "VMgJj_ZVgqK",
+      "song": "KCP Mixolydian 4",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "lydian",
+      "id": "LAgQEPkegyO",
+      "song": "KCP Lydian 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "lydian",
+      "id": "RPxenXyLob_",
+      "song": "KCP Lydian 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "lydian",
+      "id": "veoYekyzodn",
+      "song": "KCP Lydian 3",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "lydian",
+      "id": "ZwxKv_JDged",
+      "song": "KCP Lydian 4",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "lydian",
+      "id": "ZOxVZwOAxdq",
+      "song": "KCP Lydian 5",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 1,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 5,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "phrygian",
+      "id": "JNgq-zBJgrz",
+      "song": "KCP Phrygian 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "phrygian",
+      "id": "KexEj_Nvo_B",
+      "song": "KCP Phrygian 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "phrygian",
+      "id": "d_gw-eQAoGV",
+      "song": "KCP Phrygian 3",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 7,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "phrygian",
+      "id": "kygz-VeQmKB",
+      "song": "KCP Phrygian 4",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "locrian",
+      "id": "Rzoj_yENmDe",
+      "song": "KCP Locrian 1",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    },
+    {
+      "mode": "locrian",
+      "id": "YAg-PpEJmle",
+      "song": "KCP Locrian 2",
+      "wikiorder": 1,
+      "chords": [
+        {
+          "root": 1,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 2,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 3,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        },
+        {
+          "root": 4,
+          "dur": 4,
+          "type": 5,
+          "inv": 0,
+          "borrowed": "",
+          "applied": 0,
+          "rest": false
+        }
+      ]
+    }
+  ]
+}

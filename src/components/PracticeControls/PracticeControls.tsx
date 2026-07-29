@@ -2,10 +2,11 @@
 
 import type { ChangeEvent } from 'react'
 import {
-  CHORD_PROGRESSIONS,
+  KEY_POPULARITY,
   NOTES,
   SCALE_NAMES,
   getPositionCount,
+  getProgressionsForScale,
   type Note,
 } from '@/lib/music-theory'
 import type { PracticeMode, ScaleDirection } from '@/lib/practice-sequence'
@@ -36,10 +37,13 @@ export interface PracticeControlsProps {
   onScaleDirectionChange: (direction: ScaleDirection) => void
   onTriadStringSetChange: (index: number) => void
   onProgressionChange: (progression: string) => void
+  onKeySelect: (root: Note, scale: string) => void
   onBpmChange: (bpm: number) => void
   onMetronomeToggle: (on: boolean) => void
   onTogglePlay: () => void
 }
+
+const KEY_PICKER_MODES = ['major', 'minor', 'mixolydian', 'dorian', 'lydian', 'phrygian', 'locrian']
 
 export function PracticeControls({
   mode,
@@ -60,12 +64,22 @@ export function PracticeControls({
   onScaleDirectionChange,
   onTriadStringSetChange,
   onProgressionChange,
+  onKeySelect,
   onBpmChange,
   onMetronomeToggle,
   onTogglePlay,
 }: PracticeControlsProps) {
   const positionCount = getPositionCount(scale)
   const showPosition = mode === 'scale' || mode === 'chord'
+  const availableProgressions = getProgressionsForScale(scale)
+  const selectedKey =
+    KEY_POPULARITY.find((key) => key.root === rootNote && key.scale === scale) ?? null
+
+  const handleKeySelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    const [keyRoot, keyScale] = event.target.value.split('|')
+    if (!keyRoot || !keyScale) return
+    onKeySelect(keyRoot as Note, keyScale)
+  }
 
   const handleRootSelect = (event: ChangeEvent<HTMLSelectElement>) => {
     onRootChange(event.target.value as Note)
@@ -125,6 +139,31 @@ export function PracticeControls({
 
       {/* Material selectors */}
       <div className={styles.optionsRow}>
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label} htmlFor="practice-key">
+            Popular Key
+          </label>
+          <select
+            id="practice-key"
+            className={styles.select}
+            value={selectedKey ? `${selectedKey.root}|${selectedKey.scale}` : ''}
+            onChange={handleKeySelect}
+          >
+            <option value="" disabled>
+              Choose a key…
+            </option>
+            {KEY_PICKER_MODES.map((pickerMode) => (
+              <optgroup key={pickerMode} label={SCALE_NAMES[pickerMode] || pickerMode}>
+                {KEY_POPULARITY.filter((key) => key.scale === pickerMode).map((key) => (
+                  <option key={`${key.root}|${key.scale}`} value={`${key.root}|${key.scale}`}>
+                    {key.name} ({key.popularity}%)
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </div>
+
         <div className={styles.fieldWrapper}>
           <label className={styles.label} htmlFor="practice-root">
             Root
@@ -232,7 +271,7 @@ export function PracticeControls({
               value={selectedProgression}
               onChange={handleProgressionSelect}
             >
-              {Object.entries(CHORD_PROGRESSIONS).map(([key, progression]) => (
+              {availableProgressions.map(([key, progression]) => (
                 <option key={key} value={key}>
                   {progression.name} — {progression.description}
                 </option>

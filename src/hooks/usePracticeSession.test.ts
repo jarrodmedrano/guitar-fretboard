@@ -168,6 +168,48 @@ describe('usePracticeSession', () => {
     expect(result.current.steps.every((step) => step.strum)).toBe(true)
   })
 
+  it('setKey() sets root and scale together and stops playback', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setKey('C', 'major')
+    })
+
+    expect(result.current.rootNote).toBe('C')
+    expect(result.current.scale).toBe('major')
+    expect(result.current.isPlaying).toBe(false)
+  })
+
+  it('resets an incompatible progression when the scale mode changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    // minorPentatonic default → minor-mode progression is valid
+    act(() => {
+      result.current.setSelectedProgression('minor-1')
+    })
+    expect(result.current.selectedProgression).toBe('minor-1')
+
+    act(() => {
+      result.current.setScale('major')
+    })
+    expect(result.current.selectedProgression).toBe('1-4-5')
+  })
+
+  it('keeps a compatible progression when the scale changes within a mode', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setSelectedProgression('minor-2')
+    })
+    act(() => {
+      result.current.setScale('blues')
+    })
+    expect(result.current.selectedProgression).toBe('minor-2')
+  })
+
   it('closes the AudioContext on unmount', () => {
     const { result, unmount } = renderHook(() => usePracticeSession())
 

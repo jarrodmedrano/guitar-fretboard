@@ -1,6 +1,6 @@
 'use client'
 
-import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, CHORD_PROGRESSIONS } from '@/lib/music-theory'
+import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, getProgressionsForScale, KEY_POPULARITY } from '@/lib/music-theory'
 import { styles } from './ScaleSelector.styles'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -60,8 +60,49 @@ export default function ScaleSelector({
   // Get tunings filtered by current string count
   const availableTunings = getTuningsByStringCount(stringCount)
 
+  // Progressions applicable to the current scale's mode
+  const availableProgressions = getProgressionsForScale(scale)
+
+  // Match the current root + scale against the popular-keys list
+  const selectedKey =
+    KEY_POPULARITY.find((key) => key.root === rootNote && key.scale === scale) ?? null
+
+  const handleKeySelect = (value: string) => {
+    const [keyRoot, keyScale] = value.split('|')
+    if (!keyRoot || !keyScale) return
+    onRootChange(keyRoot as Note)
+    onScaleChange(keyScale)
+  }
+
   return (
     <div className={styles.container}>
+      {/* Popular Key Selector (Hooktheory key popularity) */}
+      <div className={styles.fieldWrapper}>
+        <label htmlFor="key-select" className={styles.label}>Key</label>
+        <select
+          id="key-select"
+          value={selectedKey ? `${selectedKey.root}|${selectedKey.scale}` : ''}
+          onChange={(e) => handleKeySelect(e.target.value)}
+          className={styles.select}
+          aria-label="Select a popular key"
+        >
+          <option value="" disabled>
+            Popular keys…
+          </option>
+          {['major', 'minor', 'mixolydian', 'dorian', 'lydian', 'phrygian', 'locrian'].map(
+            (mode) => (
+              <optgroup key={mode} label={SCALE_NAMES[mode] || mode}>
+                {KEY_POPULARITY.filter((key) => key.scale === mode).map((key) => (
+                  <option key={`${key.root}|${key.scale}`} value={`${key.root}|${key.scale}`}>
+                    {key.name} ({key.popularity}%)
+                  </option>
+                ))}
+              </optgroup>
+            )
+          )}
+        </select>
+      </div>
+
       {/* String Count / Instrument Selector */}
       <div className={styles.fieldWrapper}>
         <label className={styles.label}>Instrument</label>
@@ -199,7 +240,7 @@ export default function ScaleSelector({
             className={styles.selectEmerald}
             aria-label="Select chord progression"
           >
-            {Object.entries(CHORD_PROGRESSIONS).map(([key, prog]) => (
+            {availableProgressions.map(([key, prog]) => (
               <option key={key} value={key}>
                 {prog.name}
               </option>

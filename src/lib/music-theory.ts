@@ -698,6 +698,13 @@ export interface ChordProgression {
   degreesMajor: number[]  // Scale degrees for major keys (1-based)
   degreesMinor: number[]  // Scale degrees for minor keys (1-based)
   description: string
+  // Mode-specific progressions (from Hooktheory's key cheat sheets):
+  // `mode` is the SCALES key whose formula defines the chord roots, and
+  // `qualities` gives each chord's quality explicitly (covers borrowed chords
+  // like the major V in minor keys). Progressions without these fields use the
+  // generic major/minor degree tables.
+  mode?: string
+  qualities?: ('major' | 'minor')[]
 }
 
 export const CHORD_PROGRESSIONS: Record<string, ChordProgression> = {
@@ -736,7 +743,410 @@ export const CHORD_PROGRESSIONS: Record<string, ChordProgression> = {
     degreesMajor: [1, 4, 1, 5],
     degreesMinor: [1, 4, 1, 5],
     description: 'Simple blues progression'
+  },
+
+  // Popular chord progressions per key, from Hooktheory's key cheat sheets
+  // (hooktheory.com/cheat-sheet). Raw data: docs/data/hooktheory-cheat-sheet.json.
+  // Superscript ⁶ marks a first-inversion chord and ⁷ a seventh chord in the
+  // source; both are approximated as root-position triads here.
+  'major-1': {
+    name: 'I–V–vi–IV',
+    degreesMajor: [1, 5, 6, 4],
+    degreesMinor: [1, 5, 6, 4],
+    description: 'The four-chord pop progression',
+    mode: 'major',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'major-2': {
+    name: 'I–vi–IV–V',
+    degreesMajor: [1, 6, 4, 5],
+    degreesMinor: [1, 6, 4, 5],
+    description: '50s doo-wop progression',
+    mode: 'major',
+    qualities: ['major', 'minor', 'major', 'major'],
+  },
+  'major-3': {
+    name: 'I–IV–ii–V',
+    degreesMajor: [1, 4, 2, 5],
+    degreesMinor: [1, 4, 2, 5],
+    description: 'Turnaround with a pre-dominant ii',
+    mode: 'major',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'major-4': {
+    name: 'I–iii–vi–V',
+    degreesMajor: [1, 3, 6, 5],
+    degreesMinor: [1, 3, 6, 5],
+    description: 'Minor-color pop progression',
+    mode: 'major',
+    qualities: ['major', 'minor', 'minor', 'major'],
+  },
+  'major-5': {
+    name: 'I–V⁶–IV–V',
+    degreesMajor: [1, 5, 4, 5],
+    degreesMinor: [1, 5, 4, 5],
+    description: 'Walking bass into IV–V',
+    mode: 'major',
+    qualities: ['major', 'major', 'major', 'major'],
+  },
+  'major-6': {
+    name: 'I–V⁶–vi–IV',
+    degreesMajor: [1, 5, 6, 4],
+    degreesMinor: [1, 5, 6, 4],
+    description: 'Pop progression with walking bass',
+    mode: 'major',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'major-7': {
+    name: 'I–I⁶–IV–V',
+    degreesMajor: [1, 1, 4, 5],
+    degreesMinor: [1, 1, 4, 5],
+    description: 'Tonic walk-up into IV–V',
+    mode: 'major',
+    qualities: ['major', 'major', 'major', 'major'],
+  },
+  'major-8': {
+    name: 'I–I⁶–vi⁷–V',
+    degreesMajor: [1, 1, 6, 5],
+    degreesMinor: [1, 1, 6, 5],
+    description: 'Tonic walk-up with vi seventh',
+    mode: 'major',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'minor-1': {
+    name: 'i–iv–V–i',
+    degreesMajor: [1, 4, 5, 1],
+    degreesMinor: [1, 4, 5, 1],
+    description: 'Minor cadence with major V',
+    mode: 'minor',
+    qualities: ['minor', 'minor', 'major', 'minor'],
+  },
+  'minor-2': {
+    name: 'i–VII–VI–V',
+    degreesMajor: [1, 7, 6, 5],
+    degreesMinor: [1, 7, 6, 5],
+    description: 'Andalusian-style descent to major V',
+    mode: 'minor',
+    qualities: ['minor', 'major', 'major', 'major'],
+  },
+  'minor-3': {
+    name: 'i–v–VI–VII',
+    degreesMajor: [1, 5, 6, 7],
+    degreesMinor: [1, 5, 6, 7],
+    description: 'Natural minor rock progression',
+    mode: 'minor',
+    qualities: ['minor', 'minor', 'major', 'major'],
+  },
+  'minor-4': {
+    name: 'i–III–VII–iv',
+    degreesMajor: [1, 3, 7, 4],
+    degreesMinor: [1, 3, 7, 4],
+    description: 'Epic minor progression',
+    mode: 'minor',
+    qualities: ['minor', 'major', 'major', 'minor'],
+  },
+  'minor-5': {
+    name: 'i–v⁶–VI–VII',
+    degreesMajor: [1, 5, 6, 7],
+    degreesMinor: [1, 5, 6, 7],
+    description: 'Minor walk-down variant',
+    mode: 'minor',
+    qualities: ['minor', 'minor', 'major', 'major'],
+  },
+  'minor-6': {
+    name: 'i–iv–ii⁷–V',
+    degreesMajor: [1, 4, 2, 5],
+    degreesMinor: [1, 4, 2, 5],
+    description: 'Minor ii–V turnaround with major V',
+    mode: 'minor',
+    qualities: ['minor', 'minor', 'minor', 'major'],
+  },
+  'dorian-1': {
+    name: 'i–VII–III–IV',
+    degreesMajor: [1, 7, 3, 4],
+    degreesMinor: [1, 7, 3, 4],
+    description: 'Modal rock loop',
+    mode: 'dorian',
+    qualities: ['minor', 'major', 'major', 'major'],
+  },
+  'dorian-2': {
+    name: 'i–III–IV–IV',
+    degreesMajor: [1, 3, 4, 4],
+    degreesMinor: [1, 3, 4, 4],
+    description: 'Dorian vamp on the major IV',
+    mode: 'dorian',
+    qualities: ['minor', 'major', 'major', 'major'],
+  },
+  'dorian-3': {
+    name: 'i–ii–III–ii',
+    degreesMajor: [1, 2, 3, 2],
+    degreesMinor: [1, 2, 3, 2],
+    description: 'Stepwise dorian motion',
+    mode: 'dorian',
+    qualities: ['minor', 'minor', 'major', 'minor'],
+  },
+  'dorian-4': {
+    name: 'i–v–IV–i',
+    degreesMajor: [1, 5, 4, 1],
+    degreesMinor: [1, 5, 4, 1],
+    description: 'Dorian minor loop',
+    mode: 'dorian',
+    qualities: ['minor', 'minor', 'major', 'minor'],
+  },
+  'dorian-5': {
+    name: 'i–VII–vi–IV',
+    degreesMajor: [1, 7, 6, 4],
+    degreesMinor: [1, 7, 6, 4],
+    description: 'Dorian descent with borrowed vi',
+    mode: 'dorian',
+    qualities: ['minor', 'major', 'minor', 'major'],
+  },
+  'dorian-6': {
+    name: 'i–III–IV–vi',
+    degreesMajor: [1, 3, 4, 6],
+    degreesMinor: [1, 3, 4, 6],
+    description: 'Dorian rise with borrowed vi',
+    mode: 'dorian',
+    qualities: ['minor', 'major', 'major', 'minor'],
+  },
+  'mixolydian-1': {
+    name: 'I–VII–IV–I',
+    degreesMajor: [1, 7, 4, 1],
+    degreesMinor: [1, 7, 4, 1],
+    description: 'Classic rock flat-seven loop',
+    mode: 'mixolydian',
+    qualities: ['major', 'major', 'major', 'major'],
+  },
+  'mixolydian-2': {
+    name: 'I–v–IV–I',
+    degreesMajor: [1, 5, 4, 1],
+    degreesMinor: [1, 5, 4, 1],
+    description: 'Mixolydian loop with minor v',
+    mode: 'mixolydian',
+    qualities: ['major', 'minor', 'major', 'major'],
+  },
+  'mixolydian-3': {
+    name: 'I–VII–ii–I',
+    degreesMajor: [1, 7, 2, 1],
+    degreesMinor: [1, 7, 2, 1],
+    description: 'Mixolydian turnaround through ii',
+    mode: 'mixolydian',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'mixolydian-4': {
+    name: 'I–ii–v–I',
+    degreesMajor: [1, 2, 5, 1],
+    degreesMinor: [1, 2, 5, 1],
+    description: 'Soft mixolydian cadence',
+    mode: 'mixolydian',
+    qualities: ['major', 'minor', 'minor', 'major'],
+  },
+  'lydian-1': {
+    name: 'I–I–II–V',
+    degreesMajor: [1, 1, 2, 5],
+    degreesMinor: [1, 1, 2, 5],
+    description: 'Lydian lift through the major II',
+    mode: 'lydian',
+    qualities: ['major', 'major', 'major', 'major'],
+  },
+  'lydian-2': {
+    name: 'I–II–iii–II',
+    degreesMajor: [1, 2, 3, 2],
+    degreesMinor: [1, 2, 3, 2],
+    description: 'Floating lydian motion',
+    mode: 'lydian',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'lydian-3': {
+    name: 'I–II–vii–iii',
+    degreesMajor: [1, 2, 7, 3],
+    degreesMinor: [1, 2, 7, 3],
+    description: 'Lydian colors beyond the II',
+    mode: 'lydian',
+    qualities: ['major', 'major', 'minor', 'minor'],
+  },
+  'lydian-4': {
+    name: 'I–V–iii–II',
+    degreesMajor: [1, 5, 3, 2],
+    degreesMinor: [1, 5, 3, 2],
+    description: 'Lydian descent to the major II',
+    mode: 'lydian',
+    qualities: ['major', 'major', 'minor', 'major'],
+  },
+  'lydian-5': {
+    name: 'I–iii–II⁶–V',
+    degreesMajor: [1, 3, 2, 5],
+    degreesMinor: [1, 3, 2, 5],
+    description: 'Lydian turnaround',
+    mode: 'lydian',
+    qualities: ['major', 'minor', 'major', 'major'],
+  },
+  'phrygian-1': {
+    name: 'i–II–i–vii',
+    degreesMajor: [1, 2, 1, 7],
+    degreesMinor: [1, 2, 1, 7],
+    description: 'Phrygian flat-two oscillation',
+    mode: 'phrygian',
+    qualities: ['minor', 'major', 'minor', 'minor'],
+  },
+  'phrygian-2': {
+    name: 'i–II–III–II',
+    degreesMajor: [1, 2, 3, 2],
+    degreesMinor: [1, 2, 3, 2],
+    description: 'Rising phrygian steps',
+    mode: 'phrygian',
+    qualities: ['minor', 'major', 'major', 'major'],
+  },
+  'phrygian-3': {
+    name: 'i–III–vii–II',
+    degreesMajor: [1, 3, 7, 2],
+    degreesMinor: [1, 3, 7, 2],
+    description: 'Phrygian loop through the flat two',
+    mode: 'phrygian',
+    qualities: ['minor', 'major', 'minor', 'major'],
+  },
+  'phrygian-4': {
+    name: 'i–iv–III–II',
+    degreesMajor: [1, 4, 3, 2],
+    degreesMinor: [1, 4, 3, 2],
+    description: 'Phrygian descent',
+    mode: 'phrygian',
+    qualities: ['minor', 'minor', 'major', 'major'],
+  },
+  'locrian-1': {
+    name: 'i–II–iii–II',
+    degreesMajor: [1, 2, 3, 2],
+    degreesMinor: [1, 2, 3, 2],
+    description: 'Locrian oscillation',
+    mode: 'locrian',
+    qualities: ['minor', 'major', 'minor', 'major'],
+  },
+  'locrian-2': {
+    name: 'i–II–iii–iv',
+    degreesMajor: [1, 2, 3, 4],
+    degreesMinor: [1, 2, 3, 4],
+    description: 'Rising locrian steps',
+    mode: 'locrian',
+    qualities: ['minor', 'major', 'minor', 'minor'],
+  },
+}
+
+// Song keys ranked by popularity, from Hooktheory's TheoryTab database
+// (hooktheory.com/cheat-sheet/key-popularity). Popularity is the percentage of
+// songs within each mode; keys are listed per mode in descending popularity.
+// Raw data: docs/data/hooktheory-cheat-sheet.json.
+export interface MusicalKey {
+  root: Note
+  scale: string // key into SCALES
+  name: string
+  popularity: number
+}
+
+function buildKeys(scale: string, scaleName: string, entries: [Note, number][]): MusicalKey[] {
+  return entries.map(([root, popularity]) => ({
+    root,
+    scale,
+    name: `${root} ${scaleName}`,
+    popularity,
+  }))
+}
+
+export const KEY_POPULARITY: MusicalKey[] = [
+  ...buildKeys('major', 'Major', [
+    ['C', 15], ['D', 12], ['G', 12], ['A', 10], ['E', 9], ['F', 8],
+    ['D#', 7], ['A#', 6], ['C#', 5], ['B', 5], ['F#', 5], ['G#', 5],
+  ]),
+  ...buildKeys('minor', 'Minor', [
+    ['A', 13], ['E', 12], ['C', 12], ['D', 11], ['B', 9], ['G', 8],
+    ['F#', 7], ['C#', 7], ['F', 7], ['D#', 6], ['A#', 6], ['G#', 5],
+  ]),
+  ...buildKeys('mixolydian', 'Mixolydian', [
+    ['A', 13], ['G', 13], ['E', 13], ['D', 13], ['C', 11], ['B', 7],
+    ['F', 6], ['A#', 6], ['G#', 5], ['D#', 5], ['C#', 4], ['F#', 4],
+  ]),
+  ...buildKeys('dorian', 'Dorian', [
+    ['D', 15], ['A', 13], ['E', 12], ['C', 10], ['G', 9], ['F', 8],
+    ['B', 8], ['F#', 6], ['D#', 6], ['C#', 5], ['G#', 5], ['A#', 4],
+  ]),
+  ...buildKeys('lydian', 'Lydian', [
+    ['C', 16], ['F', 15], ['A', 11], ['D', 10], ['G', 8], ['G#', 7],
+    ['E', 7], ['C#', 6], ['D#', 6], ['A#', 6], ['B', 4], ['F#', 4],
+  ]),
+  ...buildKeys('phrygian', 'Phrygian', [
+    ['E', 17], ['C', 12], ['D', 10], ['D#', 9], ['G', 9], ['F', 9],
+    ['A', 8], ['C#', 7], ['B', 6], ['F#', 6], ['A#', 5], ['G#', 4],
+  ]),
+  ...buildKeys('locrian', 'Locrian', [
+    ['B', 15], ['D', 14], ['D#', 12], ['C', 12], ['E', 9], ['A', 9],
+    ['F#', 8], ['C#', 8], ['G', 6], ['A#', 4], ['G#', 1], ['F', 1],
+  ]),
+]
+
+const PROGRESSION_MODES = new Set([
+  'major', 'minor', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'locrian',
+])
+
+// Legacy generic progressions hidden per mode because a Hooktheory
+// mode-specific entry covers the same degree sequence
+const DUPLICATE_LEGACY_BY_MODE: Record<string, string[]> = {
+  major: ['1-5-6-4', '1-6-4-5'],
+}
+
+// Map any scale to the mode whose progression set applies to it
+export function getProgressionModeForScale(scale: string): string {
+  if (PROGRESSION_MODES.has(scale)) return scale
+  return getChordQuality(scale) === 'minor' ? 'minor' : 'major'
+}
+
+// Progressions applicable to the given scale: the generic set plus the
+// Hooktheory progressions for the scale's mode
+export function getProgressionsForScale(scale: string): [string, ChordProgression][] {
+  const mode = getProgressionModeForScale(scale)
+  const hidden = new Set(DUPLICATE_LEGACY_BY_MODE[mode] ?? [])
+
+  return Object.entries(CHORD_PROGRESSIONS).filter(([key, progression]) =>
+    progression.mode ? progression.mode === mode : !hidden.has(key)
+  )
+}
+
+// Resolve the chord (degree, root note, quality) at a progression position.
+// Mode-tagged progressions derive roots from their mode's formula and use their
+// explicit quality list; generic progressions use the major/minor degree tables.
+export interface ProgressionChord {
+  degree: number
+  root: Note
+  quality: 'major' | 'minor'
+}
+
+export function getProgressionChordAt(
+  rootNote: Note,
+  scale: string,
+  position: number,
+  progressionKey: string
+): ProgressionChord | null {
+  const progression = CHORD_PROGRESSIONS[progressionKey]
+  if (!progression) return null
+
+  const scaleQuality = getChordQuality(scale)
+  const degrees = scaleQuality === 'minor' ? progression.degreesMinor : progression.degreesMajor
+  const chordIndex = position % degrees.length
+  const degree = degrees[chordIndex]
+
+  const rootScale = progression.mode ?? scale
+  const root = getChordRootForDegree(rootNote, rootScale, degree)
+
+  let quality: 'major' | 'minor'
+  if (progression.qualities) {
+    quality = progression.qualities[chordIndex]
+  } else if (scaleQuality === 'major') {
+    // Major scale: I, IV, V are major; ii, iii, vi, vii° are minor/diminished
+    quality = degree === 2 || degree === 3 || degree === 6 || degree === 7 ? 'minor' : 'major'
+  } else {
+    // Minor scale: i, iv, v are minor; III, VI, VII are major
+    quality = degree === 1 || degree === 4 || degree === 5 ? 'minor' : 'major'
   }
+
+  return { degree, root, quality }
 }
 
 // Get the chord root note for a given scale degree
@@ -767,35 +1177,11 @@ export function getProgressionChordVoicing(
   progressionKey: string,
   tuning: Note[] = STANDARD_TUNING
 ): ChordVoicing | null {
-  const progression = CHORD_PROGRESSIONS[progressionKey]
-  if (!progression) return null
+  const chord = getProgressionChordAt(rootNote, scale, position, progressionKey)
+  if (!chord) return null
 
-  const scaleQuality = getChordQuality(scale)
-  const degrees = scaleQuality === 'minor' ? progression.degreesMinor : progression.degreesMajor
-
-  // Loop the progression if position exceeds progression length
-  const chordDegree = degrees[position % degrees.length]
-
-  // Get the root note for this chord in the progression
-  const chordRoot = getChordRootForDegree(rootNote, scale, chordDegree)
-
-  // Determine if THIS SPECIFIC CHORD should be major or minor based on scale degree
-  // In major scales: I, IV, V are major; ii, iii, vi are minor
-  // In minor scales: i, iv, v are minor; III, VI, VII are major
-  const scaleQualityType = getChordQuality(scale)
-  let isMinorChord: boolean
-
-  if (scaleQualityType === 'major') {
-    // Major scale chord qualities
-    // I(1), IV(4), V(5) are major
-    // ii(2), iii(3), vi(6), vii°(7) are minor/diminished
-    isMinorChord = chordDegree === 2 || chordDegree === 3 || chordDegree === 6 || chordDegree === 7
-  } else {
-    // Minor scale chord qualities
-    // i(1), iv(4), v(5) are minor
-    // III(3), VI(6), VII(7) are major
-    isMinorChord = chordDegree === 1 || chordDegree === 4 || chordDegree === 5
-  }
+  const chordRoot = chord.root
+  const isMinorChord = chord.quality === 'minor'
 
   // Get position's fret range
   const positionData = SCALE_POSITIONS[scale]?.[position]
@@ -905,27 +1291,8 @@ export function getProgressionChordName(
   position: number,
   progressionKey: string
 ): string {
-  const progression = CHORD_PROGRESSIONS[progressionKey]
-  if (!progression) return ''
+  const chord = getProgressionChordAt(rootNote, scale, position, progressionKey)
+  if (!chord) return ''
 
-  const quality = getChordQuality(scale)
-  const degrees = quality === 'minor' ? progression.degreesMinor : progression.degreesMajor
-  const chordDegree = degrees[position % degrees.length]
-  const chordRoot = getChordRootForDegree(rootNote, scale, chordDegree)
-
-  // Determine if this scale degree should be major or minor
-  const scaleQualityType = getChordQuality(scale)
-  let isMinorChord: boolean
-
-  if (scaleQualityType === 'major') {
-    // Major scale: I, IV, V are major; ii, iii, vi are minor
-    isMinorChord = chordDegree === 2 || chordDegree === 3 || chordDegree === 6 || chordDegree === 7
-  } else {
-    // Minor scale: i, iv, v are minor; III, VI, VII are major
-    isMinorChord = chordDegree === 1 || chordDegree === 4 || chordDegree === 5
-  }
-
-  const suffix = isMinorChord ? 'm' : ''
-
-  return `${chordRoot}${suffix}`
+  return `${chord.root}${chord.quality === 'minor' ? 'm' : ''}`
 }

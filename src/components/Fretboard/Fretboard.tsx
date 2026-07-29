@@ -17,9 +17,7 @@ import {
   ChordVoicing,
   getProgressionChordVoicing,
   getAllProgressionChordVoicings,
-  getChordRootForDegree,
-  getChordQuality,
-  CHORD_PROGRESSIONS,
+  getProgressionChordAt,
 } from '@/lib/music-theory'
 
 // Import extracted components
@@ -87,12 +85,9 @@ export default function Fretboard({
   // In progression scale mode, use the chord's root; otherwise use the scale root
   let effectiveRootNote = rootNote
   if (showProgressionMode && selectedProgression && progressionViewMode === 'scale' && position !== null) {
-    const progression = CHORD_PROGRESSIONS[selectedProgression]
-    if (progression) {
-      const scaleQuality = getChordQuality(scale)
-      const degrees = scaleQuality === 'minor' ? progression.degreesMinor : progression.degreesMajor
-      const chordDegree = degrees[position % degrees.length]
-      effectiveRootNote = getChordRootForDegree(rootNote, scale, chordDegree)
+    const progressionChord = getProgressionChordAt(rootNote, scale, position, selectedProgression)
+    if (progressionChord) {
+      effectiveRootNote = progressionChord.root
     }
   }
 

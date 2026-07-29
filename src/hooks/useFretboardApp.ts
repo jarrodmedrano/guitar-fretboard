@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Note, NOTES, SCALE_NAMES, SCALES, getDefaultTuning } from '@/lib/music-theory'
+import { Note, NOTES, SCALE_NAMES, SCALES, getDefaultTuning, getProgressionsForScale } from '@/lib/music-theory'
 import { useAnnouncements } from './useAnnouncements'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -30,6 +30,12 @@ export function useFretboardApp() {
   const handleScaleChange = useCallback((newScale: string) => {
     setScale(newScale)
     setPosition(null)
+    // A mode-specific progression may not apply to the new scale's mode
+    setSelectedProgression((current) =>
+      current && getProgressionsForScale(newScale).some(([key]) => key === current)
+        ? current
+        : null
+    )
     announce(`Scale changed to ${SCALE_NAMES[newScale]}, position reset`)
   }, [announce])
 

@@ -28,6 +28,7 @@ export default function PracticePage() {
     setMode,
     setRootNote,
     setScale,
+    setKey,
     setPosition,
     setScaleDirection,
     setTriadStringSetIndex,
@@ -86,6 +87,7 @@ export default function PracticePage() {
             onScaleDirectionChange={setScaleDirection}
             onTriadStringSetChange={setTriadStringSetIndex}
             onProgressionChange={setSelectedProgression}
+            onKeySelect={setKey}
             onBpmChange={setBpm}
             onMetronomeToggle={setMetronomeOn}
             onTogglePlay={togglePlay}

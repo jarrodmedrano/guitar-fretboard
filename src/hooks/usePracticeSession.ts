@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { STANDARD_TUNING, type Note } from '@/lib/music-theory'
+import { STANDARD_TUNING, getProgressionsForScale, type Note } from '@/lib/music-theory'
 import {
   buildPracticeSequence,
   type PracticeMode,
@@ -45,6 +45,7 @@ export interface UsePracticeSessionReturn {
   setMode: (mode: PracticeMode) => void
   setRootNote: (note: Note) => void
   setScale: (scale: string) => void
+  setKey: (root: Note, scale: string) => void
   setPosition: (position: number) => void
   setScaleDirection: (direction: ScaleDirection) => void
   setTriadStringSetIndex: (index: number) => void
@@ -195,8 +196,28 @@ export function usePracticeSession(): UsePracticeSessionReturn {
 
   const setMode = useMemo(() => stopThen(setModeState), [stopThen])
   const setRootNote = useMemo(() => stopThen(setRootNoteState), [stopThen])
-  const setScale = useMemo(() => stopThen(setScaleState), [stopThen])
   const setPosition = useMemo(() => stopThen(setPositionState), [stopThen])
+
+  // Scale changes also validate the progression: a mode-specific progression
+  // may not apply to the new scale's mode
+  const setScale = useCallback(
+    (newScale: string) => {
+      stop()
+      setScaleState(newScale)
+      setSelectedProgressionState((current) =>
+        getProgressionsForScale(newScale).some(([key]) => key === current) ? current : '1-4-5'
+      )
+    },
+    [stop]
+  )
+
+  const setKey = useCallback(
+    (root: Note, newScale: string) => {
+      setRootNoteState(root)
+      setScale(newScale)
+    },
+    [setScale]
+  )
   const setScaleDirection = useMemo(() => stopThen(setScaleDirectionState), [stopThen])
   const setTriadStringSetIndex = useMemo(() => stopThen(setTriadStringSetIndexState), [stopThen])
   const setSelectedProgression = useMemo(() => stopThen(setSelectedProgressionState), [stopThen])
@@ -233,6 +254,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     setMode,
     setRootNote,
     setScale,
+    setKey,
     setPosition,
     setScaleDirection,
     setTriadStringSetIndex,
