@@ -116,11 +116,21 @@ describe('buildPracticeSequence — progression mode', () => {
       scale: 'major',
     })
     expect(steps).toHaveLength(3)
-    expect(steps.map((step) => step.label)).toEqual(['A', 'D', 'E'])
+    expect(steps.map((step) => step.label)).toEqual(['I — A', 'IV — D', 'V — E'])
     steps.forEach((step) => {
       expect(step.strum).toBe(true)
       expect(step.durationBeats).toBe(4)
       expect(step.notes.length).toBeGreaterThanOrEqual(3)
     })
+  })
+
+  it('uses lowercase numerals for minor chords and shows borrowed major V', () => {
+    const steps = buildPracticeSequence({
+      ...baseOpts,
+      mode: 'progression',
+      scale: 'minor',
+      progression: 'minor-1', // i–iv–V–i with borrowed major V
+    })
+    expect(steps.map((step) => step.label)).toEqual(['i — Am', 'iv — Dm', 'V — E', 'i — Am'])
   })
 })

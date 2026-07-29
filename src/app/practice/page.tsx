@@ -19,6 +19,8 @@ export default function PracticePage() {
     metronomeOn,
     isPlaying,
     tuning,
+    steps,
+    currentStep,
     activeNotes,
     currentLabel,
     triadStringSets,
@@ -112,6 +114,24 @@ export default function PracticePage() {
               </span>
             )}
           </div>
+
+          {/* Progression map: every chord in the loop, highlighting the one sounding now */}
+          {(mode === 'progression' || mode === 'triad') && steps.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4" aria-label="Progression chords">
+              {steps.map((step, index) => (
+                <span
+                  key={`${step.label}-${index}`}
+                  className={
+                    currentStep === index
+                      ? 'px-3 py-1.5 rounded-md text-sm font-semibold bg-amber-500 text-white shadow-lg scale-105 transition-all'
+                      : 'px-3 py-1.5 rounded-md text-sm font-semibold bg-zinc-800 text-zinc-400 transition-all'
+                  }
+                >
+                  {step.label}
+                </span>
+              ))}
+            </div>
+          )}
           <Fretboard
             rootNote={rootNote}
             scale={scale}

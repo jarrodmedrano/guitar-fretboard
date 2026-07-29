@@ -7,7 +7,7 @@ import {
   getChordQuality,
   getChordVoicing,
   getNoteAtFret,
-  getProgressionChordName,
+  getProgressionChordAt,
   getProgressionChordVoicing,
   getRootFret,
   isNoteInScale,
@@ -48,6 +48,14 @@ const INVERSION_LABELS: Record<Inversion, string> = {
   0: 'Root position',
   1: '1st inversion',
   2: '2nd inversion',
+}
+
+const ROMAN_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']
+
+// Roman numeral for a progression chord: uppercase for major, lowercase for minor
+export function getRomanNumeral(degree: number, quality: 'major' | 'minor'): string {
+  const numeral = ROMAN_NUMERALS[(degree - 1) % ROMAN_NUMERALS.length] ?? String(degree)
+  return quality === 'minor' ? numeral.toLowerCase() : numeral
 }
 
 function getPositionWindow(
@@ -157,15 +165,17 @@ function buildProgressionSteps(opts: PracticeSequenceOptions): PracticeStep[] {
 
   return degrees.reduce<PracticeStep[]>((steps, _degree, index) => {
     const voicing = getProgressionChordVoicing(rootNote, scale, index, progression, tuning)
-    if (!voicing) return steps
+    const chord = getProgressionChordAt(rootNote, scale, index, progression)
+    if (!voicing || !chord) return steps
 
+    const chordName = `${chord.root}${chord.quality === 'minor' ? 'm' : ''}`
     return [
       ...steps,
       {
         notes: voicingToNotes(voicing),
         durationBeats: 4,
         strum: true,
-        label: getProgressionChordName(rootNote, scale, index, progression),
+        label: `${getRomanNumeral(chord.degree, chord.quality)} — ${chordName}`,
       },
     ]
   }, [])
