@@ -39,6 +39,13 @@ export const styles = {
       isOn ? 'bg-cyan-500 text-white shadow-lg' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
     ),
 
+  arpeggioButton: (isOn: boolean, isDisabled: boolean) =>
+    cn(
+      'px-4 py-3 md:py-2 rounded-md text-sm font-medium transition-all',
+      isOn ? 'bg-purple-500 text-white shadow-lg' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700',
+      isDisabled && 'opacity-50 cursor-not-allowed hover:bg-zinc-800'
+    ),
+
   playButton: (isPlaying: boolean) =>
     cn(
       'px-8 py-3 rounded-lg text-base font-bold transition-all shadow-lg',

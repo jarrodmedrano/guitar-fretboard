@@ -154,6 +154,39 @@ describe('LookaheadScheduler', () => {
     expect(vi.mocked(callbacks.onScheduleStep).mock.calls.length).toBe(callCount)
   })
 
+  it('flushes queued custom UI events at their audio time, after step changes', () => {
+    const scheduler = createScheduler(clock)
+    const callbacks = createCallbacks()
+    const order: string[] = []
+    vi.mocked(callbacks.onStepChange).mockImplementation((i) => order.push(`step:${i}`))
+    scheduler.start(oneBeatSteps, defaultOptions, callbacks)
+
+    scheduler.enqueueUiEvent(START_DELAY_SEC, () => order.push('note:0'))
+    scheduler.enqueueUiEvent(START_DELAY_SEC + 0.5, () => order.push('note:1'))
+
+    clock.currentTime = START_DELAY_SEC + 0.01
+    vi.advanceTimersByTime(25)
+    expect(order).toEqual(['step:0', 'note:0'])
+
+    clock.currentTime = START_DELAY_SEC + 0.51
+    vi.advanceTimersByTime(25)
+    expect(order).toEqual(['step:0', 'note:0', 'note:1'])
+    scheduler.stop()
+  })
+
+  it('drops queued custom UI events on stop()', () => {
+    const scheduler = createScheduler(clock)
+    const callbacks = createCallbacks()
+    const emit = vi.fn()
+    scheduler.start(oneBeatSteps, defaultOptions, callbacks)
+    scheduler.enqueueUiEvent(START_DELAY_SEC + 0.5, emit)
+    scheduler.stop()
+
+    clock.currentTime = 2
+    vi.advanceTimersByTime(100)
+    expect(emit).not.toHaveBeenCalled()
+  })
+
   it('does nothing when started with no steps', () => {
     const scheduler = createScheduler(clock)
     const callbacks = createCallbacks()

@@ -17,6 +17,7 @@ export default function PracticePage() {
     selectedProgression,
     bpm,
     metronomeOn,
+    arpeggioOn,
     isPlaying,
     tuning,
     steps,
@@ -27,6 +28,7 @@ export default function PracticePage() {
     togglePlay,
     setBpm,
     setMetronomeOn,
+    setArpeggioOn,
     setMode,
     setRootNote,
     setScale,
@@ -81,6 +83,7 @@ export default function PracticePage() {
             selectedProgression={selectedProgression}
             bpm={bpm}
             metronomeOn={metronomeOn}
+            arpeggioOn={arpeggioOn}
             isPlaying={isPlaying}
             onModeChange={setMode}
             onRootChange={setRootNote}
@@ -92,6 +95,7 @@ export default function PracticePage() {
             onKeySelect={setKey}
             onBpmChange={setBpm}
             onMetronomeToggle={setMetronomeOn}
+            onArpeggioToggle={setArpeggioOn}
             onTogglePlay={togglePlay}
           />
         </section>

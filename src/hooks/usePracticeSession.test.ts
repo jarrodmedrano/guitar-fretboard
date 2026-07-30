@@ -168,6 +168,115 @@ describe('usePracticeSession', () => {
     expect(result.current.steps.every((step) => step.strum)).toBe(true)
   })
 
+  it('arpeggio spreads chord notes evenly across the bar', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('triad')
+    })
+    act(() => {
+      result.current.setArpeggioOn(true)
+    })
+    act(() => {
+      result.current.play()
+    })
+
+    // 80 BPM → 0.75s per beat; a 4-beat triad bar is 3s; 3 notes → 1s apart
+    const pluckStarts = fakeCtx.oscillators
+      .filter((osc) => osc.type === 'triangle')
+      .map((osc) => osc.start.mock.calls[0][0] as number)
+    expect(pluckStarts).toHaveLength(3)
+    expect(pluckStarts[1] - pluckStarts[0]).toBeCloseTo(1, 5)
+    expect(pluckStarts[2] - pluckStarts[1]).toBeCloseTo(1, 5)
+  })
+
+  it('strums with a quick stagger when arpeggio is off', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('triad')
+    })
+    act(() => {
+      result.current.play()
+    })
+
+    const pluckStarts = fakeCtx.oscillators
+      .filter((osc) => osc.type === 'triangle')
+      .map((osc) => osc.start.mock.calls[0][0] as number)
+    expect(pluckStarts).toHaveLength(3)
+    expect(pluckStarts[1] - pluckStarts[0]).toBeCloseTo(0.035, 5)
+  })
+
+  it('highlights only the sounding note while arpeggiating', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('triad')
+    })
+    act(() => {
+      result.current.setArpeggioOn(true)
+    })
+    act(() => {
+      result.current.play()
+    })
+
+    // First arpeggio note starts at the scheduler start delay (0.05s)
+    act(() => {
+      fakeCtx.currentTime = 0.06
+      vi.advanceTimersByTime(25)
+    })
+    const firstStep = result.current.steps[0]
+    expect(result.current.activeNotes.size).toBe(1)
+    expect(
+      result.current.activeNotes.has(
+        `${firstStep.notes[0].stringIndex}-${firstStep.notes[0].fret}`
+      )
+    ).toBe(true)
+
+    // Second note of the triad sounds 1s later at 80 BPM (3s bar / 3 notes)
+    act(() => {
+      fakeCtx.currentTime = 1.06
+      vi.advanceTimersByTime(25)
+    })
+    expect(result.current.activeNotes.size).toBe(1)
+    expect(
+      result.current.activeNotes.has(
+        `${firstStep.notes[1].stringIndex}-${firstStep.notes[1].fret}`
+      )
+    ).toBe(true)
+  })
+
+  it('still highlights the whole chord when arpeggio is off', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('triad')
+    })
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      fakeCtx.currentTime = 0.06
+      vi.advanceTimersByTime(25)
+    })
+
+    expect(result.current.activeNotes.size).toBe(3)
+  })
+
+  it('toggling arpeggio does not stop playback', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setArpeggioOn(true)
+    })
+
+    expect(result.current.isPlaying).toBe(true)
+    expect(result.current.arpeggioOn).toBe(true)
+  })
+
   it('setKey() sets root and scale together and stops playback', () => {
     const { result } = renderHook(() => usePracticeSession())
 

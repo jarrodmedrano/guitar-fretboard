@@ -29,6 +29,7 @@ export interface PracticeControlsProps {
   selectedProgression: string
   bpm: number
   metronomeOn: boolean
+  arpeggioOn: boolean
   isPlaying: boolean
   onModeChange: (mode: PracticeMode) => void
   onRootChange: (note: Note) => void
@@ -40,6 +41,7 @@ export interface PracticeControlsProps {
   onKeySelect: (root: Note, scale: string) => void
   onBpmChange: (bpm: number) => void
   onMetronomeToggle: (on: boolean) => void
+  onArpeggioToggle: (on: boolean) => void
   onTogglePlay: () => void
 }
 
@@ -56,6 +58,7 @@ export function PracticeControls({
   selectedProgression,
   bpm,
   metronomeOn,
+  arpeggioOn,
   isPlaying,
   onModeChange,
   onRootChange,
@@ -67,6 +70,7 @@ export function PracticeControls({
   onKeySelect,
   onBpmChange,
   onMetronomeToggle,
+  onArpeggioToggle,
   onTogglePlay,
 }: PracticeControlsProps) {
   const positionCount = getPositionCount(scale)
@@ -115,6 +119,14 @@ export function PracticeControls({
 
   const handleMetronomeClick = () => {
     onMetronomeToggle(!metronomeOn)
+  }
+
+  // Arpeggio applies to strummed material; scale runs are already note-by-note
+  const isArpeggioAvailable = mode !== 'scale'
+
+  const handleArpeggioClick = () => {
+    if (!isArpeggioAvailable) return
+    onArpeggioToggle(!arpeggioOn)
   }
 
   return (
@@ -327,6 +339,19 @@ export function PracticeControls({
             aria-pressed={metronomeOn}
           >
             🎵 Metronome {metronomeOn ? 'On' : 'Off'}
+          </button>
+          <button
+            className={styles.arpeggioButton(arpeggioOn && isArpeggioAvailable, !isArpeggioAvailable)}
+            onClick={handleArpeggioClick}
+            disabled={!isArpeggioAvailable}
+            aria-pressed={arpeggioOn && isArpeggioAvailable}
+            title={
+              isArpeggioAvailable
+                ? 'Play chords one note at a time'
+                : 'Arpeggio applies to chords, triads, and progressions'
+            }
+          >
+            🎶 Arpeggio {arpeggioOn && isArpeggioAvailable ? 'On' : 'Off'}
           </button>
           <button className={styles.playButton(isPlaying)} onClick={onTogglePlay}>
             {isPlaying ? '■ Stop' : '▶ Play'}

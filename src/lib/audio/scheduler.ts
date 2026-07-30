@@ -51,6 +51,7 @@ export class LookaheadScheduler {
   private beatInBar = 0
   private stepsExhausted = false
   private pendingUiEvents: { stepIndex: number; audioTime: number }[] = []
+  private pendingCustomEvents: { audioTime: number; emit: () => void }[] = []
 
   constructor(config: SchedulerConfig) {
     this.clock = config.clock
@@ -77,6 +78,7 @@ export class LookaheadScheduler {
     this.beatInBar = 0
     this.stepsExhausted = false
     this.pendingUiEvents = []
+    this.pendingCustomEvents = []
 
     const startTime = this.clock.currentTime + START_DELAY_SEC
     this.nextStepTime = startTime
@@ -93,8 +95,15 @@ export class LookaheadScheduler {
       this.callbacks?.onStepChange(-1)
     }
     this.pendingUiEvents = []
+    this.pendingCustomEvents = []
     this.options = null
     this.callbacks = null
+  }
+
+  // Queue an arbitrary UI callback to fire when the audio clock reaches
+  // audioTime (used for sub-step sync like per-note arpeggio highlighting)
+  enqueueUiEvent(audioTime: number, emit: () => void): void {
+    this.pendingCustomEvents = [...this.pendingCustomEvents, { audioTime, emit }]
   }
 
   private tick(): void {
@@ -156,13 +165,24 @@ export class LookaheadScheduler {
 
   private flushUiEvents(): void {
     if (!this.callbacks) return
+    const now = this.clock.currentTime
 
-    const due = this.pendingUiEvents.filter((event) => event.audioTime <= this.clock.currentTime)
-    if (due.length === 0) return
+    const due = this.pendingUiEvents.filter((event) => event.audioTime <= now)
+    if (due.length > 0) {
+      this.pendingUiEvents = this.pendingUiEvents.filter((event) => event.audioTime > now)
+      this.callbacks.onStepChange(due[due.length - 1].stepIndex)
+    }
 
-    this.pendingUiEvents = this.pendingUiEvents.filter(
-      (event) => event.audioTime > this.clock.currentTime
-    )
-    this.callbacks.onStepChange(due[due.length - 1].stepIndex)
+    // Custom events flush after step changes so a step's reset (e.g. clearing a
+    // note highlight) never clobbers a same-tick note event
+    const dueCustom = this.pendingCustomEvents
+      .filter((event) => event.audioTime <= now)
+      .sort((a, b) => a.audioTime - b.audioTime)
+    if (dueCustom.length > 0) {
+      this.pendingCustomEvents = this.pendingCustomEvents.filter(
+        (event) => event.audioTime > now
+      )
+      dueCustom.forEach((event) => event.emit())
+    }
   }
 }

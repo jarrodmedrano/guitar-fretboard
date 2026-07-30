@@ -30,6 +30,7 @@ export interface UsePracticeSessionReturn {
   selectedProgression: string
   bpm: number
   metronomeOn: boolean
+  arpeggioOn: boolean
   isPlaying: boolean
   currentStep: number | null
   tuning: Note[]
@@ -42,6 +43,7 @@ export interface UsePracticeSessionReturn {
   togglePlay: () => void
   setBpm: (bpm: number) => void
   setMetronomeOn: (on: boolean) => void
+  setArpeggioOn: (on: boolean) => void
   setMode: (mode: PracticeMode) => void
   setRootNote: (note: Note) => void
   setScale: (scale: string) => void
@@ -62,13 +64,17 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const [selectedProgression, setSelectedProgressionState] = useState('1-4-5')
   const [bpm, setBpmState] = useState(DEFAULT_BPM)
   const [metronomeOn, setMetronomeOnState] = useState(true)
+  const [arpeggioOn, setArpeggioOnState] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentStep, setCurrentStep] = useState<number | null>(null)
+  // Which note of an arpeggiated step is sounding; null = whole step highlights
+  const [currentNoteIndex, setCurrentNoteIndex] = useState<number | null>(null)
 
   const audioCtxRef = useRef<AudioContext | null>(null)
   const schedulerRef = useRef<LookaheadScheduler | null>(null)
   const bpmRef = useRef(DEFAULT_BPM)
   const metronomeRef = useRef(true)
+  const arpeggioRef = useRef(false)
 
   const tuning = STANDARD_TUNING
   const triadStringSets = useMemo(() => getTriadStringSets(tuning.length), [tuning])
@@ -102,10 +108,15 @@ export function usePracticeSession(): UsePracticeSessionReturn {
 
   const activeNotes = useMemo(() => {
     if (currentStep === null || !steps[currentStep]) return new Set<string>()
-    return new Set(
-      steps[currentStep].notes.map(({ stringIndex, fret }) => `${stringIndex}-${fret}`)
-    )
-  }, [currentStep, steps])
+    const stepNotes = steps[currentStep].notes
+
+    if (currentNoteIndex !== null && stepNotes[currentNoteIndex]) {
+      const { stringIndex, fret } = stepNotes[currentNoteIndex]
+      return new Set([`${stringIndex}-${fret}`])
+    }
+
+    return new Set(stepNotes.map(({ stringIndex, fret }) => `${stringIndex}-${fret}`))
+  }, [currentStep, currentNoteIndex, steps])
 
   const currentLabel =
     currentStep !== null ? (steps[currentStep]?.label ?? null) : null
@@ -115,6 +126,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     schedulerRef.current = null
     setIsPlaying(false)
     setCurrentStep(null)
+    setCurrentNoteIndex(null)
   }, [])
 
   const play = useCallback(() => {
@@ -143,14 +155,21 @@ export function usePracticeSession(): UsePracticeSessionReturn {
       {
         onScheduleStep: (stepIndex, audioTime, secondsPerBeat) => {
           const step = steps[stepIndex]
-          if (!step) return
-          const duration = step.durationBeats * secondsPerBeat * NOTE_DURATION_RATIO
+          if (!step || step.notes.length === 0) return
+          const stepDuration = step.durationBeats * secondsPerBeat
+          const arpeggiate = step.strum && arpeggioRef.current
+          // Arpeggio: spread the chord's notes evenly across the bar; each note
+          // rings until the chord changes. Strum: quick low-to-high stagger.
+          const noteSpacing = arpeggiate ? stepDuration / step.notes.length : STRUM_STAGGER_SEC
 
           step.notes.forEach(({ stringIndex, fret }, noteIndex) => {
-            const startTime = step.strum
-              ? audioTime + noteIndex * STRUM_STAGGER_SEC
-              : audioTime
-            playPluck(ctx, startTime, getFrequency(tuning, stringIndex, fret), duration)
+            const offset = step.strum ? noteIndex * noteSpacing : 0
+            const duration = (stepDuration - offset) * NOTE_DURATION_RATIO
+            playPluck(ctx, audioTime + offset, getFrequency(tuning, stringIndex, fret), duration)
+
+            if (arpeggiate) {
+              scheduler.enqueueUiEvent(audioTime + offset, () => setCurrentNoteIndex(noteIndex))
+            }
           })
         },
         onScheduleBeat: (beatInBar, audioTime) => {
@@ -158,6 +177,9 @@ export function usePracticeSession(): UsePracticeSessionReturn {
         },
         onStepChange: (stepIndex) => {
           setCurrentStep(stepIndex < 0 ? null : stepIndex)
+          // Reset per-note tracking at each step boundary; a same-tick arpeggio
+          // note event (flushed after step changes) re-sets it to note 0
+          setCurrentNoteIndex(null)
         },
       }
     )
@@ -182,6 +204,11 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const setMetronomeOn = useCallback((on: boolean) => {
     metronomeRef.current = on
     setMetronomeOnState(on)
+  }, [])
+
+  const setArpeggioOn = useCallback((on: boolean) => {
+    arpeggioRef.current = on
+    setArpeggioOnState(on)
   }, [])
 
   // Material changes invalidate scheduled step indices, so playback stops first
@@ -239,6 +266,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     selectedProgression,
     bpm,
     metronomeOn,
+    arpeggioOn,
     isPlaying,
     currentStep,
     tuning,
@@ -251,6 +279,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     togglePlay,
     setBpm,
     setMetronomeOn,
+    setArpeggioOn,
     setMode,
     setRootNote,
     setScale,
