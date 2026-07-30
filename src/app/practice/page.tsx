@@ -11,6 +11,7 @@ export default function PracticePage() {
     rootNote,
     scale,
     position,
+    effectivePosition,
     mode,
     scaleDirection,
     triadStringSetIndex,
@@ -39,7 +40,18 @@ export default function PracticePage() {
     setSelectedProgression,
   } = usePracticeSession()
 
-  const showPosition = mode === 'scale' || mode === 'chord'
+  const isChordMode = mode === 'chord'
+  const isProgressionMode = mode === 'progression'
+
+  // Mirror the main page's chord display: chord and progression modes render
+  // the voicing (with fingerings) instead of the scale
+  const fretboardPosition = isChordMode
+    ? effectivePosition
+    : isProgressionMode
+      ? (currentStep ?? 0)
+      : mode === 'scale'
+        ? position
+        : null
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -140,7 +152,12 @@ export default function PracticePage() {
             rootNote={rootNote}
             scale={scale}
             tuning={tuning}
-            position={showPosition ? position : null}
+            position={fretboardPosition}
+            showChordsMode={isChordMode}
+            showProgressionMode={isProgressionMode}
+            selectedProgression={isProgressionMode ? selectedProgression : null}
+            progressionViewMode="chord"
+            showFingerings
             activeNotes={activeNotes}
           />
         </section>

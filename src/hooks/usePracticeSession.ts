@@ -30,6 +30,7 @@ export interface UsePracticeSessionReturn {
   rootNote: Note
   scale: string
   position: number
+  effectivePosition: number
   mode: PracticeMode
   scaleDirection: ScaleDirection
   triadStringSetIndex: number
@@ -273,6 +274,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     rootNote,
     scale,
     position,
+    effectivePosition,
     mode,
     scaleDirection,
     triadStringSetIndex,
