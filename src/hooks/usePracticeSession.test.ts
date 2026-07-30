@@ -436,6 +436,64 @@ describe('usePracticeSession', () => {
     expect(result.current.tuning[0]).toBe('D')
   })
 
+  it('previewing a step shows its notes and label without playing', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setPreviewStep(2)
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.displayStep).toBe(2)
+    expect(result.current.currentLabel).toBe(result.current.steps[2].label)
+
+    const expected = new Set(
+      result.current.steps[2].notes.map((n) => `${n.stringIndex}-${n.fret}`)
+    )
+    expect(result.current.activeNotes).toEqual(expected)
+    expect(fakeCtx.oscillators).toHaveLength(0)
+  })
+
+  it('playback overrides the previewed step', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setPreviewStep(2)
+    })
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      fakeCtx.currentTime = 0.06
+      vi.advanceTimersByTime(25)
+    })
+
+    expect(result.current.displayStep).toBe(0)
+  })
+
+  it('clamps a stale preview and clears it on material changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setPreviewStep(99)
+    })
+    expect(result.current.displayStep).toBe(result.current.steps.length - 1)
+
+    act(() => {
+      result.current.setMode('scale')
+    })
+    expect(result.current.displayStep).toBeNull()
+  })
+
   it('closes the AudioContext on unmount', () => {
     const { result, unmount } = renderHook(() => usePracticeSession())
 

@@ -46,6 +46,7 @@ export interface UsePracticeSessionReturn {
   showOnlyChordTones: boolean
   isPlaying: boolean
   currentStep: number | null
+  displayStep: number | null
   tuning: Note[]
   steps: PracticeStep[]
   activeNotes: Set<string>
@@ -59,6 +60,7 @@ export interface UsePracticeSessionReturn {
   setArpeggioOn: (on: boolean) => void
   setShowFingerings: (show: boolean) => void
   setShowOnlyChordTones: (show: boolean) => void
+  setPreviewStep: (step: number | null) => void
   setMode: (mode: PracticeMode) => void
   setRootNote: (note: Note) => void
   setScale: (scale: string) => void
@@ -91,6 +93,8 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const [currentStep, setCurrentStep] = useState<number | null>(null)
   // Which note of an arpeggiated step is sounding; null = whole step highlights
   const [currentNoteIndex, setCurrentNoteIndex] = useState<number | null>(null)
+  // Step selected for preview while stopped (e.g. clicking a progression chord)
+  const [previewStep, setPreviewStepState] = useState<number | null>(null)
 
   const audioCtxRef = useRef<AudioContext | null>(null)
   const schedulerRef = useRef<LookaheadScheduler | null>(null)
@@ -139,9 +143,17 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     ]
   )
 
+  // The step driving the display: the sounding step during playback,
+  // otherwise the previewed step (clamped in case the material changed)
+  const displayStep = useMemo(() => {
+    if (currentStep !== null) return currentStep
+    if (previewStep === null || steps.length === 0) return null
+    return Math.min(previewStep, steps.length - 1)
+  }, [currentStep, previewStep, steps.length])
+
   const activeNotes = useMemo(() => {
-    if (currentStep === null || !steps[currentStep]) return new Set<string>()
-    const stepNotes = steps[currentStep].notes
+    if (displayStep === null || !steps[displayStep]) return new Set<string>()
+    const stepNotes = steps[displayStep].notes
 
     if (currentNoteIndex !== null && stepNotes[currentNoteIndex]) {
       const { stringIndex, fret } = stepNotes[currentNoteIndex]
@@ -149,10 +161,10 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     }
 
     return new Set(stepNotes.map(({ stringIndex, fret }) => `${stringIndex}-${fret}`))
-  }, [currentStep, currentNoteIndex, steps])
+  }, [displayStep, currentNoteIndex, steps])
 
   const currentLabel =
-    currentStep !== null ? (steps[currentStep]?.label ?? null) : null
+    displayStep !== null ? (steps[displayStep]?.label ?? null) : null
 
   const stop = useCallback(() => {
     schedulerRef.current?.stop()
@@ -244,11 +256,17 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     setArpeggioOnState(on)
   }, [])
 
-  // Material changes invalidate scheduled step indices, so playback stops first
+  const setPreviewStep = useCallback((step: number | null) => {
+    setPreviewStepState(step)
+  }, [])
+
+  // Material changes invalidate scheduled step indices, so playback stops
+  // first and any step preview is discarded
   const stopThen = useCallback(
     <T,>(setter: (value: T) => void) =>
       (value: T) => {
         stop()
+        setPreviewStepState(null)
         setter(value)
       },
     [stop]
@@ -263,6 +281,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const setScale = useCallback(
     (newScale: string) => {
       stop()
+      setPreviewStepState(null)
       setScaleState(newScale)
       setSelectedProgressionState((current) =>
         getProgressionsForScale(newScale).some(([key]) => key === current) ? current : '1-4-5'
@@ -282,6 +301,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const setStringCount = useCallback(
     (count: number) => {
       stop()
+      setPreviewStepState(null)
       setStringCountState(count)
       setTuningKeyState(getDefaultTuning(count))
       setTriadStringSetIndexState(0)
@@ -292,6 +312,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const setTuningKey = useCallback(
     (newTuningKey: string) => {
       stop()
+      setPreviewStepState(null)
       setTuningKeyState(newTuningKey)
     },
     [stop]
@@ -325,6 +346,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     showOnlyChordTones,
     isPlaying,
     currentStep,
+    displayStep,
     tuning,
     steps,
     activeNotes,
@@ -338,6 +360,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     setArpeggioOn,
     setShowFingerings,
     setShowOnlyChordTones,
+    setPreviewStep,
     setMode,
     setRootNote,
     setScale,
