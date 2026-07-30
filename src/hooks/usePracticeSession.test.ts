@@ -340,6 +340,68 @@ describe('usePracticeSession', () => {
     expect(result.current.selectedProgression).toBe('minor-2')
   })
 
+  it('switching instruments updates tuning and keeps practice material valid', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setStringCount(4)
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.stringCount).toBe(4)
+    expect(result.current.tuningKey).toBe('bassStandard')
+    expect(result.current.tuning).toEqual(['E', 'A', 'D', 'G'])
+    expect(result.current.triadStringSets).toHaveLength(2)
+
+    // Scale practice still produces valid steps on bass
+    expect(result.current.steps.length).toBeGreaterThan(0)
+    result.current.steps.forEach((step) => {
+      step.notes.forEach((note) => {
+        expect(note.stringIndex).toBeLessThan(4)
+      })
+    })
+  })
+
+  it('forces chord-based modes back to scale on non-6-string instruments', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.setStringCount(4)
+    })
+    expect(result.current.mode).toBe('scale')
+
+    act(() => {
+      result.current.setStringCount(6)
+    })
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setStringCount(7)
+    })
+    expect(result.current.mode).toBe('scale')
+  })
+
+  it('changing tuning stops playback', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setTuningKey('dropD')
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.tuning[0]).toBe('D')
+  })
+
   it('closes the AudioContext on unmount', () => {
     const { result, unmount } = renderHook(() => usePracticeSession())
 

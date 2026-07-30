@@ -12,10 +12,17 @@ export const styles = {
   label: 'text-xs text-zinc-400 uppercase tracking-wide',
 
   modeRow: 'flex flex-wrap gap-1.5 md:gap-1',
-  modeButton: (isActive: boolean) =>
+  modeButton: (isActive: boolean, isDisabled = false) =>
     cn(
       'flex-1 md:flex-none px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all capitalize',
-      isActive ? modeVariants.active : modeVariants.inactive
+      isActive ? modeVariants.active : modeVariants.inactive,
+      isDisabled && 'opacity-50 cursor-not-allowed hover:bg-zinc-800'
+    ),
+
+  instrumentButton: (isActive: boolean) =>
+    cn(
+      'flex-1 md:flex-none px-4 py-3 md:px-3 md:py-2 rounded-md text-sm font-medium transition-all',
+      isActive ? 'bg-purple-500 text-white shadow-lg' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
     ),
 
   optionsRow: 'flex flex-col md:flex-row flex-wrap gap-3 md:gap-4 items-stretch md:items-end',

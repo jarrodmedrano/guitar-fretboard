@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Fretboard from '@/components/Fretboard'
 import { PracticeControls } from '@/components/PracticeControls'
 import { usePracticeSession } from '@/hooks/usePracticeSession'
-import { SCALE_NAMES } from '@/lib/music-theory'
+import { INSTRUMENT_NAMES, SCALE_NAMES, type InstrumentType } from '@/lib/music-theory'
 
 export default function PracticePage() {
   const {
@@ -12,6 +12,8 @@ export default function PracticePage() {
     scale,
     position,
     effectivePosition,
+    stringCount,
+    tuningKey,
     mode,
     scaleDirection,
     triadStringSetIndex,
@@ -38,6 +40,8 @@ export default function PracticePage() {
     setRootNote,
     setScale,
     setKey,
+    setStringCount,
+    setTuningKey,
     setPosition,
     setScaleDirection,
     setTriadStringSetIndex,
@@ -93,6 +97,8 @@ export default function PracticePage() {
             rootNote={rootNote}
             scale={scale}
             position={position}
+            stringCount={stringCount}
+            tuningKey={tuningKey}
             scaleDirection={scaleDirection}
             triadStringSets={triadStringSets}
             triadStringSetIndex={triadStringSetIndex}
@@ -104,6 +110,8 @@ export default function PracticePage() {
             showOnlyChordTones={showOnlyChordTones}
             isPlaying={isPlaying}
             onModeChange={setMode}
+            onStringCountChange={setStringCount}
+            onTuningChange={setTuningKey}
             onRootChange={setRootNote}
             onScaleChange={setScale}
             onPositionChange={setPosition}
@@ -126,9 +134,14 @@ export default function PracticePage() {
           className="bg-zinc-900 rounded-xl p-4 md:p-6 border border-zinc-800"
         >
           <div className="flex items-center justify-between mb-4 min-h-10">
-            <h2 className="text-lg font-semibold text-white">
-              {rootNote} {SCALE_NAMES[scale] || scale}
-            </h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-semibold text-white">
+                {rootNote} {SCALE_NAMES[scale] || scale}
+              </h2>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/30 text-purple-300">
+                {INSTRUMENT_NAMES[`${stringCount}-string` as InstrumentType]}
+              </span>
+            </div>
             {currentLabel && (
               <span
                 className="px-4 py-2 rounded-lg bg-amber-500/15 border border-amber-500/40 text-amber-300 font-semibold"

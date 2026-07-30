@@ -2,6 +2,7 @@
 
 import type { ChangeEvent } from 'react'
 import {
+  INSTRUMENT_NAMES,
   KEY_POPULARITY,
   NOTES,
   SCALE_NAMES,
@@ -9,6 +10,8 @@ import {
   getChordVoicingCount,
   getPositionCount,
   getProgressionsForScale,
+  getTuningsByStringCount,
+  type InstrumentType,
   type Note,
 } from '@/lib/music-theory'
 import type { PracticeMode, ScaleDirection } from '@/lib/practice-sequence'
@@ -16,6 +19,9 @@ import type { TriadStringSet } from '@/lib/triads'
 import { styles } from './PracticeControls.styles'
 
 const MODES: PracticeMode[] = ['scale', 'chord', 'triad', 'progression']
+const STRING_COUNTS = [4, 6, 7, 8] as const
+// Curated chord voicings are 6-string shapes
+const SIX_STRING_ONLY_MODES: PracticeMode[] = ['chord', 'progression']
 const MIN_BPM = 40
 const MAX_BPM = 220
 const BPM_STEP = 5
@@ -25,6 +31,8 @@ export interface PracticeControlsProps {
   rootNote: Note
   scale: string
   position: number
+  stringCount: number
+  tuningKey: string
   scaleDirection: ScaleDirection
   triadStringSets: TriadStringSet[]
   triadStringSetIndex: number
@@ -36,6 +44,8 @@ export interface PracticeControlsProps {
   showOnlyChordTones: boolean
   isPlaying: boolean
   onModeChange: (mode: PracticeMode) => void
+  onStringCountChange: (count: number) => void
+  onTuningChange: (tuningKey: string) => void
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
   onPositionChange: (position: number) => void
@@ -58,6 +68,8 @@ export function PracticeControls({
   rootNote,
   scale,
   position,
+  stringCount,
+  tuningKey,
   scaleDirection,
   triadStringSets,
   triadStringSetIndex,
@@ -69,6 +81,8 @@ export function PracticeControls({
   showOnlyChordTones,
   isPlaying,
   onModeChange,
+  onStringCountChange,
+  onTuningChange,
   onRootChange,
   onScaleChange,
   onPositionChange,
@@ -148,6 +162,12 @@ export function PracticeControls({
   // the R-3-5 filter applies to the scale display (scale and triad modes)
   const isChordView = mode === 'chord' || mode === 'progression'
 
+  const availableTunings = getTuningsByStringCount(stringCount)
+
+  const handleTuningSelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    onTuningChange(event.target.value)
+  }
+
   const handleFingeringsClick = () => {
     onFingeringsToggle(!showFingerings)
   }
@@ -163,17 +183,65 @@ export function PracticeControls({
       <div className={styles.fieldWrapper}>
         <span className={styles.label}>Practice</span>
         <div className={styles.modeRow} role="tablist" aria-label="Practice mode">
-          {MODES.map((practiceMode) => (
-            <button
-              key={practiceMode}
-              role="tab"
-              aria-selected={mode === practiceMode}
-              className={styles.modeButton(mode === practiceMode)}
-              onClick={() => onModeChange(practiceMode)}
-            >
-              {practiceMode === 'triad' ? 'Triads' : `${practiceMode}s`}
-            </button>
-          ))}
+          {MODES.map((practiceMode) => {
+            const isModeDisabled =
+              stringCount !== 6 && SIX_STRING_ONLY_MODES.includes(practiceMode)
+            return (
+              <button
+                key={practiceMode}
+                role="tab"
+                aria-selected={mode === practiceMode}
+                className={styles.modeButton(mode === practiceMode, isModeDisabled)}
+                onClick={() => onModeChange(practiceMode)}
+                disabled={isModeDisabled}
+                title={
+                  isModeDisabled
+                    ? 'Chord voicings are available on 6-string guitar only'
+                    : undefined
+                }
+              >
+                {practiceMode === 'triad' ? 'Triads' : `${practiceMode}s`}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Instrument and tuning */}
+      <div className={styles.optionsRow}>
+        <div className={styles.fieldWrapper}>
+          <span className={styles.label}>Instrument</span>
+          <div className={styles.modeRow} role="group" aria-label="Select instrument">
+            {STRING_COUNTS.map((count) => (
+              <button
+                key={count}
+                onClick={() => onStringCountChange(count)}
+                className={styles.instrumentButton(stringCount === count)}
+                aria-label={`Select instrument: ${INSTRUMENT_NAMES[`${count}-string` as InstrumentType]}`}
+                aria-pressed={stringCount === count}
+              >
+                {count}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label} htmlFor="practice-tuning">
+            Tuning
+          </label>
+          <select
+            id="practice-tuning"
+            className={styles.select}
+            value={tuningKey}
+            onChange={handleTuningSelect}
+          >
+            {Object.entries(availableTunings).map(([key, config]) => (
+              <option key={key} value={key}>
+                {config.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

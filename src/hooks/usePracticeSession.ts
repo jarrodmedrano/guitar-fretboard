@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   STANDARD_TUNING,
+  TUNINGS,
   getChordQuality,
   getChordVoicingCount,
+  getDefaultTuning,
   getProgressionsForScale,
   type Note,
 } from '@/lib/music-theory'
@@ -31,6 +33,8 @@ export interface UsePracticeSessionReturn {
   scale: string
   position: number
   effectivePosition: number
+  stringCount: number
+  tuningKey: string
   mode: PracticeMode
   scaleDirection: ScaleDirection
   triadStringSetIndex: number
@@ -59,6 +63,8 @@ export interface UsePracticeSessionReturn {
   setRootNote: (note: Note) => void
   setScale: (scale: string) => void
   setKey: (root: Note, scale: string) => void
+  setStringCount: (count: number) => void
+  setTuningKey: (tuningKey: string) => void
   setPosition: (position: number) => void
   setScaleDirection: (direction: ScaleDirection) => void
   setTriadStringSetIndex: (index: number) => void
@@ -69,6 +75,8 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const [rootNote, setRootNoteState] = useState<Note>('A')
   const [scale, setScaleState] = useState('minorPentatonic')
   const [position, setPositionState] = useState(0)
+  const [stringCount, setStringCountState] = useState(6)
+  const [tuningKey, setTuningKeyState] = useState('standard')
   const [mode, setModeState] = useState<PracticeMode>('scale')
   const [scaleDirection, setScaleDirectionState] = useState<ScaleDirection>('asc-desc')
   const [triadStringSetIndex, setTriadStringSetIndexState] = useState(0)
@@ -90,7 +98,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const metronomeRef = useRef(true)
   const arpeggioRef = useRef(false)
 
-  const tuning = STANDARD_TUNING
+  const tuning = useMemo(() => TUNINGS[tuningKey] ?? STANDARD_TUNING, [tuningKey])
   const triadStringSets = useMemo(() => getTriadStringSets(tuning.length), [tuning])
 
   // Chord mode indexes curated voicings, whose count differs from scale positions
@@ -266,6 +274,31 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     },
     [setScale]
   )
+
+  // Curated chord voicings are 6-string shapes, so chord and progression
+  // practice are only available on 6-string instruments
+  const setStringCount = useCallback(
+    (count: number) => {
+      stop()
+      setStringCountState(count)
+      setTuningKeyState(getDefaultTuning(count))
+      setTriadStringSetIndexState(0)
+      if (count !== 6) {
+        setModeState((current) =>
+          current === 'chord' || current === 'progression' ? 'scale' : current
+        )
+      }
+    },
+    [stop]
+  )
+
+  const setTuningKey = useCallback(
+    (newTuningKey: string) => {
+      stop()
+      setTuningKeyState(newTuningKey)
+    },
+    [stop]
+  )
   const setScaleDirection = useMemo(() => stopThen(setScaleDirectionState), [stopThen])
   const setTriadStringSetIndex = useMemo(() => stopThen(setTriadStringSetIndexState), [stopThen])
   const setSelectedProgression = useMemo(() => stopThen(setSelectedProgressionState), [stopThen])
@@ -282,6 +315,8 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     scale,
     position,
     effectivePosition,
+    stringCount,
+    tuningKey,
     mode,
     scaleDirection,
     triadStringSetIndex,
@@ -310,6 +345,8 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     setRootNote,
     setScale,
     setKey,
+    setStringCount,
+    setTuningKey,
     setPosition,
     setScaleDirection,
     setTriadStringSetIndex,
