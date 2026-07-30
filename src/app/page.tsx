@@ -34,7 +34,7 @@ export default function Home() {
     handleProgressionModeToggle,
     handleToggleDisplayMode,
     handleToggleChordsMode,
-    setTuning,
+    handleTuningChange,
     setDisplayMode,
     setShowOnlyChordTones,
     setSelectedProgression,
@@ -118,7 +118,7 @@ export default function Home() {
             onRootChange={handleRootChange}
             onScaleChange={handleScaleChange}
             onStringCountChange={handleStringCountChange}
-            onTuningChange={setTuning}
+            onTuningChange={handleTuningChange}
             onDisplayModeChange={setDisplayMode}
             onChordTonesToggle={setShowOnlyChordTones}
             onChordsModeToggle={handleChordsModeToggle}
@@ -154,7 +154,7 @@ export default function Home() {
                     {showChordsMode && !showProgressionMode && (
                       position !== null ? (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
-                          {getChordNameForPosition(rootNote, scale, position)}
+                          {getChordNameForPosition(rootNote, scale, position, TUNINGS[tuning])}
                         </span>
                       ) : (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
@@ -190,7 +190,7 @@ export default function Home() {
                       <div className="text-2xl md:text-3xl font-bold text-white">
                         {showProgressionMode && selectedProgression
                           ? getProgressionChordName(rootNote, scale, position, selectedProgression)
-                          : getChordNameForPosition(rootNote, scale, position)}
+                          : getChordNameForPosition(rootNote, scale, position, TUNINGS[tuning])}
                       </div>
                     </div>
                   )}
@@ -201,6 +201,7 @@ export default function Home() {
                     <VoicingSelector
                       rootNote={rootNote}
                       scale={scale}
+                      tuning={TUNINGS[tuning]}
                       position={position}
                       onPositionChange={handlePositionChange}
                     />

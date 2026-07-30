@@ -1,4 +1,4 @@
-import { NOTES, type Note } from '@/lib/music-theory'
+import { NOTES, type Note } from '@/lib/notes'
 
 // MIDI note of the lowest string in the instrument's standard tuning,
 // used as the anchor when deriving octaves: E1 (bass), E2 (guitar), B1 (7-string), F#1 (8-string)

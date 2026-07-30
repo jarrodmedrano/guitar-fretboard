@@ -2,8 +2,9 @@
 
 import {
   CHORD_SUFFIXES,
+  STANDARD_TUNING,
   getChordQuality,
-  getChordVoicings,
+  getChordVoicingsForTuning,
   type Note,
 } from '@/lib/music-theory'
 import {
@@ -21,6 +22,7 @@ import {
 export interface VoicingSelectorProps {
   rootNote: Note
   scale: string
+  tuning?: Note[]
   position: number | null // voicing index; null means "All"
   onPositionChange: (position: number | null) => void
 }
@@ -28,11 +30,12 @@ export interface VoicingSelectorProps {
 export default function VoicingSelector({
   rootNote,
   scale,
+  tuning = STANDARD_TUNING,
   position,
   onPositionChange,
 }: VoicingSelectorProps) {
   const quality = getChordQuality(scale)
-  const voicings = getChordVoicings(rootNote, quality)
+  const voicings = getChordVoicingsForTuning(rootNote, quality, tuning)
   const chordName = `${rootNote}${CHORD_SUFFIXES[quality]}`
   const currentVoicing = position !== null ? voicings[position] : null
 

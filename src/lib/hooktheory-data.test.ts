@@ -4,6 +4,7 @@ import {
   KEY_POPULARITY,
   NOTES,
   SCALES,
+  TUNINGS,
   getProgressionChordAt,
   getProgressionChordName,
   getProgressionChordVoicing,
@@ -185,15 +186,33 @@ describe('progression name and voicing integration', () => {
     expect(low!.baseFret).toBeLessThan(high!.baseFret)
   })
 
-  it('produces voicings for every Hooktheory progression across positions', () => {
+  it('produces voicings for every Hooktheory progression across positions and instruments', () => {
     const roots: Note[] = ['C', 'A', 'F#']
+    const tunings = [
+      TUNINGS.bassStandard,
+      TUNINGS.standard,
+      TUNINGS.standard7,
+      TUNINGS.standard8,
+    ]
     Object.entries(CHORD_PROGRESSIONS)
       .filter(([, p]) => p.mode)
       .forEach(([key, progression]) => {
         roots.forEach((root) => {
-          progression.degreesMajor.forEach((_, position) => {
-            const voicing = getProgressionChordVoicing(root, progression.mode!, position, key)
-            expect(voicing, `${key} in ${root} at ${position}`).not.toBeNull()
+          tunings.forEach((tuning) => {
+            progression.degreesMajor.forEach((_, position) => {
+              const voicing = getProgressionChordVoicing(
+                root,
+                progression.mode!,
+                position,
+                key,
+                tuning
+              )
+              expect(
+                voicing,
+                `${key} in ${root} at ${position} on ${tuning.length}-string`
+              ).not.toBeNull()
+              expect(voicing!.frets).toHaveLength(tuning.length)
+            })
           })
         })
       })
