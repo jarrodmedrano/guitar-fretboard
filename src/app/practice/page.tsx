@@ -19,6 +19,8 @@ export default function PracticePage() {
     bpm,
     metronomeOn,
     arpeggioOn,
+    showFingerings,
+    showOnlyChordTones,
     isPlaying,
     tuning,
     steps,
@@ -30,6 +32,8 @@ export default function PracticePage() {
     setBpm,
     setMetronomeOn,
     setArpeggioOn,
+    setShowFingerings,
+    setShowOnlyChordTones,
     setMode,
     setRootNote,
     setScale,
@@ -96,6 +100,8 @@ export default function PracticePage() {
             bpm={bpm}
             metronomeOn={metronomeOn}
             arpeggioOn={arpeggioOn}
+            showFingerings={showFingerings}
+            showOnlyChordTones={showOnlyChordTones}
             isPlaying={isPlaying}
             onModeChange={setMode}
             onRootChange={setRootNote}
@@ -108,6 +114,8 @@ export default function PracticePage() {
             onBpmChange={setBpm}
             onMetronomeToggle={setMetronomeOn}
             onArpeggioToggle={setArpeggioOn}
+            onFingeringsToggle={setShowFingerings}
+            onChordTonesToggle={setShowOnlyChordTones}
             onTogglePlay={togglePlay}
           />
         </section>
@@ -157,7 +165,8 @@ export default function PracticePage() {
             showProgressionMode={isProgressionMode}
             selectedProgression={isProgressionMode ? selectedProgression : null}
             progressionViewMode="chord"
-            showFingerings
+            showFingerings={showFingerings}
+            showOnlyChordTones={showOnlyChordTones && !isChordMode && !isProgressionMode}
             activeNotes={activeNotes}
           />
         </section>

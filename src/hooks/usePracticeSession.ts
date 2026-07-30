@@ -38,6 +38,8 @@ export interface UsePracticeSessionReturn {
   bpm: number
   metronomeOn: boolean
   arpeggioOn: boolean
+  showFingerings: boolean
+  showOnlyChordTones: boolean
   isPlaying: boolean
   currentStep: number | null
   tuning: Note[]
@@ -51,6 +53,8 @@ export interface UsePracticeSessionReturn {
   setBpm: (bpm: number) => void
   setMetronomeOn: (on: boolean) => void
   setArpeggioOn: (on: boolean) => void
+  setShowFingerings: (show: boolean) => void
+  setShowOnlyChordTones: (show: boolean) => void
   setMode: (mode: PracticeMode) => void
   setRootNote: (note: Note) => void
   setScale: (scale: string) => void
@@ -72,6 +76,9 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const [bpm, setBpmState] = useState(DEFAULT_BPM)
   const [metronomeOn, setMetronomeOnState] = useState(true)
   const [arpeggioOn, setArpeggioOnState] = useState(false)
+  // Display-only toggles (mirror the main page); changing them never stops playback
+  const [showFingerings, setShowFingerings] = useState(true)
+  const [showOnlyChordTones, setShowOnlyChordTones] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentStep, setCurrentStep] = useState<number | null>(null)
   // Which note of an arpeggiated step is sounding; null = whole step highlights
@@ -282,6 +289,8 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     bpm,
     metronomeOn,
     arpeggioOn,
+    showFingerings,
+    showOnlyChordTones,
     isPlaying,
     currentStep,
     tuning,
@@ -295,6 +304,8 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     setBpm,
     setMetronomeOn,
     setArpeggioOn,
+    setShowFingerings,
+    setShowOnlyChordTones,
     setMode,
     setRootNote,
     setScale,
