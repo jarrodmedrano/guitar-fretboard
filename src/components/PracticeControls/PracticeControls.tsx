@@ -6,8 +6,10 @@ import {
   KEY_POPULARITY,
   NOTES,
   SCALE_NAMES,
+  STANDARD_TUNING,
+  TUNINGS,
   getChordQuality,
-  getChordVoicingCount,
+  getChordVoicingCountForTuning,
   getPositionCount,
   getProgressionsForScale,
   getTuningsByStringCount,
@@ -20,8 +22,6 @@ import { styles } from './PracticeControls.styles'
 
 const MODES: PracticeMode[] = ['scale', 'chord', 'triad', 'progression']
 const STRING_COUNTS = [4, 6, 7, 8] as const
-// Curated chord voicings are 6-string shapes
-const SIX_STRING_ONLY_MODES: PracticeMode[] = ['chord', 'progression']
 const MIN_BPM = 40
 const MAX_BPM = 220
 const BPM_STEP = 5
@@ -97,10 +97,14 @@ export function PracticeControls({
   onChordTonesToggle,
   onTogglePlay,
 }: PracticeControlsProps) {
-  // Chord mode selects among curated voicings; scale mode among scale positions
+  // Chord mode selects among the instrument's voicings; scale mode among scale positions
   const positionCount =
     mode === 'chord'
-      ? getChordVoicingCount(rootNote, getChordQuality(scale))
+      ? getChordVoicingCountForTuning(
+          rootNote,
+          getChordQuality(scale),
+          TUNINGS[tuningKey] ?? STANDARD_TUNING
+        )
       : getPositionCount(scale)
   const positionLabel = mode === 'chord' ? 'Voicing' : 'Position'
   const showPosition = mode === 'scale' || mode === 'chord'
@@ -183,27 +187,17 @@ export function PracticeControls({
       <div className={styles.fieldWrapper}>
         <span className={styles.label}>Practice</span>
         <div className={styles.modeRow} role="tablist" aria-label="Practice mode">
-          {MODES.map((practiceMode) => {
-            const isModeDisabled =
-              stringCount !== 6 && SIX_STRING_ONLY_MODES.includes(practiceMode)
-            return (
-              <button
-                key={practiceMode}
-                role="tab"
-                aria-selected={mode === practiceMode}
-                className={styles.modeButton(mode === practiceMode, isModeDisabled)}
-                onClick={() => onModeChange(practiceMode)}
-                disabled={isModeDisabled}
-                title={
-                  isModeDisabled
-                    ? 'Chord voicings are available on 6-string guitar only'
-                    : undefined
-                }
-              >
-                {practiceMode === 'triad' ? 'Triads' : `${practiceMode}s`}
-              </button>
-            )
-          })}
+          {MODES.map((practiceMode) => (
+            <button
+              key={practiceMode}
+              role="tab"
+              aria-selected={mode === practiceMode}
+              className={styles.modeButton(mode === practiceMode)}
+              onClick={() => onModeChange(practiceMode)}
+            >
+              {practiceMode === 'triad' ? 'Triads' : `${practiceMode}s`}
+            </button>
+          ))}
         </div>
       </div>
 

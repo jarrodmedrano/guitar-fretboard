@@ -132,7 +132,7 @@ function buildChordSteps(opts: PracticeSequenceOptions): PracticeStep[] {
       notes: voicingToNotes(voicing),
       durationBeats: 4,
       strum: true,
-      label: getChordNameForPosition(rootNote, scale, position),
+      label: getChordNameForPosition(rootNote, scale, position, tuning),
     },
   ]
 }

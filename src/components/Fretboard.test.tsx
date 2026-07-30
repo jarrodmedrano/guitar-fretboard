@@ -37,6 +37,37 @@ describe('Fretboard Component', () => {
     })
   })
 
+  describe('Chord Mode (multi-instrument)', () => {
+    it('renders chord voicings on a 7-string without misaligned strings', () => {
+      const { container } = render(
+        <Fretboard
+          rootNote="C"
+          scale="major"
+          tuning={['B', 'E', 'A', 'D', 'G', 'B', 'E']}
+          showChordsMode
+          position={0}
+        />
+      )
+      // The low-B C (fret 1) plus the top-six open-C shape notes render
+      const buttons = container.querySelectorAll('button')
+      expect(buttons.length).toBeGreaterThan(0)
+      expect(screen.getAllByText('X').length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('renders compact chord voicings on bass', () => {
+      const { container } = render(
+        <Fretboard
+          rootNote="C"
+          scale="major"
+          tuning={['E', 'A', 'D', 'G']}
+          showChordsMode
+          position={0}
+        />
+      )
+      expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
+    })
+  })
+
   describe('Chord Mode (curated voicings)', () => {
     it('shows a muted-string marker at the nut for a single voicing', () => {
       // C major voicing 1 is x-3-2-0-1-0: the low E string is muted

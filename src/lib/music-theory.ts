@@ -1,13 +1,13 @@
 import {
   CHORD_SUFFIXES,
   getChordVoicingCount,
-  getChordVoicings,
   type ChordQuality,
   type ChordVoicing,
 } from './chords'
 
-export const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const
-export type Note = typeof NOTES[number]
+export { NOTES } from './notes'
+export type { Note } from './notes'
+import { NOTES, type Note } from './notes'
 
 export const STANDARD_TUNING: Note[] = ['E', 'A', 'D', 'G', 'B', 'E'] // low to high (6th to 1st string)
 
@@ -321,6 +321,8 @@ export {
   parseUberchordVoicing,
 } from './chords'
 export type { ChordQuality, ChordVoicing } from './chords'
+export { getChordVoicingCountForTuning, getChordVoicingsForTuning } from './chord-voicings'
+import { getChordVoicingCountForTuning, getChordVoicingsForTuning } from './chord-voicings'
 
 // Chord tone intervals for major and minor chords
 export const MAJOR_CHORD_INTERVALS = [0, 4, 7]  // R, 3, 5
@@ -347,35 +349,37 @@ export function getChordIntervals(scale: string): number[] {
 export function getChordNameForPosition(
   rootNote: Note,
   scale: string,
-  position: number
+  position: number,
+  tuning: Note[] = STANDARD_TUNING
 ): string {
   const quality = getChordQuality(scale)
   const suffix = quality === 'minor' ? 'm' : ''
-  const count = getChordVoicingCount(rootNote, quality)
+  const count = getChordVoicingCountForTuning(rootNote, quality, tuning)
   if (count === 0) return `${rootNote}${suffix}`
 
   const voicingIndex = Math.min(position, count - 1)
   return `${rootNote}${suffix} · voicing ${voicingIndex + 1}/${count}`
 }
 
-// Get the curated chord voicing at a voicing index (position = voicing 1..N)
+// Get the chord voicing at a voicing index for the instrument's tuning
+// (position = voicing 1..N)
 export function getChordVoicing(
   rootNote: Note,
   scale: string,
   position: number,
-  _tuning: Note[] = STANDARD_TUNING
+  tuning: Note[] = STANDARD_TUNING
 ): ChordVoicing | null {
-  const voicings = getChordVoicings(rootNote, getChordQuality(scale))
+  const voicings = getChordVoicingsForTuning(rootNote, getChordQuality(scale), tuning)
   return voicings[position] ?? null
 }
 
-// Get every curated voicing for the chord (for "All" voicings mode)
+// Get every voicing for the chord on this instrument (for "All" voicings mode)
 export function getAllChordVoicings(
   rootNote: Note,
   scale: string,
-  _tuning: Note[] = STANDARD_TUNING
+  tuning: Note[] = STANDARD_TUNING
 ): ChordVoicing[] {
-  return getChordVoicings(rootNote, getChordQuality(scale))
+  return getChordVoicingsForTuning(rootNote, getChordQuality(scale), tuning)
 }
 
 // Chord Progression Support
@@ -875,9 +879,9 @@ export function getProgressionChordVoicing(
   const positionEndFret = baseRootFret + positionData.end
   const targetFret = Math.floor((positionStartFret + positionEndFret) / 2)
 
-  // Pick the curated voicing closest to the position window; ties go to the
-  // earlier voicing (curated order roughly tracks playability)
-  const candidates = getChordVoicings(chord.root, chord.quality)
+  // Pick the voicing closest to the position window; ties go to the
+  // earlier voicing (voicing order roughly tracks playability)
+  const candidates = getChordVoicingsForTuning(chord.root, chord.quality, tuning)
   if (candidates.length === 0) return null
 
   return candidates.reduce((best, candidate) => {

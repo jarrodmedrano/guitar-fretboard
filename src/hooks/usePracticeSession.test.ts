@@ -365,7 +365,7 @@ describe('usePracticeSession', () => {
     })
   })
 
-  it('forces chord-based modes back to scale on non-6-string instruments', () => {
+  it('keeps chord mode working when switching to bass', () => {
     const { result } = renderHook(() => usePracticeSession())
 
     act(() => {
@@ -374,18 +374,52 @@ describe('usePracticeSession', () => {
     act(() => {
       result.current.setStringCount(4)
     })
-    expect(result.current.mode).toBe('scale')
 
-    act(() => {
-      result.current.setStringCount(6)
+    expect(result.current.mode).toBe('chord')
+    expect(result.current.steps.length).toBeGreaterThan(0)
+    result.current.steps.forEach((step) => {
+      expect(step.notes.length).toBeGreaterThanOrEqual(3)
+      step.notes.forEach((note) => {
+        expect(note.stringIndex).toBeLessThan(4)
+      })
     })
+  })
+
+  it('keeps progression mode working on 7-string with in-range notes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
     act(() => {
       result.current.setMode('progression')
     })
     act(() => {
       result.current.setStringCount(7)
     })
-    expect(result.current.mode).toBe('scale')
+
+    expect(result.current.mode).toBe('progression')
+    expect(result.current.steps.length).toBeGreaterThan(0)
+    result.current.steps.forEach((step) => {
+      step.notes.forEach((note) => {
+        expect(note.stringIndex).toBeLessThan(7)
+      })
+    })
+  })
+
+  it('clamps the chord voicing index when the instrument changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.setPosition(3)
+    })
+    act(() => {
+      result.current.setStringCount(4)
+    })
+
+    // Whatever the bass voicing count is, playback material stays valid
+    expect(result.current.effectivePosition).toBeLessThanOrEqual(3)
+    expect(result.current.steps.length).toBeGreaterThan(0)
   })
 
   it('changing tuning stops playback', () => {

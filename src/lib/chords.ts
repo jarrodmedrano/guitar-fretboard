@@ -2,7 +2,7 @@
 // format (see src/lib/chord-shapes.ts). This replaces the old algorithmic
 // CAGED shape generator: every voicing here is a real, playable fingering.
 
-import type { Note } from './music-theory'
+import type { Note } from './notes'
 import { CHORD_SHAPES, type UberchordVoicing } from './chord-shapes'
 
 export type ChordQuality = 'major' | 'minor' | '7' | 'maj7' | 'm7' | 'm7b5'
