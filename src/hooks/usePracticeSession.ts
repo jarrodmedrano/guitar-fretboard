@@ -1,7 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { STANDARD_TUNING, getProgressionsForScale, type Note } from '@/lib/music-theory'
+import {
+  STANDARD_TUNING,
+  getChordQuality,
+  getChordVoicingCount,
+  getProgressionsForScale,
+  type Note,
+} from '@/lib/music-theory'
 import {
   buildPracticeSequence,
   type PracticeMode,
@@ -79,13 +85,20 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const tuning = STANDARD_TUNING
   const triadStringSets = useMemo(() => getTriadStringSets(tuning.length), [tuning])
 
+  // Chord mode indexes curated voicings, whose count differs from scale positions
+  const effectivePosition = useMemo(() => {
+    if (mode !== 'chord') return position
+    const voicingCount = getChordVoicingCount(rootNote, getChordQuality(scale))
+    return Math.min(position, Math.max(0, voicingCount - 1))
+  }, [mode, position, rootNote, scale])
+
   const steps = useMemo(
     () =>
       buildPracticeSequence({
         mode,
         rootNote,
         scale,
-        position,
+        position: effectivePosition,
         tuning,
         direction: scaleDirection,
         triadStringSet:
@@ -97,7 +110,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
       mode,
       rootNote,
       scale,
-      position,
+      effectivePosition,
       tuning,
       scaleDirection,
       triadStringSets,

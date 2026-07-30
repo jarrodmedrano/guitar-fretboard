@@ -5,6 +5,8 @@ import {
   KEY_POPULARITY,
   NOTES,
   SCALE_NAMES,
+  getChordQuality,
+  getChordVoicingCount,
   getPositionCount,
   getProgressionsForScale,
   type Note,
@@ -73,7 +75,12 @@ export function PracticeControls({
   onArpeggioToggle,
   onTogglePlay,
 }: PracticeControlsProps) {
-  const positionCount = getPositionCount(scale)
+  // Chord mode selects among curated voicings; scale mode among scale positions
+  const positionCount =
+    mode === 'chord'
+      ? getChordVoicingCount(rootNote, getChordQuality(scale))
+      : getPositionCount(scale)
+  const positionLabel = mode === 'chord' ? 'Voicing' : 'Position'
   const showPosition = mode === 'scale' || mode === 'chord'
   const availableProgressions = getProgressionsForScale(scale)
   const selectedKey =
@@ -215,17 +222,17 @@ export function PracticeControls({
         {showPosition && (
           <div className={styles.fieldWrapper}>
             <label className={styles.label} htmlFor="practice-position">
-              Position
+              {positionLabel}
             </label>
             <select
               id="practice-position"
               className={styles.select}
-              value={position}
+              value={Math.min(position, Math.max(0, positionCount - 1))}
               onChange={handlePositionSelect}
             >
               {Array.from({ length: positionCount }, (_, index) => (
                 <option key={index} value={index}>
-                  Position {index + 1}
+                  {positionLabel} {index + 1}
                 </option>
               ))}
             </select>
