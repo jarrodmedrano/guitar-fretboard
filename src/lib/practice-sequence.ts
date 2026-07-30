@@ -1,5 +1,6 @@
 import {
   CHORD_PROGRESSIONS,
+  CHORD_SUFFIXES,
   SCALES,
   SCALE_POSITIONS,
   STANDARD_TUNING,
@@ -10,7 +11,9 @@ import {
   getProgressionChordAt,
   getProgressionChordVoicing,
   getRootFret,
+  isMinorQuality,
   isNoteInScale,
+  type ChordQuality,
   type ChordVoicing,
   type Note,
 } from '@/lib/music-theory'
@@ -52,10 +55,11 @@ const INVERSION_LABELS: Record<Inversion, string> = {
 
 const ROMAN_NUMERALS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']
 
-// Roman numeral for a progression chord: uppercase for major, lowercase for minor
-export function getRomanNumeral(degree: number, quality: 'major' | 'minor'): string {
+// Roman numeral for a progression chord: uppercase for major-flavored
+// qualities, lowercase for minor-flavored (minor, m7, m7b5)
+export function getRomanNumeral(degree: number, quality: ChordQuality): string {
   const numeral = ROMAN_NUMERALS[(degree - 1) % ROMAN_NUMERALS.length] ?? String(degree)
-  return quality === 'minor' ? numeral.toLowerCase() : numeral
+  return isMinorQuality(quality) ? numeral.toLowerCase() : numeral
 }
 
 function getPositionWindow(
@@ -168,7 +172,7 @@ function buildProgressionSteps(opts: PracticeSequenceOptions): PracticeStep[] {
     const chord = getProgressionChordAt(rootNote, scale, index, progression)
     if (!voicing || !chord) return steps
 
-    const chordName = `${chord.root}${chord.quality === 'minor' ? 'm' : ''}`
+    const chordName = `${chord.root}${CHORD_SUFFIXES[chord.quality]}`
     return [
       ...steps,
       {

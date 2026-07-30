@@ -119,12 +119,19 @@ export default function Fretboard({
       return { shouldShow: false }
     }
 
+    // A muted-string marker only makes sense when showing a single voicing;
+    // in "All" mode one voicing's muted string must not hide another's notes
+    const showMuted = chordVoicings.length === 1
+
     for (const voicing of chordVoicings) {
       const fretValue = voicing.frets[stringIndex]
 
       // Check for muted string
       if (fretValue === 'x') {
-        return { shouldShow: true, isMuted: true }
+        if (showMuted) {
+          return { shouldShow: true, isMuted: true }
+        }
+        continue
       }
 
       // Check if this fret matches the voicing

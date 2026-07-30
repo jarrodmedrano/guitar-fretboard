@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Note, NOTES, SCALE_NAMES, SCALES, getDefaultTuning, getProgressionsForScale } from '@/lib/music-theory'
+import { Note, NOTES, SCALE_NAMES, SCALES, getChordQuality, getChordVoicingCount, getDefaultTuning, getProgressionsForScale } from '@/lib/music-theory'
 import { useAnnouncements } from './useAnnouncements'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -41,8 +41,16 @@ export function useFretboardApp() {
 
   const handleRootChange = useCallback((newRoot: Note) => {
     setRootNote(newRoot)
+    // Chord-mode positions index curated voicings, whose count can differ per chord
+    if (showChordsMode) {
+      setPosition((current) => {
+        if (current === null) return current
+        const count = getChordVoicingCount(newRoot, getChordQuality(scale))
+        return count > 0 ? Math.min(current, count - 1) : null
+      })
+    }
     announce(`Root note changed to ${newRoot}`)
-  }, [announce])
+  }, [announce, showChordsMode, scale])
 
   const handlePositionChange = useCallback((newPosition: number | null) => {
     setPosition(newPosition)
@@ -63,8 +71,14 @@ export function useFretboardApp() {
     if (enabled) {
       setShowProgressionMode(false)
       setShowOnlyChordTones(false)
+      // Scale positions (up to 7) may exceed the curated voicing count
+      setPosition((current) => {
+        if (current === null) return current
+        const count = getChordVoicingCount(rootNote, getChordQuality(scale))
+        return count > 0 ? Math.min(current, count - 1) : null
+      })
     }
-  }, [])
+  }, [rootNote, scale])
 
   const handleProgressionModeToggle = useCallback((enabled: boolean) => {
     setShowProgressionMode(enabled)

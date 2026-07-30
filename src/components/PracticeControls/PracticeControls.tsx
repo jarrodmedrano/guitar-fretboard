@@ -5,6 +5,8 @@ import {
   KEY_POPULARITY,
   NOTES,
   SCALE_NAMES,
+  getChordQuality,
+  getChordVoicingCount,
   getPositionCount,
   getProgressionsForScale,
   type Note,
@@ -30,6 +32,8 @@ export interface PracticeControlsProps {
   bpm: number
   metronomeOn: boolean
   arpeggioOn: boolean
+  showFingerings: boolean
+  showOnlyChordTones: boolean
   isPlaying: boolean
   onModeChange: (mode: PracticeMode) => void
   onRootChange: (note: Note) => void
@@ -42,6 +46,8 @@ export interface PracticeControlsProps {
   onBpmChange: (bpm: number) => void
   onMetronomeToggle: (on: boolean) => void
   onArpeggioToggle: (on: boolean) => void
+  onFingeringsToggle: (show: boolean) => void
+  onChordTonesToggle: (show: boolean) => void
   onTogglePlay: () => void
 }
 
@@ -59,6 +65,8 @@ export function PracticeControls({
   bpm,
   metronomeOn,
   arpeggioOn,
+  showFingerings,
+  showOnlyChordTones,
   isPlaying,
   onModeChange,
   onRootChange,
@@ -71,9 +79,16 @@ export function PracticeControls({
   onBpmChange,
   onMetronomeToggle,
   onArpeggioToggle,
+  onFingeringsToggle,
+  onChordTonesToggle,
   onTogglePlay,
 }: PracticeControlsProps) {
-  const positionCount = getPositionCount(scale)
+  // Chord mode selects among curated voicings; scale mode among scale positions
+  const positionCount =
+    mode === 'chord'
+      ? getChordVoicingCount(rootNote, getChordQuality(scale))
+      : getPositionCount(scale)
+  const positionLabel = mode === 'chord' ? 'Voicing' : 'Position'
   const showPosition = mode === 'scale' || mode === 'chord'
   const availableProgressions = getProgressionsForScale(scale)
   const selectedKey =
@@ -127,6 +142,19 @@ export function PracticeControls({
   const handleArpeggioClick = () => {
     if (!isArpeggioAvailable) return
     onArpeggioToggle(!arpeggioOn)
+  }
+
+  // Chord and progression modes render voicings, so fingerings apply there;
+  // the R-3-5 filter applies to the scale display (scale and triad modes)
+  const isChordView = mode === 'chord' || mode === 'progression'
+
+  const handleFingeringsClick = () => {
+    onFingeringsToggle(!showFingerings)
+  }
+
+  const handleChordTonesClick = () => {
+    if (isChordView) return
+    onChordTonesToggle(!showOnlyChordTones)
   }
 
   return (
@@ -215,17 +243,17 @@ export function PracticeControls({
         {showPosition && (
           <div className={styles.fieldWrapper}>
             <label className={styles.label} htmlFor="practice-position">
-              Position
+              {positionLabel}
             </label>
             <select
               id="practice-position"
               className={styles.select}
-              value={position}
+              value={Math.min(position, Math.max(0, positionCount - 1))}
               onChange={handlePositionSelect}
             >
               {Array.from({ length: positionCount }, (_, index) => (
                 <option key={index} value={index}>
-                  Position {index + 1}
+                  {positionLabel} {index + 1}
                 </option>
               ))}
             </select>
@@ -291,6 +319,33 @@ export function PracticeControls({
             </select>
           </div>
         )}
+
+        {isChordView && (
+          <div className={styles.fieldWrapper}>
+            <span className={styles.label}>Chord View</span>
+            <button
+              onClick={handleFingeringsClick}
+              className={styles.fingeringsButton(showFingerings)}
+              aria-label="Show finger numbers or note labels"
+              aria-pressed={showFingerings}
+            >
+              Fingerings
+            </button>
+          </div>
+        )}
+
+        <div className={styles.fieldWrapper}>
+          <span className={styles.label}>Filter</span>
+          <button
+            onClick={handleChordTonesClick}
+            className={styles.chordTonesButton(showOnlyChordTones && !isChordView, isChordView)}
+            aria-label="Show only root, third, and fifth notes"
+            aria-pressed={showOnlyChordTones && !isChordView}
+            disabled={isChordView}
+          >
+            R-3-5 Only
+          </button>
+        </div>
       </div>
 
       {/* Playback controls */}

@@ -175,6 +175,16 @@ describe('progression name and voicing integration', () => {
     expect(getProgressionChordName('A', 'minor', 1, 'minor-3')).toBe('Em')
   })
 
+  it('picks a curated voicing near the selected position window', () => {
+    // Positions 0 and 3 of '1-4-5' both resolve to the tonic chord (index % 3),
+    // but position 3 sits an octave up the neck — the voicing should follow
+    const low = getProgressionChordVoicing('A', 'minorPentatonic', 0, '1-4-5')
+    const high = getProgressionChordVoicing('A', 'minorPentatonic', 3, '1-4-5')
+    expect(low).not.toBeNull()
+    expect(high).not.toBeNull()
+    expect(low!.baseFret).toBeLessThan(high!.baseFret)
+  })
+
   it('produces voicings for every Hooktheory progression across positions', () => {
     const roots: Note[] = ['C', 'A', 'F#']
     Object.entries(CHORD_PROGRESSIONS)

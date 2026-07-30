@@ -208,7 +208,7 @@ export default function ScaleSelector({
           <button
             onClick={() => onChordsModeToggle(!showChordsMode)}
             className={styles.buttonCapitalize(showChordsMode, 'amber')}
-            aria-label="Show CAGED chord shapes"
+            aria-label="Show chord voicings"
             aria-pressed={showChordsMode}
           >
             Chords

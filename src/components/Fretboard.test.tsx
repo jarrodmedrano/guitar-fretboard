@@ -37,6 +37,23 @@ describe('Fretboard Component', () => {
     })
   })
 
+  describe('Chord Mode (curated voicings)', () => {
+    it('shows a muted-string marker at the nut for a single voicing', () => {
+      // C major voicing 1 is x-3-2-0-1-0: the low E string is muted
+      render(
+        <Fretboard rootNote="C" scale="major" showChordsMode position={0} />
+      )
+      expect(screen.getAllByText('X').length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('does not blank strings with muted markers in All voicings mode', () => {
+      render(
+        <Fretboard rootNote="C" scale="major" showChordsMode position={null} />
+      )
+      expect(screen.queryByText('X')).not.toBeInTheDocument()
+    })
+  })
+
   describe('Active Notes (practice playback)', () => {
     it('should apply the active highlight to notes in activeNotes', () => {
       // Low E string (index 0), fret 5 = A, the root of A minor pentatonic

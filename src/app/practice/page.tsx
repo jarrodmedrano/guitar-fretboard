@@ -11,6 +11,7 @@ export default function PracticePage() {
     rootNote,
     scale,
     position,
+    effectivePosition,
     mode,
     scaleDirection,
     triadStringSetIndex,
@@ -18,6 +19,8 @@ export default function PracticePage() {
     bpm,
     metronomeOn,
     arpeggioOn,
+    showFingerings,
+    showOnlyChordTones,
     isPlaying,
     tuning,
     steps,
@@ -29,6 +32,8 @@ export default function PracticePage() {
     setBpm,
     setMetronomeOn,
     setArpeggioOn,
+    setShowFingerings,
+    setShowOnlyChordTones,
     setMode,
     setRootNote,
     setScale,
@@ -39,7 +44,18 @@ export default function PracticePage() {
     setSelectedProgression,
   } = usePracticeSession()
 
-  const showPosition = mode === 'scale' || mode === 'chord'
+  const isChordMode = mode === 'chord'
+  const isProgressionMode = mode === 'progression'
+
+  // Mirror the main page's chord display: chord and progression modes render
+  // the voicing (with fingerings) instead of the scale
+  const fretboardPosition = isChordMode
+    ? effectivePosition
+    : isProgressionMode
+      ? (currentStep ?? 0)
+      : mode === 'scale'
+        ? position
+        : null
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -84,6 +100,8 @@ export default function PracticePage() {
             bpm={bpm}
             metronomeOn={metronomeOn}
             arpeggioOn={arpeggioOn}
+            showFingerings={showFingerings}
+            showOnlyChordTones={showOnlyChordTones}
             isPlaying={isPlaying}
             onModeChange={setMode}
             onRootChange={setRootNote}
@@ -96,6 +114,8 @@ export default function PracticePage() {
             onBpmChange={setBpm}
             onMetronomeToggle={setMetronomeOn}
             onArpeggioToggle={setArpeggioOn}
+            onFingeringsToggle={setShowFingerings}
+            onChordTonesToggle={setShowOnlyChordTones}
             onTogglePlay={togglePlay}
           />
         </section>
@@ -140,7 +160,13 @@ export default function PracticePage() {
             rootNote={rootNote}
             scale={scale}
             tuning={tuning}
-            position={showPosition ? position : null}
+            position={fretboardPosition}
+            showChordsMode={isChordMode}
+            showProgressionMode={isProgressionMode}
+            selectedProgression={isProgressionMode ? selectedProgression : null}
+            progressionViewMode="chord"
+            showFingerings={showFingerings}
+            showOnlyChordTones={showOnlyChordTones && !isChordMode && !isProgressionMode}
             activeNotes={activeNotes}
           />
         </section>

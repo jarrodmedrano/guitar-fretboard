@@ -263,6 +263,27 @@ describe('usePracticeSession', () => {
     expect(result.current.activeNotes.size).toBe(3)
   })
 
+  it('display toggles default like the main page and never stop playback', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    expect(result.current.showFingerings).toBe(true)
+    expect(result.current.showOnlyChordTones).toBe(false)
+
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setShowFingerings(false)
+    })
+    act(() => {
+      result.current.setShowOnlyChordTones(true)
+    })
+
+    expect(result.current.showFingerings).toBe(false)
+    expect(result.current.showOnlyChordTones).toBe(true)
+    expect(result.current.isPlaying).toBe(true)
+  })
+
   it('toggling arpeggio does not stop playback', () => {
     const { result } = renderHook(() => usePracticeSession())
 

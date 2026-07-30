@@ -21,7 +21,7 @@ export const labelStyles = 'text-xs text-zinc-400 uppercase tracking-wide'
 export const infoSectionStyles = 'flex items-center gap-2 text-xs'
 
 /**
- * Form name display (e.g., CAGED form names)
+ * Form name display (e.g., Fret Science form names)
  */
 export const formNameStyles = 'text-emerald-400 font-medium'
 
