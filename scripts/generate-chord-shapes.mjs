@@ -23,16 +23,67 @@ const KEY_TO_APP_NOTE = {
   Fsharp: 'F#', G: 'G', Ab: 'G#', A: 'A', Bb: 'A#', B: 'B',
 }
 
-const QUALITIES = ['major', 'minor', '7', 'maj7', 'm7', 'm7b5']
+const QUALITIES = [
+  'major', 'minor', 'dim', 'aug', 'sus2', 'sus4',
+  '7', 'maj7', 'm7', 'm7b5', 'dim7',
+  '6', 'm6', 'add9', '9',
+]
 
 // Uberchord chordName is "root,quality,tension,bass"
 const UBERCHORD_NAME_PARTS = {
   major: ['', ''],
   minor: ['m', ''],
+  dim: ['dim', ''],
+  aug: ['aug', ''],
+  sus2: ['sus', '2'],
+  sus4: ['sus', '4'],
   '7': ['', '7'],
   maj7: ['maj', '7'],
   m7: ['m', '7'],
   m7b5: ['m', '7b5'],
+  dim7: ['dim', '7'],
+  '6': ['', '6'],
+  m6: ['m', '6'],
+  add9: ['', 'add9'],
+  '9': ['', '9'],
+}
+
+// Chord tone intervals per quality, used to validate the dataset: a position
+// is kept only if its tones are a subset of the chord's intervals and it
+// contains every required tone (all intervals except the droppable perfect
+// fifth). This drops a handful of chords-db positions that are mislabeled or
+// omit a defining tone (e.g. a "9" grip with no seventh is really an add9).
+const CHORD_TONE_INTERVALS = {
+  major: [0, 4, 7],
+  minor: [0, 3, 7],
+  dim: [0, 3, 6],
+  aug: [0, 4, 8],
+  sus2: [0, 2, 7],
+  sus4: [0, 5, 7],
+  '7': [0, 4, 7, 10],
+  maj7: [0, 4, 7, 11],
+  m7: [0, 3, 7, 10],
+  m7b5: [0, 3, 6, 10],
+  dim7: [0, 3, 6, 9],
+  '6': [0, 4, 7, 9],
+  m6: [0, 3, 7, 9],
+  add9: [0, 4, 7, 14],
+  '9': [0, 4, 7, 10, 14],
+}
+
+const PERFECT_FIFTH = 7
+
+function isValidPosition(position, rootPc, quality) {
+  const intervals = CHORD_TONE_INTERVALS[quality]
+  const allowed = new Set(intervals.map((interval) => (rootPc + interval) % 12))
+  const required = intervals
+    .filter((interval) => interval !== PERFECT_FIFTH)
+    .map((interval) => (rootPc + interval) % 12)
+
+  const pcs = new Set(position.midi.map((midi) => midi % 12))
+  return (
+    [...pcs].every((pc) => allowed.has(pc)) && required.every((pc) => pcs.has(pc))
+  )
 }
 
 function assert(condition, message) {
@@ -87,17 +138,37 @@ for (const [dbKey, appNote] of Object.entries(KEY_TO_APP_NOTE)) {
   for (const quality of QUALITIES) {
     const chord = chordsForKey.find((c) => c.suffix === quality)
     assert(chord, `chords-db missing ${dbKey} ${quality}`)
-    assert(chord.positions.length >= 2, `${dbKey} ${quality} has fewer than 2 voicings`)
+
+    const rootPc = NOTES.indexOf(appNote)
+    const validPositions = chord.positions.filter((position) =>
+      isValidPosition(position, rootPc, quality)
+    )
+    assert(
+      validPositions.length >= 2,
+      `${dbKey} ${quality} has fewer than 2 valid voicings`
+    )
 
     const [qualityPart, tensionPart] = UBERCHORD_NAME_PARTS[quality]
     const chordName = `${appNote},${qualityPart},${tensionPart},`
 
-    // Order voicings ascending up the neck
-    const positions = [...chord.positions].sort((a, b) => a.baseFret - b.baseFret)
+    const converted = validPositions.map((position) => convertPosition(position))
 
-    shapes[`${appNote}_${quality}`] = positions.map((position) => {
+    // Order voicings ascending up the neck by the lowest fretted note — the
+    // same baseFret the app derives when parsing (chords-db's own baseFret is
+    // relative and can disagree once open strings are involved)
+    const minFrettedFret = (voicing) => {
+      const fretted = voicing.strings
+        .split(' ')
+        .filter((token) => token !== 'X')
+        .map(Number)
+        .filter((fret) => fret > 0)
+      return fretted.length > 0 ? Math.min(...fretted) : 0
+    }
+    converted.sort((a, b) => minFrettedFret(a) - minFrettedFret(b))
+
+    shapes[`${appNote}_${quality}`] = converted.map((voicing) => {
       voicingCount++
-      return { ...convertPosition(position), chordName }
+      return { ...voicing, chordName }
     })
   }
 }

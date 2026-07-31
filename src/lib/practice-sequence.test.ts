@@ -83,6 +83,26 @@ describe('buildPracticeSequence — chord mode', () => {
       expect(fret).toBeLessThanOrEqual(24)
     })
   })
+
+  it('uses the explicit chord quality for notes and label', () => {
+    const steps = buildPracticeSequence({ ...baseOpts, mode: 'chord', chordQuality: 'sus4' })
+    expect(steps).toHaveLength(1)
+    expect(steps[0].label).toMatch(/^Asus4/)
+
+    // A sus4 = A, D, E (pitch classes 9, 2, 4)
+    const midiNotes = getStringMidiNotes(STANDARD_TUNING)
+    const allowed = new Set([9, 2, 4])
+    steps[0].notes.forEach(({ stringIndex, fret }) => {
+      expect(allowed.has((midiNotes[stringIndex] + fret) % 12)).toBe(true)
+    })
+  })
+
+  it('falls back to the scale-derived quality when no chord quality is given', () => {
+    const implicit = buildPracticeSequence({ ...baseOpts, mode: 'chord' })
+    const explicit = buildPracticeSequence({ ...baseOpts, mode: 'chord', chordQuality: 'minor' })
+    expect(implicit).toEqual(explicit)
+    expect(implicit[0].label).toMatch(/^Am/)
+  })
 })
 
 describe('buildPracticeSequence — triad mode', () => {

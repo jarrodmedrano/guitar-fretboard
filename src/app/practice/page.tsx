@@ -15,6 +15,7 @@ export default function PracticePage() {
     stringCount,
     tuningKey,
     mode,
+    chordQuality,
     scaleDirection,
     triadStringSetIndex,
     selectedProgression,
@@ -26,7 +27,7 @@ export default function PracticePage() {
     isPlaying,
     tuning,
     steps,
-    currentStep,
+    displayStep,
     activeNotes,
     currentLabel,
     triadStringSets,
@@ -36,7 +37,9 @@ export default function PracticePage() {
     setArpeggioOn,
     setShowFingerings,
     setShowOnlyChordTones,
+    setPreviewStep,
     setMode,
+    setChordQuality,
     setRootNote,
     setScale,
     setKey,
@@ -56,7 +59,7 @@ export default function PracticePage() {
   const fretboardPosition = isChordMode
     ? effectivePosition
     : isProgressionMode
-      ? (currentStep ?? 0)
+      ? (displayStep ?? 0)
       : mode === 'scale'
         ? position
         : null
@@ -94,6 +97,7 @@ export default function PracticePage() {
         >
           <PracticeControls
             mode={mode}
+            chordQuality={chordQuality}
             rootNote={rootNote}
             scale={scale}
             position={position}
@@ -110,6 +114,7 @@ export default function PracticePage() {
             showOnlyChordTones={showOnlyChordTones}
             isPlaying={isPlaying}
             onModeChange={setMode}
+            onChordQualityChange={setChordQuality}
             onStringCountChange={setStringCount}
             onTuningChange={setTuningKey}
             onRootChange={setRootNote}
@@ -152,20 +157,24 @@ export default function PracticePage() {
             )}
           </div>
 
-          {/* Progression map: every chord in the loop, highlighting the one sounding now */}
+          {/* Progression map: every chord in the loop. Highlights the one
+              sounding during playback; click a chord to preview it while stopped */}
           {(mode === 'progression' || mode === 'triad') && steps.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4" aria-label="Progression chords">
               {steps.map((step, index) => (
-                <span
+                <button
                   key={`${step.label}-${index}`}
+                  onClick={() => setPreviewStep(index)}
+                  aria-pressed={displayStep === index}
+                  title={isPlaying ? undefined : `Show ${step.label} on the fretboard`}
                   className={
-                    currentStep === index
-                      ? 'px-3 py-1.5 rounded-md text-sm font-semibold bg-amber-500 text-white shadow-lg scale-105 transition-all'
-                      : 'px-3 py-1.5 rounded-md text-sm font-semibold bg-zinc-800 text-zinc-400 transition-all'
+                    displayStep === index
+                      ? 'px-3 py-1.5 rounded-md text-sm font-semibold bg-amber-500 text-white shadow-lg scale-105 transition-all cursor-pointer'
+                      : 'px-3 py-1.5 rounded-md text-sm font-semibold bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-all cursor-pointer'
                   }
                 >
                   {step.label}
-                </span>
+                </button>
               ))}
             </div>
           )}
@@ -175,6 +184,7 @@ export default function PracticePage() {
             tuning={tuning}
             position={fretboardPosition}
             showChordsMode={isChordMode}
+            chordQuality={isChordMode ? chordQuality : null}
             showProgressionMode={isProgressionMode}
             selectedProgression={isProgressionMode ? selectedProgression : null}
             progressionViewMode="chord"

@@ -422,6 +422,75 @@ describe('usePracticeSession', () => {
     expect(result.current.steps.length).toBeGreaterThan(0)
   })
 
+  it('derives the chord quality from the scale until overridden', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    // minorPentatonic default → minor
+    expect(result.current.chordQuality).toBe('minor')
+
+    act(() => {
+      result.current.setScale('major')
+    })
+    expect(result.current.chordQuality).toBe('major')
+  })
+
+  it('setChordQuality stops playback and rebuilds the chord step', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setChordQuality('dim7')
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.chordQuality).toBe('dim7')
+    expect(result.current.steps[0].label).toMatch(/^Adim7/)
+  })
+
+  it('keeps the chord quality override when the scale changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.setChordQuality('sus4')
+    })
+    act(() => {
+      result.current.setScale('major')
+    })
+
+    expect(result.current.chordQuality).toBe('sus4')
+    expect(result.current.steps[0].label).toMatch(/^Asus4/)
+  })
+
+  it('clamps the chord voicing index when the quality changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.setStringCount(4)
+    })
+    act(() => {
+      result.current.setPosition(9)
+    })
+    act(() => {
+      result.current.setChordQuality('add9')
+    })
+
+    // add9 on bass has few voicings; playback material stays valid
+    expect(result.current.effectivePosition).toBeLessThanOrEqual(9)
+    expect(result.current.steps.length).toBeGreaterThan(0)
+    expect(result.current.steps[0].label).toMatch(/^Aadd9/)
+  })
+
   it('changing tuning stops playback', () => {
     const { result } = renderHook(() => usePracticeSession())
 
@@ -434,6 +503,64 @@ describe('usePracticeSession', () => {
 
     expect(result.current.isPlaying).toBe(false)
     expect(result.current.tuning[0]).toBe('D')
+  })
+
+  it('previewing a step shows its notes and label without playing', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setPreviewStep(2)
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.displayStep).toBe(2)
+    expect(result.current.currentLabel).toBe(result.current.steps[2].label)
+
+    const expected = new Set(
+      result.current.steps[2].notes.map((n) => `${n.stringIndex}-${n.fret}`)
+    )
+    expect(result.current.activeNotes).toEqual(expected)
+    expect(fakeCtx.oscillators).toHaveLength(0)
+  })
+
+  it('playback overrides the previewed step', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setPreviewStep(2)
+    })
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      fakeCtx.currentTime = 0.06
+      vi.advanceTimersByTime(25)
+    })
+
+    expect(result.current.displayStep).toBe(0)
+  })
+
+  it('clamps a stale preview and clears it on material changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('progression')
+    })
+    act(() => {
+      result.current.setPreviewStep(99)
+    })
+    expect(result.current.displayStep).toBe(result.current.steps.length - 1)
+
+    act(() => {
+      result.current.setMode('scale')
+    })
+    expect(result.current.displayStep).toBeNull()
   })
 
   it('closes the AudioContext on unmount', () => {

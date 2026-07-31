@@ -44,6 +44,8 @@ export interface PracticeSequenceOptions {
   direction: ScaleDirection
   triadStringSet: [number, number, number]
   progression: string
+  // Explicit chord quality for chord mode; falls back to the scale-derived quality
+  chordQuality?: ChordQuality
 }
 
 const MAX_FRET = 24
@@ -124,7 +126,8 @@ function voicingToNotes(voicing: ChordVoicing): PracticeNote[] {
 
 function buildChordSteps(opts: PracticeSequenceOptions): PracticeStep[] {
   const { rootNote, scale, position, tuning } = opts
-  const voicing = getChordVoicing(rootNote, scale, position, tuning)
+  const quality = opts.chordQuality ?? getChordQuality(scale)
+  const voicing = getChordVoicing(rootNote, scale, position, tuning, quality)
   if (!voicing) return []
 
   return [
@@ -132,7 +135,7 @@ function buildChordSteps(opts: PracticeSequenceOptions): PracticeStep[] {
       notes: voicingToNotes(voicing),
       durationBeats: 4,
       strum: true,
-      label: getChordNameForPosition(rootNote, scale, position, tuning),
+      label: getChordNameForPosition(rootNote, scale, position, tuning, quality),
     },
   ]
 }
