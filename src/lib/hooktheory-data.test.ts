@@ -220,6 +220,23 @@ describe('progression name and voicing integration', () => {
     })
   })
 
+  it('walks the C major tonic strictly up the neck with no octave gap', () => {
+    // The voicing ladder is curated shapes + octave repeats + the D-shape gap
+    // fill at fret 10, so consecutive positions never repeat or jump 8 -> 12
+    const baseFrets = [0, 1, 2, 3, 4, 5, 6].map(
+      (scalePosition) =>
+        getProgressionChordVoicing(
+          'C',
+          'major',
+          0,
+          '1-4-5',
+          TUNINGS.standard,
+          scalePosition
+        )!.baseFret
+    )
+    expect(baseFrets).toEqual([1, 3, 5, 8, 10, 12, 15])
+  })
+
   it('uses an explicit scale position for the voicing window when given', () => {
     // Chord index 2 is the v chord (Em); without an explicit scale position the
     // window comes from position 2, high on the neck. Pinning the window to

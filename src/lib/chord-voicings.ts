@@ -1,12 +1,17 @@
 // Tuning-aware chord voicings.
 //
-// 6-string instruments use the curated dataset (src/lib/chords.ts) unchanged.
+// 6-string instruments use the curated dataset (src/lib/chords.ts).
 // 4-string basses get compact voicings generated from chord tones, and
 // 7/8-string guitars get the curated shapes placed on their top six strings
 // and auto-extended onto the extra low strings where a chord tone is in reach.
+//
+// Every instrument's base set is then extended into a full-neck ladder:
+// octave repeats of each shape (+12 frets), plus movable CAGED shapes filling
+// the areas the curated data misses (6-string major/minor only).
 
 import { NOTES, type Note } from './notes'
 import { getChordVoicings, type ChordQuality, type ChordVoicing } from './chords'
+import { generateCagedVoicings } from './caged-shapes'
 import { getStringMidiNotes } from './audio/frequencies'
 
 const SEMITONES_PER_OCTAVE = 12
@@ -290,6 +295,54 @@ function extendCurated(
     .sort((a, b) => a.baseFret - b.baseFret)
 }
 
+// --- Full-neck ladder (octave repeats + CAGED gap fill) ---------------------
+
+// Repeat each shape an octave higher (open strings become fret 12, turning
+// open chords into their real 12th-fret barre forms). Repeats that fall off
+// the fretboard or stretch past a relaxed hand span (e.g. "x 0 7 9 10 8",
+// whose open A becomes a 10-fret reach) are dropped.
+function addOctaveRepeats(voicings: ChordVoicing[]): ChordVoicing[] {
+  const repeats = voicings
+    .map((voicing) =>
+      voicing.frets.map((fret) =>
+        fret === 'x' ? ('x' as const) : fret + SEMITONES_PER_OCTAVE
+      )
+    )
+    .filter(
+      (frets) =>
+        frets.every((fret) => fret === 'x' || fret <= MAX_ABSOLUTE_FRET) &&
+        fretsWithinSpan(frets, RELAXED_HAND_SPAN)
+    )
+    .map(toVoicing)
+  return [...voicings, ...repeats]
+}
+
+// A generated CAGED shape only joins the ladder when it lands in a neck area
+// no other voicing covers (no entry within one fret of its baseFret), so it
+// fills genuine gaps — like the D-shape C major at fret 10 — without
+// shadowing curated fingerings with near-identical generated ones
+function buildVoicingLadder(
+  base: ChordVoicing[],
+  root: Note,
+  quality: ChordQuality,
+  tuning: Note[]
+): ChordVoicing[] {
+  const withRepeats = addOctaveRepeats(base)
+  const cagedFill = tuning.length === 6 ? generateCagedVoicings(root, quality) : []
+
+  return cagedFill
+    .reduce((ladder, candidate) => {
+      const coversNewArea = ladder.every(
+        (voicing) =>
+          voicing.frets.join(',') !== candidate.frets.join(',') &&
+          Math.abs(voicing.baseFret - candidate.baseFret) > 1
+      )
+      return coversNewArea ? [...ladder, candidate] : ladder
+    }, withRepeats)
+    .slice()
+    .sort((a, b) => a.baseFret - b.baseFret)
+}
+
 // --- Dispatcher -------------------------------------------------------------
 
 const voicingCache = new Map<string, ChordVoicing[]>()
@@ -299,28 +352,27 @@ export function getChordVoicingsForTuning(
   quality: ChordQuality,
   tuning: Note[]
 ): ChordVoicing[] {
-  if (tuning.length === 6) {
-    // All 6-string tunings show the curated standard shapes, as before
-    return getChordVoicings(root, quality)
-  }
-
   const key = `${root}|${quality}|${tuning.join(',')}`
   const cached = voicingCache.get(key)
   if (cached) return cached
 
-  let voicings: ChordVoicing[]
-  if (tuning.length < 6) {
-    voicings = generateCompactVoicings(root, quality, tuning)
+  let base: ChordVoicing[]
+  if (tuning.length === 6) {
+    // All 6-string tunings use the curated standard shapes, as before
+    base = getChordVoicings(root, quality)
+  } else if (tuning.length < 6) {
+    base = generateCompactVoicings(root, quality, tuning)
   } else {
     const transposition = topSixTranspositionOffset(tuning)
-    voicings =
+    base =
       transposition !== null
         ? extendCurated(root, quality, tuning, transposition)
         : generateCompactVoicings(root, quality, tuning)
   }
 
-  voicingCache.set(key, voicings)
-  return voicings
+  const ladder = buildVoicingLadder(base, root, quality, tuning)
+  voicingCache.set(key, ladder)
+  return ladder
 }
 
 export function getChordVoicingCountForTuning(

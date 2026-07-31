@@ -122,13 +122,53 @@ describe('bass voicings (4-string)', () => {
   })
 })
 
-describe('6-string passthrough', () => {
-  it('returns the curated array identity for standard tuning', () => {
+describe('6-string extended ladder', () => {
+  it('includes every curated voicing', () => {
     NOTES.forEach((root) => {
       ALL_QUALITIES.forEach((quality) => {
-        expect(getChordVoicingsForTuning(root, quality, STANDARD_TUNING)).toBe(
-          getChordVoicings(root, quality)
-        )
+        const ladder = getChordVoicingsForTuning(root, quality, STANDARD_TUNING)
+        const ladderKeys = new Set(ladder.map((v) => v.frets.join(',')))
+        getChordVoicings(root, quality).forEach((curated) => {
+          expect(ladderKeys.has(curated.frets.join(',')), `${root} ${quality}`).toBe(
+            true
+          )
+        })
+      })
+    })
+  })
+
+  it('repeats shapes an octave up (open Am reappears as the 12th-fret barre)', () => {
+    const ladder = getChordVoicingsForTuning('A', 'minor', STANDARD_TUNING)
+    expect(ladder.some((v) => v.frets.join(',') === 'x,12,14,14,13,12')).toBe(true)
+  })
+
+  it('fills the C major gap at fret 10 with the D shape', () => {
+    const ladder = getChordVoicingsForTuning('C', 'major', STANDARD_TUNING)
+    expect(ladder.some((v) => v.frets.join(',') === 'x,x,10,12,13,12')).toBe(true)
+  })
+
+  it('keeps the C major ladder continuous up the neck', () => {
+    const baseFrets = getChordVoicingsForTuning('C', 'major', STANDARD_TUNING).map(
+      (v) => v.baseFret
+    )
+    expect(baseFrets[0]).toBeLessThanOrEqual(1)
+    expect(baseFrets[baseFrets.length - 1]).toBeGreaterThanOrEqual(15)
+    baseFrets.forEach((fret, i) => {
+      if (i > 0) {
+        expect(fret - baseFrets[i - 1], `gap after fret ${baseFrets[i - 1]}`).toBeLessThanOrEqual(4)
+      }
+    })
+  })
+
+  it('never includes an unplayable span or off-fretboard repeat', () => {
+    // e.g. "X 0 7 9 10 8" would span 10 frets once the open A becomes fret 12
+    NOTES.forEach((root) => {
+      ;(['major', 'minor'] as const).forEach((quality) => {
+        getChordVoicingsForTuning(root, quality, STANDARD_TUNING).forEach((v) => {
+          const fretted = v.frets.filter((f): f is number => f !== 'x' && f > 0)
+          expect(Math.max(...fretted) - Math.min(...fretted)).toBeLessThanOrEqual(4)
+          fretted.forEach((f) => expect(f).toBeLessThanOrEqual(24))
+        })
       })
     })
   })
@@ -137,18 +177,21 @@ describe('6-string passthrough', () => {
 describe('7-string extension (standard7)', () => {
   const tuning = TUNINGS.standard7
 
-  it('keeps the curated shape on the top six strings', () => {
+  it('keeps the curated shape (or its octave repeat) on the top six strings', () => {
     NOTES.forEach((root) => {
       ALL_QUALITIES.forEach((quality) => {
         const extended = getChordVoicingsForTuning(root, quality, tuning)
         const curated = getChordVoicings(root, quality)
-        expect(extended).toHaveLength(curated.length)
+        expect(extended.length).toBeGreaterThanOrEqual(curated.length)
+        const allowed = new Set(
+          curated.flatMap((c) => [
+            JSON.stringify(c.frets),
+            JSON.stringify(c.frets.map((f) => (f === 'x' ? 'x' : f + 12))),
+          ])
+        )
         extended.forEach((voicing) => {
           const topSix = JSON.stringify(voicing.frets.slice(1))
-          expect(
-            curated.some((c) => JSON.stringify(c.frets) === topSix),
-            `${root} ${quality} ${topSix}`
-          ).toBe(true)
+          expect(allowed.has(topSix), `${root} ${quality} ${topSix}`).toBe(true)
         })
       })
     })
@@ -179,15 +222,20 @@ describe('7-string extension (standard7)', () => {
 describe('8-string extension (standard8)', () => {
   const tuning = TUNINGS.standard8
 
-  it('keeps the curated shape on the top six strings and restricts the lowest string to the root', () => {
+  it('keeps the curated shape (or its octave repeat) on the top six strings and restricts the lowest string to the root', () => {
     const rootPcOf = (root: Note) => NOTES.indexOf(root)
     NOTES.forEach((root) => {
       const extended = getChordVoicingsForTuning(root, 'major', tuning)
       const curated = getChordVoicings(root, 'major')
-      expect(extended).toHaveLength(curated.length)
+      expect(extended.length).toBeGreaterThanOrEqual(curated.length)
+      const allowed = new Set(
+        curated.flatMap((c) => [
+          JSON.stringify(c.frets),
+          JSON.stringify(c.frets.map((f) => (f === 'x' ? 'x' : f + 12))),
+        ])
+      )
       extended.forEach((voicing) => {
-        const topSix = JSON.stringify(voicing.frets.slice(2))
-        expect(curated.some((c) => JSON.stringify(c.frets) === topSix)).toBe(true)
+        expect(allowed.has(JSON.stringify(voicing.frets.slice(2)))).toBe(true)
         const lowest = voicing.frets[0]
         if (lowest !== 'x') {
           const pc = (getStringMidiNotes(tuning)[0] + lowest) % 12
@@ -203,11 +251,12 @@ describe('transposed top-six tunings (aStandard7)', () => {
     const tuning = TUNINGS.aStandard7
     const extended = getChordVoicingsForTuning('C', 'major', tuning)
     const curated = getChordVoicings('C', 'major')
-    const transposed = curated.map((c) =>
-      JSON.stringify(c.frets.map((fret) => (fret === 'x' ? 'x' : fret + 2)))
-    )
+    const transposed = curated.flatMap((c) => [
+      JSON.stringify(c.frets.map((fret) => (fret === 'x' ? 'x' : fret + 2))),
+      JSON.stringify(c.frets.map((fret) => (fret === 'x' ? 'x' : fret + 14))),
+    ])
 
-    expect(extended).toHaveLength(curated.length)
+    expect(extended.length).toBeGreaterThanOrEqual(curated.length)
     extended.forEach((voicing) => {
       expect(transposed).toContain(JSON.stringify(voicing.frets.slice(1)))
     })
@@ -240,7 +289,7 @@ describe('fingering and caching', () => {
       getChordVoicingsForTuning('C', 'major', TUNINGS.bassStandard).length
     )
     expect(getChordVoicingCountForTuning('C', 'major', STANDARD_TUNING)).toBe(
-      getChordVoicings('C', 'major').length
+      getChordVoicingsForTuning('C', 'major', STANDARD_TUNING).length
     )
   })
 })

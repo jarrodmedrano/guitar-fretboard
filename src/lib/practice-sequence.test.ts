@@ -178,19 +178,25 @@ describe('buildPracticeSequence — progression mode', () => {
     expect(minFret(high[0])).toBeGreaterThan(minFret(low[0]))
   })
 
-  it('ascends from open chords to barre chords across positions in C major', () => {
-    // C major's scale boxes are rooted at fret 8, but chord positions are
-    // ordered by neck area: position 1 gives open C/F/G and later positions
-    // climb to the 8th-fret barre shapes
+  it('ascends from open chords through the gap-fill area to the octave repeats in C major', () => {
+    // Position 1 gives open C/F/G; the middle positions land in the 9-13 fret
+    // area that used to be an unreachable gap; the top positions reach the
+    // octave-repeated shapes past the 12th fret
     const minFret = (step: PracticeStep) =>
       Math.min(...step.notes.filter(({ fret }) => fret > 0).map(({ fret }) => fret))
 
     const opts = { ...baseOpts, rootNote: 'C' as const, scale: 'major', mode: 'progression' as const }
     const open = buildPracticeSequence({ ...opts, position: 0 })
-    const barre = buildPracticeSequence({ ...opts, position: 5 })
+    const mid = buildPracticeSequence({ ...opts, position: 4 })
+    const high = buildPracticeSequence({ ...opts, position: 6 })
 
-    expect(barre.map((step) => step.label)).toEqual(open.map((step) => step.label))
+    expect(mid.map((step) => step.label)).toEqual(open.map((step) => step.label))
+    expect(high.map((step) => step.label)).toEqual(open.map((step) => step.label))
     open.forEach((step) => expect(minFret(step)).toBeLessThanOrEqual(3))
-    barre.forEach((step) => expect(minFret(step)).toBeGreaterThanOrEqual(7))
+    mid.forEach((step) => {
+      expect(minFret(step)).toBeGreaterThanOrEqual(9)
+      expect(minFret(step)).toBeLessThanOrEqual(13)
+    })
+    high.forEach((step) => expect(minFret(step)).toBeGreaterThanOrEqual(14))
   })
 })
