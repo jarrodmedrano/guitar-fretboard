@@ -153,4 +153,29 @@ describe('buildPracticeSequence — progression mode', () => {
     })
     expect(steps.map((step) => step.label)).toEqual(['i — Am', 'iv — Dm', 'V — E', 'i — Am'])
   })
+
+  it('keeps every chord voicing near the selected position window', () => {
+    // A minor pentatonic position 1 spans frets 5–8; all three chords should
+    // voice nearby instead of drifting up the neck with their progression index
+    const steps = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 0 })
+    expect(steps).toHaveLength(3)
+    steps.forEach((step) => {
+      const frettedNotes = step.notes.filter(({ fret }) => fret > 0)
+      const lowestFret = Math.min(...frettedNotes.map(({ fret }) => fret))
+      expect(lowestFret).toBeGreaterThanOrEqual(4)
+      expect(lowestFret).toBeLessThanOrEqual(8)
+    })
+  })
+
+  it('moves the whole progression up the neck at a higher position', () => {
+    const minFret = (step: PracticeStep) =>
+      Math.min(...step.notes.filter(({ fret }) => fret > 0).map(({ fret }) => fret))
+
+    const low = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 0 })
+    const high = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 4 })
+
+    // Position changes the voicings, not the harmony
+    expect(high.map((step) => step.label)).toEqual(low.map((step) => step.label))
+    expect(minFret(high[0])).toBeGreaterThan(minFret(low[0]))
+  })
 })

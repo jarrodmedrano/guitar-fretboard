@@ -863,21 +863,26 @@ export function getChordRootForDegree(
   return NOTES[(rootIndex + interval) % 12]
 }
 
-// Get chord voicing for a specific position in a progression
-// This finds the best voicing close to the position's fret range
+// Get chord voicing for a specific chord in a progression
+// This finds the best voicing close to a scale position's fret range;
+// scalePosition defaults to the chord index (each chord near its own box)
+// but callers can pin every chord to one position (e.g. practice screen)
 export function getProgressionChordVoicing(
   rootNote: Note,
   scale: string,
   position: number,
   progressionKey: string,
-  tuning: Note[] = STANDARD_TUNING
+  tuning: Note[] = STANDARD_TUNING,
+  scalePosition: number = position
 ): ChordVoicing | null {
   const chord = getProgressionChordAt(rootNote, scale, position, progressionKey)
   if (!chord) return null
 
-  // Get position's fret range
-  const positionData = SCALE_POSITIONS[scale]?.[position]
-  if (!positionData) return null
+  // Get the fret range of the scale position anchoring the voicing window
+  const scalePositions = SCALE_POSITIONS[scale]
+  if (!scalePositions || scalePositions.length === 0) return null
+  const clampedPosition = Math.min(Math.max(0, scalePosition), scalePositions.length - 1)
+  const positionData = scalePositions[clampedPosition]
 
   const baseRootFret = getRootFret(rootNote, tuning) // Root of scale on 6th string
   const positionStartFret = baseRootFret + positionData.start

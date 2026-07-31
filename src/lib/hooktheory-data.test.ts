@@ -186,6 +186,36 @@ describe('progression name and voicing integration', () => {
     expect(low!.baseFret).toBeLessThan(high!.baseFret)
   })
 
+  it('uses an explicit scale position for the voicing window when given', () => {
+    // Chord index 2 is the v chord (Em); without an explicit scale position the
+    // window comes from position 2, high on the neck. Pinning the window to
+    // position 0 should pick a voicing lower on the neck
+    const drifted = getProgressionChordVoicing('A', 'minorPentatonic', 2, '1-4-5')
+    const pinned = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      2,
+      '1-4-5',
+      TUNINGS.standard,
+      0
+    )
+    expect(drifted).not.toBeNull()
+    expect(pinned).not.toBeNull()
+    expect(pinned!.baseFret).toBeLessThan(drifted!.baseFret)
+  })
+
+  it('clamps an out-of-range scale position instead of failing', () => {
+    const clamped = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      99
+    )
+    expect(clamped).not.toBeNull()
+  })
+
   it('produces voicings for every Hooktheory progression across positions and instruments', () => {
     const roots: Note[] = ['C', 'A', 'F#']
     const tunings = [
