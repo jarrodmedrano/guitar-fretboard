@@ -422,6 +422,75 @@ describe('usePracticeSession', () => {
     expect(result.current.steps.length).toBeGreaterThan(0)
   })
 
+  it('derives the chord quality from the scale until overridden', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    // minorPentatonic default → minor
+    expect(result.current.chordQuality).toBe('minor')
+
+    act(() => {
+      result.current.setScale('major')
+    })
+    expect(result.current.chordQuality).toBe('major')
+  })
+
+  it('setChordQuality stops playback and rebuilds the chord step', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.play()
+    })
+    act(() => {
+      result.current.setChordQuality('dim7')
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.chordQuality).toBe('dim7')
+    expect(result.current.steps[0].label).toMatch(/^Adim7/)
+  })
+
+  it('keeps the chord quality override when the scale changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.setChordQuality('sus4')
+    })
+    act(() => {
+      result.current.setScale('major')
+    })
+
+    expect(result.current.chordQuality).toBe('sus4')
+    expect(result.current.steps[0].label).toMatch(/^Asus4/)
+  })
+
+  it('clamps the chord voicing index when the quality changes', () => {
+    const { result } = renderHook(() => usePracticeSession())
+
+    act(() => {
+      result.current.setMode('chord')
+    })
+    act(() => {
+      result.current.setStringCount(4)
+    })
+    act(() => {
+      result.current.setPosition(9)
+    })
+    act(() => {
+      result.current.setChordQuality('add9')
+    })
+
+    // add9 on bass has few voicings; playback material stays valid
+    expect(result.current.effectivePosition).toBeLessThanOrEqual(9)
+    expect(result.current.steps.length).toBeGreaterThan(0)
+    expect(result.current.steps[0].label).toMatch(/^Aadd9/)
+  })
+
   it('changing tuning stops playback', () => {
     const { result } = renderHook(() => usePracticeSession())
 

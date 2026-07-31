@@ -8,15 +8,28 @@ import { NOTES, type Note } from './notes'
 import { STANDARD_TUNING, TUNINGS, TUNING_CONFIGS } from './music-theory'
 import { getStringMidiNotes } from './audio/frequencies'
 
-const ALL_QUALITIES: ChordQuality[] = ['major', 'minor', '7', 'maj7', 'm7', 'm7b5']
+const ALL_QUALITIES: ChordQuality[] = [
+  'major', 'minor', 'dim', 'aug', 'sus2', 'sus4',
+  '7', 'maj7', 'm7', 'm7b5', 'dim7',
+  '6', 'm6', 'add9', '9',
+]
 
 const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   major: [0, 4, 7],
   minor: [0, 3, 7],
+  dim: [0, 3, 6],
+  aug: [0, 4, 8],
+  sus2: [0, 2, 7],
+  sus4: [0, 5, 7],
   '7': [0, 4, 7, 10],
   maj7: [0, 4, 7, 11],
   m7: [0, 3, 7, 10],
   m7b5: [0, 3, 6, 10],
+  dim7: [0, 3, 6, 9],
+  '6': [0, 4, 7, 9],
+  m6: [0, 3, 7, 9],
+  add9: [0, 4, 7, 14],
+  '9': [0, 4, 7, 10, 14],
 }
 
 function soundedPitchClasses(frets: (number | 'x')[], tuning: Note[]): number[] {
@@ -91,8 +104,8 @@ describe('bass voicings (4-string)', () => {
               (fret): fret is number => fret !== 'x' && fret > 0
             )
             if (fretted.length > 0) {
-              // 3-fret span normally; 4 for the rare relaxed-span combos
-              expect(Math.max(...fretted) - Math.min(...fretted)).toBeLessThanOrEqual(4)
+              // 3-fret span normally; 4-5 for the rare relaxed-span combos
+              expect(Math.max(...fretted) - Math.min(...fretted)).toBeLessThanOrEqual(5)
             }
             const sounded = voicing.frets.filter((fret) => fret !== 'x')
             expect(sounded.length).toBeGreaterThanOrEqual(3)

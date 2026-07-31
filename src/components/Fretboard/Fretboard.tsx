@@ -18,6 +18,7 @@ import {
   getProgressionChordVoicing,
   getAllProgressionChordVoicings,
   getProgressionChordAt,
+  ChordQuality,
 } from '@/lib/music-theory'
 
 // Import extracted components
@@ -50,6 +51,7 @@ export interface FretboardProps {
   displayMode?: DisplayMode
   showOnlyChordTones?: boolean
   showChordsMode?: boolean
+  chordQuality?: ChordQuality | null // explicit chord type for chord mode; null follows the scale
   showProgressionMode?: boolean
   selectedProgression?: string | null
   showFingerings?: boolean
@@ -67,6 +69,7 @@ export default function Fretboard({
   displayMode = 'notes',
   showOnlyChordTones = false,
   showChordsMode = false,
+  chordQuality = null,
   showProgressionMode = false,
   selectedProgression = null,
   showFingerings = true,
@@ -105,8 +108,8 @@ export default function Fretboard({
         ? [getProgressionChordVoicing(rootNote, scale, position, selectedProgression, tuning)].filter(Boolean) as ChordVoicing[]
         : getAllProgressionChordVoicings(rootNote, scale, selectedProgression, tuning)
       : position !== null
-        ? [getChordVoicing(rootNote, scale, position, tuning)].filter(Boolean) as ChordVoicing[]
-        : getAllChordVoicings(rootNote, scale, tuning)
+        ? [getChordVoicing(rootNote, scale, position, tuning, chordQuality ?? undefined)].filter(Boolean) as ChordVoicing[]
+        : getAllChordVoicings(rootNote, scale, tuning, chordQuality ?? undefined)
     : []
 
   // Helper to check if a note is part of any chord voicing and get its finger number

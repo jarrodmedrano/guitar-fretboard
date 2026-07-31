@@ -5,18 +5,49 @@
 import type { Note } from './notes'
 import { CHORD_SHAPES, type UberchordVoicing } from './chord-shapes'
 
-export type ChordQuality = 'major' | 'minor' | '7' | 'maj7' | 'm7' | 'm7b5'
+export type ChordQuality =
+  | 'major'
+  | 'minor'
+  | 'dim'
+  | 'aug'
+  | 'sus2'
+  | 'sus4'
+  | '7'
+  | 'maj7'
+  | 'm7'
+  | 'm7b5'
+  | 'dim7'
+  | '6'
+  | 'm6'
+  | 'add9'
+  | '9'
 
 export const CHORD_SUFFIXES: Record<ChordQuality, string> = {
   major: '',
   minor: 'm',
+  dim: 'dim',
+  aug: 'aug',
+  sus2: 'sus2',
+  sus4: 'sus4',
   '7': '7',
   maj7: 'maj7',
   m7: 'm7',
   m7b5: 'm7b5',
+  dim7: 'dim7',
+  '6': '6',
+  m6: 'm6',
+  add9: 'add9',
+  '9': '9',
 }
 
-const MINOR_FLAVORED: ReadonlySet<ChordQuality> = new Set(['minor', 'm7', 'm7b5'])
+const MINOR_FLAVORED: ReadonlySet<ChordQuality> = new Set([
+  'minor',
+  'm7',
+  'm7b5',
+  'dim',
+  'dim7',
+  'm6',
+])
 
 // Minor-flavored qualities render lowercase roman numerals
 export function isMinorQuality(quality: ChordQuality): boolean {

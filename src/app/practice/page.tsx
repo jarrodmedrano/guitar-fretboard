@@ -15,6 +15,7 @@ export default function PracticePage() {
     stringCount,
     tuningKey,
     mode,
+    chordQuality,
     scaleDirection,
     triadStringSetIndex,
     selectedProgression,
@@ -38,6 +39,7 @@ export default function PracticePage() {
     setShowOnlyChordTones,
     setPreviewStep,
     setMode,
+    setChordQuality,
     setRootNote,
     setScale,
     setKey,
@@ -95,6 +97,7 @@ export default function PracticePage() {
         >
           <PracticeControls
             mode={mode}
+            chordQuality={chordQuality}
             rootNote={rootNote}
             scale={scale}
             position={position}
@@ -111,6 +114,7 @@ export default function PracticePage() {
             showOnlyChordTones={showOnlyChordTones}
             isPlaying={isPlaying}
             onModeChange={setMode}
+            onChordQualityChange={setChordQuality}
             onStringCountChange={setStringCount}
             onTuningChange={setTuningKey}
             onRootChange={setRootNote}
@@ -180,6 +184,7 @@ export default function PracticePage() {
             tuning={tuning}
             position={fretboardPosition}
             showChordsMode={isChordMode}
+            chordQuality={isChordMode ? chordQuality : null}
             showProgressionMode={isProgressionMode}
             selectedProgression={isProgressionMode ? selectedProgression : null}
             progressionViewMode="chord"

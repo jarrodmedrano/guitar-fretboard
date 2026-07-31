@@ -350,10 +350,11 @@ export function getChordNameForPosition(
   rootNote: Note,
   scale: string,
   position: number,
-  tuning: Note[] = STANDARD_TUNING
+  tuning: Note[] = STANDARD_TUNING,
+  chordQuality?: ChordQuality
 ): string {
-  const quality = getChordQuality(scale)
-  const suffix = quality === 'minor' ? 'm' : ''
+  const quality = chordQuality ?? getChordQuality(scale)
+  const suffix = CHORD_SUFFIXES[quality]
   const count = getChordVoicingCountForTuning(rootNote, quality, tuning)
   if (count === 0) return `${rootNote}${suffix}`
 
@@ -367,9 +368,11 @@ export function getChordVoicing(
   rootNote: Note,
   scale: string,
   position: number,
-  tuning: Note[] = STANDARD_TUNING
+  tuning: Note[] = STANDARD_TUNING,
+  chordQuality?: ChordQuality
 ): ChordVoicing | null {
-  const voicings = getChordVoicingsForTuning(rootNote, getChordQuality(scale), tuning)
+  const quality = chordQuality ?? getChordQuality(scale)
+  const voicings = getChordVoicingsForTuning(rootNote, quality, tuning)
   return voicings[position] ?? null
 }
 
@@ -377,9 +380,11 @@ export function getChordVoicing(
 export function getAllChordVoicings(
   rootNote: Note,
   scale: string,
-  tuning: Note[] = STANDARD_TUNING
+  tuning: Note[] = STANDARD_TUNING,
+  chordQuality?: ChordQuality
 ): ChordVoicing[] {
-  return getChordVoicingsForTuning(rootNote, getChordQuality(scale), tuning)
+  const quality = chordQuality ?? getChordQuality(scale)
+  return getChordVoicingsForTuning(rootNote, quality, tuning)
 }
 
 // Chord Progression Support

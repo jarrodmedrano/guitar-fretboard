@@ -10,7 +10,11 @@ import {
 import { CHORD_SHAPES } from './chord-shapes'
 import { NOTES } from './music-theory'
 
-const ALL_QUALITIES: ChordQuality[] = ['major', 'minor', '7', 'maj7', 'm7', 'm7b5']
+const ALL_QUALITIES: ChordQuality[] = [
+  'major', 'minor', 'dim', 'aug', 'sus2', 'sus4',
+  '7', 'maj7', 'm7', 'm7b5', 'dim7',
+  '6', 'm6', 'add9', '9',
+]
 
 describe('parseUberchordVoicing', () => {
   it('parses strings into absolute frets with x for muted', () => {
@@ -104,14 +108,26 @@ describe('quality helpers', () => {
     expect(CHORD_SUFFIXES.major).toBe('')
     expect(CHORD_SUFFIXES.minor).toBe('m')
     expect(CHORD_SUFFIXES.m7b5).toBe('m7b5')
+    expect(CHORD_SUFFIXES.dim).toBe('dim')
+    expect(CHORD_SUFFIXES.aug).toBe('aug')
+    expect(CHORD_SUFFIXES.sus4).toBe('sus4')
+    expect(CHORD_SUFFIXES.add9).toBe('add9')
   })
 
   it('classifies minor-flavored qualities for roman numeral casing', () => {
     expect(isMinorQuality('minor')).toBe(true)
     expect(isMinorQuality('m7')).toBe(true)
     expect(isMinorQuality('m7b5')).toBe(true)
+    expect(isMinorQuality('dim')).toBe(true)
+    expect(isMinorQuality('dim7')).toBe(true)
+    expect(isMinorQuality('m6')).toBe(true)
     expect(isMinorQuality('major')).toBe(false)
     expect(isMinorQuality('7')).toBe(false)
     expect(isMinorQuality('maj7')).toBe(false)
+    expect(isMinorQuality('aug')).toBe(false)
+    expect(isMinorQuality('sus2')).toBe(false)
+    expect(isMinorQuality('sus4')).toBe(false)
+    expect(isMinorQuality('add9')).toBe(false)
+    expect(isMinorQuality('9')).toBe(false)
   })
 })

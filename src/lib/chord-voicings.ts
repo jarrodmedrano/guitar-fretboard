@@ -14,18 +14,29 @@ const MAX_FRET = 17
 const MAX_ABSOLUTE_FRET = 24
 const MAX_HAND_SPAN = 3
 // A few root/quality/tuning combos can't produce two span-3 voicings
-// (e.g. Emaj7 on drop-D bass) — they get a second pass with a wider stretch
+// (e.g. Emaj7 on drop-D bass) — they get a second pass with a wider stretch.
+// add9 shapes pack a whole-tone cluster and can need a third, wider pass.
 const RELAXED_HAND_SPAN = 4
+const WIDE_HAND_SPAN = 5
 const MAX_VOICINGS = 4
 const GUITAR_TOP_SIX: Note[] = ['E', 'A', 'D', 'G', 'B', 'E']
 
 const CHORD_INTERVALS: Record<ChordQuality, number[]> = {
   major: [0, 4, 7],
   minor: [0, 3, 7],
+  dim: [0, 3, 6],
+  aug: [0, 4, 8],
+  sus2: [0, 2, 7],
+  sus4: [0, 5, 7],
   '7': [0, 4, 7, 10],
   maj7: [0, 4, 7, 11],
   m7: [0, 3, 7, 10],
   m7b5: [0, 3, 6, 10],
+  dim7: [0, 3, 6, 9],
+  '6': [0, 4, 7, 9],
+  m6: [0, 3, 7, 9],
+  add9: [0, 4, 7, 14],
+  '9': [0, 4, 7, 10, 14],
 }
 
 function pitchClass(note: Note): number {
@@ -124,7 +135,9 @@ function generateCompactVoicings(
 ): ChordVoicing[] {
   const strict = collectCompactVoicings(root, quality, tuning, MAX_HAND_SPAN)
   if (strict.length >= 2) return strict
-  return collectCompactVoicings(root, quality, tuning, RELAXED_HAND_SPAN)
+  const relaxed = collectCompactVoicings(root, quality, tuning, RELAXED_HAND_SPAN)
+  if (relaxed.length >= 2) return relaxed
+  return collectCompactVoicings(root, quality, tuning, WIDE_HAND_SPAN)
 }
 
 function collectCompactVoicings(

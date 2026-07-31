@@ -8,6 +8,7 @@ import {
   getChordVoicingCountForTuning,
   getDefaultTuning,
   getProgressionsForScale,
+  type ChordQuality,
   type Note,
 } from '@/lib/music-theory'
 import {
@@ -36,6 +37,7 @@ export interface UsePracticeSessionReturn {
   stringCount: number
   tuningKey: string
   mode: PracticeMode
+  chordQuality: ChordQuality
   scaleDirection: ScaleDirection
   triadStringSetIndex: number
   selectedProgression: string
@@ -62,6 +64,7 @@ export interface UsePracticeSessionReturn {
   setShowOnlyChordTones: (show: boolean) => void
   setPreviewStep: (step: number | null) => void
   setMode: (mode: PracticeMode) => void
+  setChordQuality: (quality: ChordQuality) => void
   setRootNote: (note: Note) => void
   setScale: (scale: string) => void
   setKey: (root: Note, scale: string) => void
@@ -80,6 +83,9 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   const [stringCount, setStringCountState] = useState(6)
   const [tuningKey, setTuningKeyState] = useState('standard')
   const [mode, setModeState] = useState<PracticeMode>('scale')
+  // Explicit chord-type selection for chord mode; null follows the scale
+  const [chordQualityOverride, setChordQualityOverrideState] =
+    useState<ChordQuality | null>(null)
   const [scaleDirection, setScaleDirectionState] = useState<ScaleDirection>('asc-desc')
   const [triadStringSetIndex, setTriadStringSetIndexState] = useState(0)
   const [selectedProgression, setSelectedProgressionState] = useState('1-4-5')
@@ -104,17 +110,14 @@ export function usePracticeSession(): UsePracticeSessionReturn {
 
   const tuning = useMemo(() => TUNINGS[tuningKey] ?? STANDARD_TUNING, [tuningKey])
   const triadStringSets = useMemo(() => getTriadStringSets(tuning.length), [tuning])
+  const chordQuality = chordQualityOverride ?? getChordQuality(scale)
 
   // Chord mode indexes voicings, whose count differs from scale positions
   const effectivePosition = useMemo(() => {
     if (mode !== 'chord') return position
-    const voicingCount = getChordVoicingCountForTuning(
-      rootNote,
-      getChordQuality(scale),
-      tuning
-    )
+    const voicingCount = getChordVoicingCountForTuning(rootNote, chordQuality, tuning)
     return Math.min(position, Math.max(0, voicingCount - 1))
-  }, [mode, position, rootNote, scale, tuning])
+  }, [mode, position, rootNote, chordQuality, tuning])
 
   const steps = useMemo(
     () =>
@@ -129,6 +132,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
           triadStringSets[triadStringSetIndex]?.stringIndices ??
           triadStringSets[0].stringIndices,
         progression: selectedProgression,
+        chordQuality,
       }),
     [
       mode,
@@ -140,6 +144,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
       triadStringSets,
       triadStringSetIndex,
       selectedProgression,
+      chordQuality,
     ]
   )
 
@@ -273,6 +278,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
   )
 
   const setMode = useMemo(() => stopThen(setModeState), [stopThen])
+  const setChordQuality = useMemo(() => stopThen(setChordQualityOverrideState), [stopThen])
   const setRootNote = useMemo(() => stopThen(setRootNoteState), [stopThen])
   const setPosition = useMemo(() => stopThen(setPositionState), [stopThen])
 
@@ -336,6 +342,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     stringCount,
     tuningKey,
     mode,
+    chordQuality,
     scaleDirection,
     triadStringSetIndex,
     selectedProgression,
@@ -362,6 +369,7 @@ export function usePracticeSession(): UsePracticeSessionReturn {
     setShowOnlyChordTones,
     setPreviewStep,
     setMode,
+    setChordQuality,
     setRootNote,
     setScale,
     setKey,

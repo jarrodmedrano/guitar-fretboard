@@ -8,19 +8,45 @@ import {
   SCALE_NAMES,
   STANDARD_TUNING,
   TUNINGS,
-  getChordQuality,
   getChordVoicingCountForTuning,
   getPositionCount,
   getProgressionsForScale,
   getTuningsByStringCount,
+  type ChordQuality,
   type InstrumentType,
   type Note,
 } from '@/lib/music-theory'
 import type { PracticeMode, ScaleDirection } from '@/lib/practice-sequence'
 import type { TriadStringSet } from '@/lib/triads'
+import { cn } from '@/lib/utils'
 import { styles } from './PracticeControls.styles'
 
 const MODES: PracticeMode[] = ['scale', 'chord', 'triad', 'progression']
+
+// Ordered triads → sevenths → color tones
+const CHORD_QUALITIES: ChordQuality[] = [
+  'major', 'minor', 'dim', 'aug', 'sus2', 'sus4',
+  '7', 'maj7', 'm7', 'm7b5', 'dim7',
+  '6', 'm6', 'add9', '9',
+]
+
+const CHORD_QUALITY_LABELS: Record<ChordQuality, string> = {
+  major: 'Maj',
+  minor: 'Min',
+  dim: 'dim',
+  aug: 'aug',
+  sus2: 'sus2',
+  sus4: 'sus4',
+  '7': '7',
+  maj7: 'maj7',
+  m7: 'm7',
+  m7b5: 'm7b5',
+  dim7: 'dim7',
+  '6': '6',
+  m6: 'm6',
+  add9: 'add9',
+  '9': '9',
+}
 const STRING_COUNTS = [4, 6, 7, 8] as const
 const MIN_BPM = 40
 const MAX_BPM = 220
@@ -28,6 +54,7 @@ const BPM_STEP = 5
 
 export interface PracticeControlsProps {
   mode: PracticeMode
+  chordQuality: ChordQuality
   rootNote: Note
   scale: string
   position: number
@@ -44,6 +71,7 @@ export interface PracticeControlsProps {
   showOnlyChordTones: boolean
   isPlaying: boolean
   onModeChange: (mode: PracticeMode) => void
+  onChordQualityChange: (quality: ChordQuality) => void
   onStringCountChange: (count: number) => void
   onTuningChange: (tuningKey: string) => void
   onRootChange: (note: Note) => void
@@ -65,6 +93,7 @@ const KEY_PICKER_MODES = ['major', 'minor', 'mixolydian', 'dorian', 'lydian', 'p
 
 export function PracticeControls({
   mode,
+  chordQuality,
   rootNote,
   scale,
   position,
@@ -81,6 +110,7 @@ export function PracticeControls({
   showOnlyChordTones,
   isPlaying,
   onModeChange,
+  onChordQualityChange,
   onStringCountChange,
   onTuningChange,
   onRootChange,
@@ -102,7 +132,7 @@ export function PracticeControls({
     mode === 'chord'
       ? getChordVoicingCountForTuning(
           rootNote,
-          getChordQuality(scale),
+          chordQuality,
           TUNINGS[tuningKey] ?? STANDARD_TUNING
         )
       : getPositionCount(scale)
@@ -120,6 +150,10 @@ export function PracticeControls({
 
   const handleRootSelect = (event: ChangeEvent<HTMLSelectElement>) => {
     onRootChange(event.target.value as Note)
+  }
+
+  const handleChordQualitySelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    onChordQualityChange(event.target.value as ChordQuality)
   }
 
   const handleScaleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -200,6 +234,39 @@ export function PracticeControls({
           ))}
         </div>
       </div>
+
+      {/* Chord type sub-selector (chord mode only) */}
+      {mode === 'chord' && (
+        <div className={styles.fieldWrapper}>
+          <label className={styles.label} htmlFor="practice-chord-quality">
+            Chord Type
+          </label>
+          <select
+            id="practice-chord-quality"
+            className={cn(styles.select, styles.qualitySelectMobile)}
+            value={chordQuality}
+            onChange={handleChordQualitySelect}
+          >
+            {CHORD_QUALITIES.map((quality) => (
+              <option key={quality} value={quality}>
+                {CHORD_QUALITY_LABELS[quality]}
+              </option>
+            ))}
+          </select>
+          <div className={styles.qualityRow} role="group" aria-label="Chord type">
+            {CHORD_QUALITIES.map((quality) => (
+              <button
+                key={quality}
+                className={styles.qualityButton(chordQuality === quality)}
+                onClick={() => onChordQualityChange(quality)}
+                aria-pressed={chordQuality === quality}
+              >
+                {CHORD_QUALITY_LABELS[quality]}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Instrument and tuning */}
       <div className={styles.optionsRow}>
