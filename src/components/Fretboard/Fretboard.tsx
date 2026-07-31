@@ -57,6 +57,9 @@ export interface FretboardProps {
   showFingerings?: boolean
   progressionViewMode?: ProgressionViewMode
   position?: number | null // null means show all positions
+  // Scale position anchoring progression voicings on the neck; null/undefined
+  // falls back to the chord's own index (each chord near its own box)
+  progressionAnchorPosition?: number | null
   activeNotes?: Set<string> // Currently sounding notes, keyed `${stringIndex}-${fret}` (0 = lowest string)
   onNoteClick?: (note: Note, string: number, fret: number) => void
 }
@@ -75,6 +78,7 @@ export default function Fretboard({
   showFingerings = true,
   progressionViewMode = 'chord',
   position = null,
+  progressionAnchorPosition = null,
   activeNotes,
   onNoteClick,
 }: FretboardProps) {
@@ -105,7 +109,7 @@ export default function Fretboard({
   const chordVoicings = (showChordsMode || (showProgressionMode && progressionViewMode === 'chord'))
     ? showProgressionMode && selectedProgression
       ? position !== null
-        ? [getProgressionChordVoicing(rootNote, scale, position, selectedProgression, tuning)].filter(Boolean) as ChordVoicing[]
+        ? [getProgressionChordVoicing(rootNote, scale, position, selectedProgression, tuning, progressionAnchorPosition ?? position)].filter(Boolean) as ChordVoicing[]
         : getAllProgressionChordVoicings(rootNote, scale, selectedProgression, tuning)
       : position !== null
         ? [getChordVoicing(rootNote, scale, position, tuning, chordQuality ?? undefined)].filter(Boolean) as ChordVoicing[]
