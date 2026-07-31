@@ -885,8 +885,14 @@ export function getProgressionChordVoicing(
   const positionData = scalePositions[clampedPosition]
 
   const baseRootFret = getRootFret(rootNote, tuning) // Root of scale on 6th string
-  const positionStartFret = baseRootFret + positionData.start
-  const positionEndFret = baseRootFret + positionData.end
+  // Octave-shift the window into the first 12 frets: high-root keys push
+  // positions past the curated voicing range (C major boxes span frets 8-23),
+  // which would otherwise saturate every position to the same top voicing.
+  // Mirrors the below-nut shift scale boxes get in the practice sequence.
+  const rawStartFret = baseRootFret + positionData.start
+  const octaveShift = -12 * Math.floor(rawStartFret / 12)
+  const positionStartFret = rawStartFret + octaveShift
+  const positionEndFret = baseRootFret + positionData.end + octaveShift
   const targetFret = Math.floor((positionStartFret + positionEndFret) / 2)
 
   // Pick the voicing closest to the position window; ties go to the

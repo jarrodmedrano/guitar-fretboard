@@ -177,13 +177,42 @@ describe('progression name and voicing integration', () => {
   })
 
   it('picks a curated voicing near the selected position window', () => {
-    // Positions 0 and 3 of '1-4-5' both resolve to the tonic chord (index % 3),
-    // but position 3 sits an octave up the neck — the voicing should follow
-    const low = getProgressionChordVoicing('A', 'minorPentatonic', 0, '1-4-5')
-    const high = getProgressionChordVoicing('A', 'minorPentatonic', 3, '1-4-5')
+    // Same tonic chord anchored to two different scale positions: position 2's
+    // window sits higher on the neck, so the voicing should follow
+    const low = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      0
+    )
+    const high = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      2
+    )
     expect(low).not.toBeNull()
     expect(high).not.toBeNull()
     expect(low!.baseFret).toBeLessThan(high!.baseFret)
+  })
+
+  it('wraps a window that falls off the curated range down an octave', () => {
+    // A minor pentatonic position 4 spans frets 12-15; wrapped down an octave
+    // (0-3) it picks the open Am instead of saturating at the highest voicing
+    const wrapped = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      3
+    )
+    expect(wrapped).not.toBeNull()
+    expect(wrapped!.baseFret).toBe(1)
   })
 
   it('uses an explicit scale position for the voicing window when given', () => {

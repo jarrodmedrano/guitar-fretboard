@@ -172,10 +172,26 @@ describe('buildPracticeSequence — progression mode', () => {
       Math.min(...step.notes.filter(({ fret }) => fret > 0).map(({ fret }) => fret))
 
     const low = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 0 })
-    const high = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 4 })
+    const high = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 2 })
 
     // Position changes the voicings, not the harmony
     expect(high.map((step) => step.label)).toEqual(low.map((step) => step.label))
     expect(minFret(high[0])).toBeGreaterThan(minFret(low[0]))
+  })
+
+  it('varies voicings across positions in high-root keys instead of saturating', () => {
+    // C major's scale boxes span frets 8-23, past the curated voicing range.
+    // Position 3's window wraps down an octave, so it must yield open-position
+    // chords while position 1 stays on the 8th-fret shapes
+    const minFret = (step: PracticeStep) =>
+      Math.min(...step.notes.filter(({ fret }) => fret > 0).map(({ fret }) => fret))
+
+    const opts = { ...baseOpts, rootNote: 'C' as const, scale: 'major', mode: 'progression' as const }
+    const barre = buildPracticeSequence({ ...opts, position: 0 })
+    const open = buildPracticeSequence({ ...opts, position: 2 })
+
+    expect(open.map((step) => step.label)).toEqual(barre.map((step) => step.label))
+    barre.forEach((step) => expect(minFret(step)).toBeGreaterThanOrEqual(7))
+    open.forEach((step) => expect(minFret(step)).toBeLessThanOrEqual(3))
   })
 })
