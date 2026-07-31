@@ -878,22 +878,27 @@ export function getProgressionChordVoicing(
   const chord = getProgressionChordAt(rootNote, scale, position, progressionKey)
   if (!chord) return null
 
-  // Get the fret range of the scale position anchoring the voicing window
   const scalePositions = SCALE_POSITIONS[scale]
   if (!scalePositions || scalePositions.length === 0) return null
   const clampedPosition = Math.min(Math.max(0, scalePosition), scalePositions.length - 1)
-  const positionData = scalePositions[clampedPosition]
 
   const baseRootFret = getRootFret(rootNote, tuning) // Root of scale on 6th string
-  // Octave-shift the window into the first 12 frets: high-root keys push
-  // positions past the curated voicing range (C major boxes span frets 8-23),
-  // which would otherwise saturate every position to the same top voicing.
-  // Mirrors the below-nut shift scale boxes get in the practice sequence.
-  const rawStartFret = baseRootFret + positionData.start
-  const octaveShift = -12 * Math.floor(rawStartFret / 12)
-  const positionStartFret = rawStartFret + octaveShift
-  const positionEndFret = baseRootFret + positionData.end + octaveShift
-  const targetFret = Math.floor((positionStartFret + positionEndFret) / 2)
+  // Octave-shift each scale box into the first 12 frets (high-root keys push
+  // boxes past the curated voicing range — C major spans frets 8-23), then
+  // order the windows low-to-high: position 1 is always the open-most neck
+  // area and each later position moves up the fretboard
+  const windows = scalePositions
+    .map(({ start, end }) => {
+      const rawStartFret = baseRootFret + start
+      const octaveShift = -12 * Math.floor(rawStartFret / 12)
+      return {
+        start: rawStartFret + octaveShift,
+        end: baseRootFret + end + octaveShift,
+      }
+    })
+    .sort((a, b) => a.start - b.start)
+  const window = windows[clampedPosition]
+  const targetFret = Math.floor((window.start + window.end) / 2)
 
   // Pick the voicing closest to the position window; ties go to the
   // earlier voicing (voicing order roughly tracks playability)

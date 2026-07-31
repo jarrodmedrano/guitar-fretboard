@@ -200,19 +200,24 @@ describe('progression name and voicing integration', () => {
     expect(low!.baseFret).toBeLessThan(high!.baseFret)
   })
 
-  it('wraps a window that falls off the curated range down an octave', () => {
-    // A minor pentatonic position 4 spans frets 12-15; wrapped down an octave
-    // (0-3) it picks the open Am instead of saturating at the highest voicing
-    const wrapped = getProgressionChordVoicing(
-      'A',
-      'minorPentatonic',
-      0,
-      '1-4-5',
-      TUNINGS.standard,
-      3
+  it('orders positions from the open area up the neck', () => {
+    // Position 1 always voices the tonic in the open-most area (open Am here)
+    // and each higher position moves up the fretboard, never back down
+    const baseFrets = [0, 1, 2, 3, 4].map(
+      (scalePosition) =>
+        getProgressionChordVoicing(
+          'A',
+          'minorPentatonic',
+          0,
+          '1-4-5',
+          TUNINGS.standard,
+          scalePosition
+        )!.baseFret
     )
-    expect(wrapped).not.toBeNull()
-    expect(wrapped!.baseFret).toBe(1)
+    expect(baseFrets[0]).toBe(1)
+    baseFrets.forEach((fret, i) => {
+      if (i > 0) expect(fret).toBeGreaterThanOrEqual(baseFrets[i - 1])
+    })
   })
 
   it('uses an explicit scale position for the voicing window when given', () => {
