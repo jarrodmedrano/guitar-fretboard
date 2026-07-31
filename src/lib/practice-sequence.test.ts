@@ -153,4 +153,44 @@ describe('buildPracticeSequence — progression mode', () => {
     })
     expect(steps.map((step) => step.label)).toEqual(['i — Am', 'iv — Dm', 'V — E', 'i — Am'])
   })
+
+  it('voices the whole progression in the open position at position 1', () => {
+    // Position 1 is the open-most neck area in every key; all three chords
+    // should sit there instead of drifting up the neck per progression index
+    const steps = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 0 })
+    expect(steps).toHaveLength(3)
+    steps.forEach((step) => {
+      const frettedNotes = step.notes.filter(({ fret }) => fret > 0)
+      const lowestFret = Math.min(...frettedNotes.map(({ fret }) => fret))
+      expect(lowestFret).toBeLessThanOrEqual(3)
+    })
+  })
+
+  it('moves the whole progression up the neck at a higher position', () => {
+    const minFret = (step: PracticeStep) =>
+      Math.min(...step.notes.filter(({ fret }) => fret > 0).map(({ fret }) => fret))
+
+    const low = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 0 })
+    const high = buildPracticeSequence({ ...baseOpts, mode: 'progression', position: 2 })
+
+    // Position changes the voicings, not the harmony
+    expect(high.map((step) => step.label)).toEqual(low.map((step) => step.label))
+    expect(minFret(high[0])).toBeGreaterThan(minFret(low[0]))
+  })
+
+  it('ascends from open chords to barre chords across positions in C major', () => {
+    // C major's scale boxes are rooted at fret 8, but chord positions are
+    // ordered by neck area: position 1 gives open C/F/G and later positions
+    // climb to the 8th-fret barre shapes
+    const minFret = (step: PracticeStep) =>
+      Math.min(...step.notes.filter(({ fret }) => fret > 0).map(({ fret }) => fret))
+
+    const opts = { ...baseOpts, rootNote: 'C' as const, scale: 'major', mode: 'progression' as const }
+    const open = buildPracticeSequence({ ...opts, position: 0 })
+    const barre = buildPracticeSequence({ ...opts, position: 5 })
+
+    expect(barre.map((step) => step.label)).toEqual(open.map((step) => step.label))
+    open.forEach((step) => expect(minFret(step)).toBeLessThanOrEqual(3))
+    barre.forEach((step) => expect(minFret(step)).toBeGreaterThanOrEqual(7))
+  })
 })

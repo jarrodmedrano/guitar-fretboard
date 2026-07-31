@@ -188,6 +188,7 @@ export default function PracticePage() {
             showProgressionMode={isProgressionMode}
             selectedProgression={isProgressionMode ? selectedProgression : null}
             progressionViewMode="chord"
+            progressionAnchorPosition={isProgressionMode ? position : null}
             showFingerings={showFingerings}
             showOnlyChordTones={showOnlyChordTones && !isChordMode && !isProgressionMode}
             activeNotes={activeNotes}

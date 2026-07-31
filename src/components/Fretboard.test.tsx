@@ -85,6 +85,42 @@ describe('Fretboard Component', () => {
     })
   })
 
+  describe('Progression Mode', () => {
+    it('anchors the voicing window to progressionAnchorPosition', () => {
+      // Chord index 1 of i–v–VI–iv in A minor pentatonic is Gm. Anchored to
+      // position 3 (frets 5-8) it picks the x-x-5-7-8-6 voicing, whose two
+      // muted strings render X markers at the nut
+      render(
+        <Fretboard
+          rootNote="A"
+          scale="minorPentatonic"
+          showProgressionMode
+          selectedProgression="1-5-6-4"
+          progressionViewMode="chord"
+          position={1}
+          progressionAnchorPosition={2}
+        />
+      )
+      expect(screen.getAllByText('X')).toHaveLength(2)
+    })
+
+    it('keeps per-chord windows when no anchor is given', () => {
+      // Without an anchor the same chord uses its own index's window (position
+      // 2, frets 3-6) and picks the 3rd-fret barre with no muted strings
+      render(
+        <Fretboard
+          rootNote="A"
+          scale="minorPentatonic"
+          showProgressionMode
+          selectedProgression="1-5-6-4"
+          progressionViewMode="chord"
+          position={1}
+        />
+      )
+      expect(screen.queryByText('X')).not.toBeInTheDocument()
+    })
+  })
+
   describe('Active Notes (practice playback)', () => {
     it('should apply the active highlight to notes in activeNotes', () => {
       // Low E string (index 0), fret 5 = A, the root of A minor pentatonic

@@ -162,7 +162,7 @@ function buildTriadSteps(opts: PracticeSequenceOptions): PracticeStep[] {
 }
 
 function buildProgressionSteps(opts: PracticeSequenceOptions): PracticeStep[] {
-  const { rootNote, scale, tuning, progression } = opts
+  const { rootNote, scale, position, tuning, progression } = opts
   const progressionData = CHORD_PROGRESSIONS[progression]
   if (!progressionData) return []
 
@@ -171,7 +171,16 @@ function buildProgressionSteps(opts: PracticeSequenceOptions): PracticeStep[] {
     quality === 'minor' ? progressionData.degreesMinor : progressionData.degreesMajor
 
   return degrees.reduce<PracticeStep[]>((steps, _degree, index) => {
-    const voicing = getProgressionChordVoicing(rootNote, scale, index, progression, tuning)
+    // Anchor every chord's voicing to the selected scale position so the
+    // progression stays in one neck area instead of drifting up per chord
+    const voicing = getProgressionChordVoicing(
+      rootNote,
+      scale,
+      index,
+      progression,
+      tuning,
+      position
+    )
     const chord = getProgressionChordAt(rootNote, scale, index, progression)
     if (!voicing || !chord) return steps
 

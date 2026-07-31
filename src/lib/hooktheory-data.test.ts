@@ -177,13 +177,77 @@ describe('progression name and voicing integration', () => {
   })
 
   it('picks a curated voicing near the selected position window', () => {
-    // Positions 0 and 3 of '1-4-5' both resolve to the tonic chord (index % 3),
-    // but position 3 sits an octave up the neck — the voicing should follow
-    const low = getProgressionChordVoicing('A', 'minorPentatonic', 0, '1-4-5')
-    const high = getProgressionChordVoicing('A', 'minorPentatonic', 3, '1-4-5')
+    // Same tonic chord anchored to two different scale positions: position 2's
+    // window sits higher on the neck, so the voicing should follow
+    const low = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      0
+    )
+    const high = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      2
+    )
     expect(low).not.toBeNull()
     expect(high).not.toBeNull()
     expect(low!.baseFret).toBeLessThan(high!.baseFret)
+  })
+
+  it('orders positions from the open area up the neck', () => {
+    // Position 1 always voices the tonic in the open-most area (open Am here)
+    // and each higher position moves up the fretboard, never back down
+    const baseFrets = [0, 1, 2, 3, 4].map(
+      (scalePosition) =>
+        getProgressionChordVoicing(
+          'A',
+          'minorPentatonic',
+          0,
+          '1-4-5',
+          TUNINGS.standard,
+          scalePosition
+        )!.baseFret
+    )
+    expect(baseFrets[0]).toBe(1)
+    baseFrets.forEach((fret, i) => {
+      if (i > 0) expect(fret).toBeGreaterThanOrEqual(baseFrets[i - 1])
+    })
+  })
+
+  it('uses an explicit scale position for the voicing window when given', () => {
+    // Chord index 2 is the v chord (Em); without an explicit scale position the
+    // window comes from position 2, high on the neck. Pinning the window to
+    // position 0 should pick a voicing lower on the neck
+    const drifted = getProgressionChordVoicing('A', 'minorPentatonic', 2, '1-4-5')
+    const pinned = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      2,
+      '1-4-5',
+      TUNINGS.standard,
+      0
+    )
+    expect(drifted).not.toBeNull()
+    expect(pinned).not.toBeNull()
+    expect(pinned!.baseFret).toBeLessThan(drifted!.baseFret)
+  })
+
+  it('clamps an out-of-range scale position instead of failing', () => {
+    const clamped = getProgressionChordVoicing(
+      'A',
+      'minorPentatonic',
+      0,
+      '1-4-5',
+      TUNINGS.standard,
+      99
+    )
+    expect(clamped).not.toBeNull()
   })
 
   it('produces voicings for every Hooktheory progression across positions and instruments', () => {

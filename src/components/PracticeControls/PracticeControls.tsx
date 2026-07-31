@@ -137,7 +137,8 @@ export function PracticeControls({
         )
       : getPositionCount(scale)
   const positionLabel = mode === 'chord' ? 'Voicing' : 'Position'
-  const showPosition = mode === 'scale' || mode === 'chord'
+  // Progression mode uses the position to anchor chord voicings on the neck
+  const showPosition = mode === 'scale' || mode === 'chord' || mode === 'progression'
   const availableProgressions = getProgressionsForScale(scale)
   const selectedKey =
     KEY_POPULARITY.find((key) => key.root === rootNote && key.scale === scale) ?? null
