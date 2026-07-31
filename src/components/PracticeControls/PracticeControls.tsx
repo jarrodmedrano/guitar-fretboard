@@ -10,6 +10,7 @@ import {
   TUNINGS,
   getChordVoicingCountForTuning,
   getPositionCount,
+  getProgressionPositionCount,
   getProgressionsForScale,
   getTuningsByStringCount,
   type ChordQuality,
@@ -127,7 +128,8 @@ export function PracticeControls({
   onChordTonesToggle,
   onTogglePlay,
 }: PracticeControlsProps) {
-  // Chord mode selects among the instrument's voicings; scale mode among scale positions
+  // Chord mode selects among the instrument's voicings, progression mode among
+  // the progression's voicing-ladder rungs, scale mode among scale positions
   const positionCount =
     mode === 'chord'
       ? getChordVoicingCountForTuning(
@@ -135,7 +137,14 @@ export function PracticeControls({
           chordQuality,
           TUNINGS[tuningKey] ?? STANDARD_TUNING
         )
-      : getPositionCount(scale)
+      : mode === 'progression'
+        ? getProgressionPositionCount(
+            rootNote,
+            scale,
+            selectedProgression,
+            TUNINGS[tuningKey] ?? STANDARD_TUNING
+          )
+        : getPositionCount(scale)
   const positionLabel = mode === 'chord' ? 'Voicing' : 'Position'
   // Progression mode uses the position to anchor chord voicings on the neck
   const showPosition = mode === 'scale' || mode === 'chord' || mode === 'progression'
