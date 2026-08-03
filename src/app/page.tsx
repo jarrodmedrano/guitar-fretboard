@@ -25,11 +25,13 @@ export default function Home() {
     selectedProgression,
     showFingerings,
     progressionViewMode,
+    chordQuality,
     announcement,
     handleScaleChange,
     handleRootChange,
     handlePositionChange,
     handleStringCountChange,
+    handleChordQualityChange,
     handleChordsModeToggle,
     handleProgressionModeToggle,
     handleToggleDisplayMode,
@@ -115,6 +117,8 @@ export default function Home() {
             selectedProgression={selectedProgression}
             showFingerings={showFingerings}
             progressionViewMode={progressionViewMode}
+            chordQuality={chordQuality}
+            onChordQualityChange={handleChordQualityChange}
             onRootChange={handleRootChange}
             onScaleChange={handleScaleChange}
             onStringCountChange={handleStringCountChange}
@@ -154,7 +158,7 @@ export default function Home() {
                     {showChordsMode && !showProgressionMode && (
                       position !== null ? (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
-                          {getChordNameForPosition(rootNote, scale, position, TUNINGS[tuning])}
+                          {getChordNameForPosition(rootNote, scale, position, TUNINGS[tuning], chordQuality)}
                         </span>
                       ) : (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300">
@@ -190,7 +194,7 @@ export default function Home() {
                       <div className="text-2xl md:text-3xl font-bold text-white">
                         {showProgressionMode && selectedProgression
                           ? getProgressionChordName(rootNote, scale, position, selectedProgression)
-                          : getChordNameForPosition(rootNote, scale, position, TUNINGS[tuning])}
+                          : getChordNameForPosition(rootNote, scale, position, TUNINGS[tuning], chordQuality)}
                       </div>
                     </div>
                   )}
@@ -202,6 +206,7 @@ export default function Home() {
                       rootNote={rootNote}
                       scale={scale}
                       tuning={TUNINGS[tuning]}
+                      chordQuality={chordQuality}
                       position={position}
                       onPositionChange={handlePositionChange}
                     />
@@ -225,6 +230,7 @@ export default function Home() {
                 displayMode={displayMode}
                 showOnlyChordTones={showOnlyChordTones}
                 showChordsMode={showChordsMode}
+                chordQuality={showChordsMode ? chordQuality : null}
                 showProgressionMode={showProgressionMode}
                 selectedProgression={selectedProgression}
                 showFingerings={showFingerings}

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useFretboardApp } from './useFretboardApp'
+import { STANDARD_TUNING, getChordVoicingCountForTuning } from '@/lib/music-theory'
 
 describe('useFretboardApp', () => {
   it('should initialize with default state', () => {
@@ -134,3 +135,47 @@ describe('useFretboardApp', () => {
     expect(result.current.showChordsMode).toBe(false)
     expect(result.current.announcement).toBe('Chords mode disabled')
   })
+
+describe('useFretboardApp — chord quality', () => {
+  it('derives the chord quality from the scale by default', () => {
+    const { result } = renderHook(() => useFretboardApp())
+    expect(result.current.chordQuality).toBe('minor') // A minor pentatonic
+
+    act(() => {
+      result.current.handleScaleChange('major')
+    })
+    expect(result.current.chordQuality).toBe('major')
+  })
+
+  it('applies an explicit chord type that survives scale changes', () => {
+    const { result } = renderHook(() => useFretboardApp())
+
+    act(() => {
+      result.current.handleChordQualityChange('sus4')
+    })
+    expect(result.current.chordQuality).toBe('sus4')
+
+    act(() => {
+      result.current.handleScaleChange('major')
+    })
+    expect(result.current.chordQuality).toBe('sus4')
+  })
+
+  it('clamps the voicing position to the new chord type', () => {
+    const { result } = renderHook(() => useFretboardApp())
+    const minorCount = getChordVoicingCountForTuning('A', 'minor', STANDARD_TUNING)
+    const augCount = getChordVoicingCountForTuning('A', 'aug', STANDARD_TUNING)
+
+    act(() => {
+      result.current.handleChordsModeToggle(true)
+    })
+    act(() => {
+      result.current.handlePositionChange(minorCount - 1)
+    })
+    act(() => {
+      result.current.handleChordQualityChange('aug')
+    })
+
+    expect(result.current.position).toBe(Math.min(minorCount, augCount) - 1)
+  })
+})

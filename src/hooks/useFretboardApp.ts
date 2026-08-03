@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Note, NOTES, SCALE_NAMES, SCALES, STANDARD_TUNING, TUNINGS, getChordQuality, getChordVoicingCountForTuning, getDefaultTuning, getProgressionsForScale } from '@/lib/music-theory'
+import { CHORD_QUALITY_LABELS, Note, NOTES, SCALE_NAMES, SCALES, STANDARD_TUNING, TUNINGS, getChordQuality, getChordVoicingCountForTuning, getDefaultTuning, getProgressionsForScale, type ChordQuality } from '@/lib/music-theory'
 import { useAnnouncements } from './useAnnouncements'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -25,6 +25,10 @@ export function useFretboardApp() {
   const [selectedProgression, setSelectedProgression] = useState<string | null>(null)
   const [showFingerings, setShowFingerings] = useState(true)
   const [progressionViewMode, setProgressionViewMode] = useState<ProgressionViewMode>('chord')
+  // Explicit chord-type selection for chords mode; null follows the scale
+  const [chordQualityOverride, setChordQualityOverride] = useState<ChordQuality | null>(null)
+
+  const chordQuality = chordQualityOverride ?? getChordQuality(scale)
 
   // Handlers
   const handleScaleChange = useCallback((newScale: string) => {
@@ -47,14 +51,14 @@ export function useFretboardApp() {
         if (current === null) return current
         const count = getChordVoicingCountForTuning(
           newRoot,
-          getChordQuality(scale),
+          chordQuality,
           TUNINGS[tuning] ?? STANDARD_TUNING
         )
         return count > 0 ? Math.min(current, count - 1) : null
       })
     }
     announce(`Root note changed to ${newRoot}`)
-  }, [announce, showChordsMode, scale, tuning])
+  }, [announce, showChordsMode, chordQuality, tuning])
 
   const handlePositionChange = useCallback((newPosition: number | null) => {
     setPosition(newPosition)
@@ -67,18 +71,18 @@ export function useFretboardApp() {
 
   // Clamp a chord-mode voicing index against the voicing count for a tuning
   const clampPositionForTuning = useCallback(
-    (tuningKey: string) => {
+    (tuningKey: string, quality: ChordQuality = chordQuality) => {
       setPosition((current) => {
         if (current === null) return current
         const count = getChordVoicingCountForTuning(
           rootNote,
-          getChordQuality(scale),
+          quality,
           TUNINGS[tuningKey] ?? STANDARD_TUNING
         )
         return count > 0 ? Math.min(current, count - 1) : null
       })
     },
-    [rootNote, scale]
+    [rootNote, chordQuality]
   )
 
   const handleStringCountChange = useCallback((count: number) => {
@@ -96,6 +100,13 @@ export function useFretboardApp() {
       clampPositionForTuning(newTuning)
     }
   }, [showChordsMode, clampPositionForTuning])
+
+  const handleChordQualityChange = useCallback((quality: ChordQuality) => {
+    setChordQualityOverride(quality)
+    // Voicing counts differ per chord type, so re-clamp the voicing index
+    clampPositionForTuning(tuning, quality)
+    announce(`Chord type changed to ${CHORD_QUALITY_LABELS[quality]}`)
+  }, [announce, clampPositionForTuning, tuning])
 
   const handleChordsModeToggle = useCallback((enabled: boolean) => {
     setShowChordsMode(enabled)
@@ -154,6 +165,7 @@ export function useFretboardApp() {
     selectedProgression,
     showFingerings,
     progressionViewMode,
+    chordQuality,
     announcement,
 
     // Handlers
@@ -162,6 +174,7 @@ export function useFretboardApp() {
     handlePositionChange,
     handleStringCountChange,
     handleTuningChange,
+    handleChordQualityChange,
     handleChordsModeToggle,
     handleProgressionModeToggle,
     handleToggleDisplayMode,

@@ -15,6 +15,8 @@ describe('ScaleSelector Component', () => {
     selectedProgression: null,
     showFingerings: false,
     progressionViewMode: 'chord' as const,
+    chordQuality: 'minor' as const,
+    onChordQualityChange: vi.fn(),
     onRootChange: vi.fn(),
     onScaleChange: vi.fn(),
     onStringCountChange: vi.fn(),
@@ -223,6 +225,46 @@ describe('ScaleSelector Component', () => {
       expect(screen.getByText(/tuning/i)).toBeInTheDocument()
       expect(screen.getByText(/display/i)).toBeInTheDocument()
       expect(screen.getByText(/filter/i)).toBeInTheDocument()
+    })
+  })
+
+  describe('Chord Type Selector', () => {
+    it('is hidden when chords mode is off', () => {
+      render(<ScaleSelector {...defaultProps} />)
+      expect(screen.queryByRole('group', { name: /chord type/i })).not.toBeInTheDocument()
+    })
+
+    it('shows the chord type buttons when chords mode is on', () => {
+      render(<ScaleSelector {...defaultProps} showChordsMode />)
+      expect(screen.getByRole('group', { name: /chord type/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Maj' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'sus4' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'maj7' })).toBeInTheDocument()
+    })
+
+    it('highlights the active chord type', () => {
+      render(<ScaleSelector {...defaultProps} showChordsMode chordQuality="minor" />)
+      expect(screen.getByRole('button', { name: 'Min' })).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      )
+      expect(screen.getByRole('button', { name: 'Maj' })).toHaveAttribute(
+        'aria-pressed',
+        'false'
+      )
+    })
+
+    it('calls onChordQualityChange when a type is clicked', () => {
+      const onChordQualityChange = vi.fn()
+      render(
+        <ScaleSelector
+          {...defaultProps}
+          showChordsMode
+          onChordQualityChange={onChordQualityChange}
+        />
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'sus4' }))
+      expect(onChordQualityChange).toHaveBeenCalledWith('sus4')
     })
   })
 })

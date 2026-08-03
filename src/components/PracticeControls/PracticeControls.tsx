@@ -2,6 +2,8 @@
 
 import type { ChangeEvent } from 'react'
 import {
+  CHORD_QUALITIES,
+  CHORD_QUALITY_LABELS,
   INSTRUMENT_NAMES,
   KEY_POPULARITY,
   NOTES,
@@ -23,31 +25,6 @@ import { cn } from '@/lib/utils'
 import { styles } from './PracticeControls.styles'
 
 const MODES: PracticeMode[] = ['scale', 'chord', 'triad', 'progression']
-
-// Ordered triads → sevenths → color tones
-const CHORD_QUALITIES: ChordQuality[] = [
-  'major', 'minor', 'dim', 'aug', 'sus2', 'sus4',
-  '7', 'maj7', 'm7', 'm7b5', 'dim7',
-  '6', 'm6', 'add9', '9',
-]
-
-const CHORD_QUALITY_LABELS: Record<ChordQuality, string> = {
-  major: 'Maj',
-  minor: 'Min',
-  dim: 'dim',
-  aug: 'aug',
-  sus2: 'sus2',
-  sus4: 'sus4',
-  '7': '7',
-  maj7: 'maj7',
-  m7: 'm7',
-  m7b5: 'm7b5',
-  dim7: 'dim7',
-  '6': '6',
-  m6: 'm6',
-  add9: 'add9',
-  '9': '9',
-}
 const STRING_COUNTS = [4, 6, 7, 8] as const
 const MIN_BPM = 40
 const MAX_BPM = 220
