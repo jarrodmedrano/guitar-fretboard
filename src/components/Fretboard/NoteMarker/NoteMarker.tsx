@@ -76,6 +76,11 @@ export function NoteMarker({
     if (isRoot) return styles.bgColor.root
     if (interval === 4 || interval === 3) return styles.bgColor.third // 3rd
     if (interval === 7) return styles.bgColor.fifth // 5th
+    // In chord mode (fingerNumber is defined) an altered fifth — the dim b5
+    // or aug #5 — is still the chord's fifth
+    if (fingerNumber !== undefined && (interval === 6 || interval === 8)) {
+      return styles.bgColor.fifth
+    }
     if (interval === 10 || interval === 11) return styles.bgColor.seventh // 7th
     if (interval === 6) return styles.bgColor.blueNote // blue note
     return styles.bgColor.default

@@ -1,6 +1,6 @@
 'use client'
 
-import { Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, getProgressionsForScale, KEY_POPULARITY } from '@/lib/music-theory'
+import { CHORD_QUALITIES, CHORD_QUALITY_LABELS, Note, NOTES, SCALES, SCALE_NAMES, INSTRUMENT_NAMES, getTuningsByStringCount, getProgressionsForScale, KEY_POPULARITY, type ChordQuality } from '@/lib/music-theory'
 import { styles } from './ScaleSelector.styles'
 
 type DisplayMode = 'notes' | 'intervals' | 'degrees'
@@ -18,6 +18,8 @@ export interface ScaleSelectorProps {
   selectedProgression: string | null
   showFingerings: boolean
   progressionViewMode: ProgressionViewMode
+  chordQuality: ChordQuality
+  onChordQualityChange: (quality: ChordQuality) => void
   onRootChange: (note: Note) => void
   onScaleChange: (scale: string) => void
   onStringCountChange: (count: number) => void
@@ -45,6 +47,8 @@ export default function ScaleSelector({
   selectedProgression,
   showFingerings,
   progressionViewMode,
+  chordQuality,
+  onChordQualityChange,
   onRootChange,
   onScaleChange,
   onStringCountChange,
@@ -228,6 +232,42 @@ export default function ScaleSelector({
           </button>
         </div>
       </div>
+
+      {/* Chord Type Selector - only visible in Chords mode */}
+      {showChordsMode && (
+        <div className={styles.fieldWrapper}>
+          <label htmlFor="chord-quality-mobile" className={styles.label}>Chord Type</label>
+
+          {/* Mobile: Dropdown */}
+          <select
+            id="chord-quality-mobile"
+            value={chordQuality}
+            onChange={(e) => onChordQualityChange(e.target.value as ChordQuality)}
+            className={styles.selectMobile}
+            aria-label="Select chord type"
+          >
+            {CHORD_QUALITIES.map((quality) => (
+              <option key={quality} value={quality}>
+                {CHORD_QUALITY_LABELS[quality]}
+              </option>
+            ))}
+          </select>
+
+          {/* Desktop: Buttons */}
+          <div className={styles.buttonGroupDesktopOnly} role="group" aria-label="Chord type">
+            {CHORD_QUALITIES.map((quality) => (
+              <button
+                key={quality}
+                onClick={() => onChordQualityChange(quality)}
+                className={styles.desktopButton(chordQuality === quality, 'amber')}
+                aria-pressed={chordQuality === quality}
+              >
+                {CHORD_QUALITY_LABELS[quality]}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Chord Progression Selector */}
       {showProgressionMode && (

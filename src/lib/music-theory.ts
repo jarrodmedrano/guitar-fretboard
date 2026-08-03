@@ -314,6 +314,8 @@ export function getIntervalName(rootNote: Note, note: Note): string {
 // (src/lib/chord-shapes.ts) via the adapter in src/lib/chords.ts. Re-exported
 // here so consumers keep importing from '@/lib/music-theory'.
 export {
+  CHORD_QUALITIES,
+  CHORD_QUALITY_LABELS,
   CHORD_SUFFIXES,
   getChordVoicingCount,
   getChordVoicings,
