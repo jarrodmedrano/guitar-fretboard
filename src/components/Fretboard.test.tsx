@@ -21,6 +21,13 @@ describe('Fretboard Component', () => {
       expect(screen.getAllByText('6').length).toBeGreaterThan(0)
     })
 
+    it('should label the top string (high E) as string 1', () => {
+      render(<Fretboard {...defaultProps} />)
+      const labels = screen.getAllByRole('text')
+      expect(labels[0]).toHaveAttribute('aria-label', 'String 1')
+      expect(labels[labels.length - 1]).toHaveAttribute('aria-label', 'String 6')
+    })
+
     it('should render fret numbers', () => {
       render(<Fretboard {...defaultProps} frets={12} />)
       // Fret numbers should be visible
@@ -82,6 +89,40 @@ describe('Fretboard Component', () => {
         <Fretboard rootNote="C" scale="major" showChordsMode position={null} />
       )
       expect(screen.queryByText('X')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Chord Mode (out-of-scale chord types)', () => {
+    it('shows every chord tone before playback, including notes outside the scale', () => {
+      // A aug voicing 2 (5-4-3-2-2-x) is A-C#-F-A-C#; C# and F are not in
+      // A minor pentatonic but are chord tones and must render
+      render(
+        <Fretboard
+          rootNote="A"
+          scale="minorPentatonic"
+          showChordsMode
+          chordQuality="aug"
+          position={1}
+          showFingerings={false}
+        />
+      )
+      expect(screen.getAllByRole('button', { name: /^C# - / }).length).toBeGreaterThan(0)
+      expect(screen.getAllByRole('button', { name: /^F - / }).length).toBeGreaterThan(0)
+    })
+
+    it('colors the augmented fifth as a fifth, not a scale note', () => {
+      render(
+        <Fretboard
+          rootNote="A"
+          scale="minorPentatonic"
+          showChordsMode
+          chordQuality="aug"
+          position={1}
+          showFingerings={false}
+        />
+      )
+      const [fifth] = screen.getAllByRole('button', { name: /^F - / })
+      expect(fifth.className).toContain('bg-blue-500')
     })
   })
 

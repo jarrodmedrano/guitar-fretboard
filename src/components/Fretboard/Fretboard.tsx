@@ -105,8 +105,13 @@ export default function Fretboard({
   // For R-3-5 filter mode, include both major and minor 3rds
   const r35Intervals = [0, 3, 4, 7]
 
+  // Chord and progression-chord modes render voicings; their notes may sit
+  // outside the selected scale (e.g. an aug chord over a pentatonic)
+  const isChordVoicingView =
+    showChordsMode || (showProgressionMode && progressionViewMode === 'chord')
+
   // Get chord voicing(s) for chord mode or progression mode (only when in chord view)
-  const chordVoicings = (showChordsMode || (showProgressionMode && progressionViewMode === 'chord'))
+  const chordVoicings = isChordVoicingView
     ? showProgressionMode && selectedProgression
       ? position !== null
         ? [getProgressionChordVoicing(rootNote, scale, position, selectedProgression, tuning, progressionAnchorPosition ?? position)].filter(Boolean) as ChordVoicing[]
@@ -302,8 +307,10 @@ export default function Fretboard({
           <div className={stringLabelStyles.container}>
             {displayTuning.map((note, i) => (
               <div key={i} className={stringLabelStyles.label}>
-                <span role="text" aria-label={`String ${tuning.length - i}`}>
-                  {tuning.length - i}
+                {/* displayTuning is high-to-low, and the 1st string is the
+                    highest, so the top row is string 1 */}
+                <span role="text" aria-label={`String ${i + 1}`}>
+                  {i + 1}
                 </span>
               </div>
             ))}
@@ -328,7 +335,7 @@ export default function Fretboard({
 
                 // Determine if note should be shown based on mode
                 const isR35Tone = r35Intervals.includes(interval)
-                const shouldShow = showChordsMode || (showProgressionMode && progressionViewMode === 'chord')
+                const shouldShow = isChordVoicingView
                   ? chordInfo.shouldShow  // Chords/Progression chord mode: only notes in voicing
                   : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode or progression scale mode: respect R-3-5 filter
                 const isActive = activeNotes?.has(key) ?? false
@@ -338,7 +345,7 @@ export default function Fretboard({
                     key={stringIndex}
                     note={note}
                     isRoot={isRoot}
-                    inScale={(shouldShow && inScale) || isActive}
+                    inScale={(shouldShow && (inScale || isChordVoicingView)) || isActive}
                     interval={interval}
                     degree={degree}
                     displayMode={displayMode}
@@ -387,7 +394,7 @@ export default function Fretboard({
 
                     // Determine if note should be shown based on mode
                     const isR35Tone = r35Intervals.includes(interval)
-                    const shouldShow = showChordsMode || (showProgressionMode && progressionViewMode === 'chord')
+                    const shouldShow = isChordVoicingView
                       ? chordInfo.shouldShow  // Chords/Progression chord mode: only notes in voicing
                       : (!showOnlyChordTones || isR35Tone) && inPosition  // Normal mode or progression scale mode: respect R-3-5 filter
                     const isActive = activeNotes?.has(key) ?? false
@@ -402,7 +409,7 @@ export default function Fretboard({
                         <NoteMarker
                           note={note}
                           isRoot={isRoot}
-                          inScale={(shouldShow && inScale) || isActive}
+                          inScale={(shouldShow && (inScale || isChordVoicingView)) || isActive}
                           interval={interval}
                           degree={degree}
                           displayMode={displayMode}
